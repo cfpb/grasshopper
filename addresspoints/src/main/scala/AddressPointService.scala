@@ -46,7 +46,22 @@ trait Service extends Protocols {
             }
           }
         }
-      }
+      } ~
+        pathPrefix("address") {
+          path("point") {
+            post {
+              compressResponseIfRequested() {
+                entity(as[AddressInput]) { address =>
+                  //val point = geocodePoint(client, "address", "point", address)
+                  complete {
+                    //ToResponseMarshallable(point)
+                    ToResponseMarshallable(address)
+                  }
+                }
+              }
+            }
+          }
+        }
     }
   }
 }
