@@ -6,11 +6,14 @@ import akka.http.model.StatusCodes._
 import akka.http.testkit.ScalatestRouteTest
 import akka.stream.scaladsl.Flow
 import org.scalatest._
+import grasshopper.elasticsearch._
 
 class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service {
   override def testConfigSource = "akka.loglevel = WARNING"
   override def config = testConfig
   override val logger = NoLogging
+
+  val es = new ElasticsearchServer
 
   "Address Point Service" should "respond to status" in {
     Get("/status") ~> routes ~> check {

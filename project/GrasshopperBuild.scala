@@ -31,7 +31,9 @@ object GrasshopperBuild extends Build {
 
   val akkaHttpDeps = akkaDeps ++ jsonDeps ++ Seq(akkaHttp, akkaHttpCore, akkaHttpTestkit)
 
-  val geocodeDeps = akkaHttpDeps ++ Seq(elasticsearch)
+  val esDeps = commonDeps ++ Seq(es)
+
+  val geocodeDeps = akkaHttpDeps ++ esDeps
 
   
   lazy val grasshopper = Project(
@@ -47,11 +49,18 @@ object GrasshopperBuild extends Build {
     settings = buildSettings ++ Seq(libraryDependencies ++= jsonDeps)
   )
 
+  lazy val elasticsearch = Project(
+    "elasticsearch",
+    file("elasticsearch"),
+    settings = buildSettings ++ Seq(libraryDependencies ++= esDeps)
+  )
+
+
   lazy val addresspoints = Project(
     "addresspoints",
     file("addresspoints"),
     settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++= geocodeDeps)
-  ).dependsOn(core)
+  ).dependsOn(core, elasticsearch)
 
 
 }

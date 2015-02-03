@@ -16,7 +16,7 @@ object Dependencies {
   val scalaTest       = "org.scalatest"     %% "scalatest"                          % Version.scalaTest   % "test"
   val scalaCheck      = "org.scalacheck"    %% "scalacheck"                         % Version.scalaCheck  % "test"
 
-  val elasticsearch   = "org.elasticsearch"  % "elasticsearch"                      % Version.elasticsearch
+  val es              = "org.elasticsearch"  % "elasticsearch"                      % Version.elasticsearch
 
   val jts             = "com.vividsolutions" % "jts"                                % Version.jts
  
