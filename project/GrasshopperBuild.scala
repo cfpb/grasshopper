@@ -53,7 +53,7 @@ object GrasshopperBuild extends Build {
     "elasticsearch",
     file("elasticsearch"),
     settings = buildSettings ++ Seq(libraryDependencies ++= esDeps)
-  )
+  ).dependsOn(core)
 
 
   lazy val addresspoints = Project(

@@ -4,7 +4,12 @@ import java.io.File
 import java.nio.file.Files
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.action.search.SearchType
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.NodeBuilder._
+import grasshopper.feature._
+import grasshopper.geojson.FeatureJsonProtocol._
+import spray.json._
 
 class ElasticsearchServer {
 
@@ -37,6 +42,23 @@ class ElasticsearchServer {
   def createAndWaitForIndex(index: String): Unit = {
     client.admin.indices.prepareCreate(index).execute.actionGet()
     client.admin.cluster.prepareHealth(index).setWaitForActiveShards(1).execute.actionGet()
+  }
+
+  def loadFeature(index: String, indexType: String, f: Feature): Boolean = {
+    val response = client
+      .prepareIndex(index, indexType)
+      .setSource(f.toJson.toString)
+      .execute()
+      .actionGet()
+    response.isCreated
+  }
+
+  def deleteById(index: String, indexType: String, id: String): Boolean = {
+    val response = client
+      .prepareDelete(index, indexType, id)
+      .execute()
+      .actionGet()
+    response.isFound
   }
 
   private def delete(path: String) = {
