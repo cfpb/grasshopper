@@ -11,7 +11,7 @@ import spray.json._
 
 trait Geocode {
 
-  def geocodePoint(client: Client, index: String, indexType: String, address: String): Feature = {
+  def geocodePoint(client: Client, index: String, indexType: String, address: String): Option[Feature] = {
     val response = client.prepareSearch(index)
       .setTypes(indexType)
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -20,8 +20,14 @@ trait Geocode {
       .actionGet
 
     val hits = response.getHits().getHits
-    val str = hits.map(hit => hit.getSourceAsString).take(1).mkString
-    str.parseJson.convertTo[Feature]
+    hits.size match {
+      case 0 => None
+      case _ =>
+        val str = hits.map(hit => hit.getSourceAsString).take(1).mkString
+        val feature = str.parseJson.convertTo[Feature]
+        Some(feature)
+
+    }
   }
 
 }

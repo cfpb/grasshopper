@@ -11,9 +11,11 @@ import akka.util.ByteString
 import akka.stream.scaladsl._
 import org.scalatest._
 import grasshopper.elasticsearch._
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import grasshopper.geometry._
 import grasshopper.feature._
 import spray.json._
+import grasshopper.geojson.FeatureJsonProtocol._
 
 class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
@@ -22,15 +24,19 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
 
   val server = new ElasticsearchServer
 
-  override val client = server.client
+  val client = server.client
+
+  private def getPointFeature() = {
+    val p = Point(-77.0590232, 38.9072597)
+    val props = Map("ADDRESS" -> "1311 30th St NW Washington DC 20007")
+    Feature(p, props)
+  }
 
   override def beforeAll = {
     server.start()
     server.createAndWaitForIndex("address")
-    val p = Point(-77.0590232, 38.9072597)
-    val properties = Map("ADDRESS" -> "1311 30th St NW Washington DC 20007")
-    val f = Feature(p, properties)
-    server.loadFeature("address", "point", f)
+    server.loadFeature("address", "point", getPointFeature)
+    client.admin().indices().refresh(new RefreshRequest("address")).actionGet()
   }
 
   override def afterAll = {
@@ -50,9 +56,12 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     val address = AddressInput(1, "1311 30th St NW Washington DC 20007")
     val json = address.toJson.toString
     //val json = """{"id":1,"address":"1311 30th St NW Washington DC 20007"}"""
-    Post("/address/point", HttpEntity(ContentTypes.`application/json`, ByteString(json))) ~> routes ~> check {
+    val header = RawHeader("Content-Type", "application/json")
+    Post("/address/point", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
+      val f = responseAs[Feature]
+      f mustBe getPointFeature
     }
   }
 

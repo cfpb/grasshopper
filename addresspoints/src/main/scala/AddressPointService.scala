@@ -25,6 +25,7 @@ import grasshopper.elasticsearch.Geocode
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import spray.json._
 
 case class Status(status: String, time: String)
 
@@ -59,13 +60,22 @@ trait Service extends JsonProtocol with Geocode {
         path("point") {
           post {
             compressResponseIfRequested() {
-              entity(as[AddressInput]) { addressInput =>
+              entity(as[String]) { json =>
+                val addressInput = json.parseJson.convertTo[AddressInput]
                 val point = geocodePoint(client, "address", "point", addressInput.address)
-                //respondWithMediaType(`application/json`) {
-                complete {
-                  ToResponseMarshallable(point)
+                point match {
+                  case Some(p) =>
+                    println(point)
+                    //respondWithMediaType(`application/json`) {
+                    complete {
+                      ToResponseMarshallable(point)
+                    }
+                  //}
+                  case None =>
+                    complete {
+                      "Not Found"
+                    }
                 }
-                //}
               }
             }
           }
