@@ -20,13 +20,13 @@ trait Geocode {
       .actionGet
 
     val hits = response.getHits().getHits
+
     hits.size match {
       case 0 => None
       case _ =>
         val str = hits.map(hit => hit.getSourceAsString).take(1).mkString
         val feature = str.parseJson.convertTo[Feature]
         Some(feature)
-
     }
   }
 

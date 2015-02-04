@@ -55,7 +55,6 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
   it should "geocode a single point" in {
     val address = AddressInput(1, "1311 30th St NW Washington DC 20007")
     val json = address.toJson.toString
-    //val json = """{"id":1,"address":"1311 30th St NW Washington DC 20007"}"""
     val header = RawHeader("Content-Type", "application/json")
     Post("/address/point", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK

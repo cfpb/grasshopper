@@ -65,15 +65,12 @@ trait Service extends JsonProtocol with Geocode {
                 val point = geocodePoint(client, "address", "point", addressInput.address)
                 point match {
                   case Some(p) =>
-                    println(point)
-                    //respondWithMediaType(`application/json`) {
                     complete {
                       ToResponseMarshallable(point)
                     }
-                  //}
                   case None =>
                     complete {
-                      "Not Found"
+                      BadRequest
                     }
                 }
               }
