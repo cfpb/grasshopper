@@ -70,7 +70,7 @@ trait Service extends JsonProtocol with Geocode {
                     }
                   case None =>
                     complete {
-                      BadRequest
+                      NotFound
                     }
                 }
               }
