@@ -1,5 +1,6 @@
 package grasshopper.addresspoints
 
+import scala.util.Properties
 import akka.actor.ActorSystem
 import akka.event.{ LoggingAdapter, Logging }
 import akka.http.Http
@@ -89,9 +90,9 @@ object AddressPointService extends App with Service {
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
 
-  lazy val host = config.getString("elasticsearch.host")
-  lazy val port = config.getInt("elasticsearch.port")
-  lazy val client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port))
+  lazy val host = Properties.envOrElse("ELASTICSEARCH_HOST", config.getString("elasticsearch.host"))
+  lazy val port = Properties.envOrElse("ELASTICSEARCH_PORT", config.getString("elasticsearch.port"))
+  lazy val client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
 
   Http().bind(interface = config.getString("http.interface"), port = config.getInt("http.port")).startHandlingWith(routes)
 }
