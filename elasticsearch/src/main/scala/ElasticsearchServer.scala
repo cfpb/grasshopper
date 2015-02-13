@@ -7,8 +7,8 @@ import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.NodeBuilder._
-import grasshopper.feature._
-import grasshopper.geojson.FeatureJsonProtocol._
+import feature._
+import io.geojson.FeatureJsonProtocol._
 import spray.json._
 
 class ElasticsearchServer {

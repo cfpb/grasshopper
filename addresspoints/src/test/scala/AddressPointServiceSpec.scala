@@ -12,10 +12,10 @@ import akka.stream.scaladsl._
 import org.scalatest._
 import grasshopper.elasticsearch._
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
-import grasshopper.geometry._
-import grasshopper.feature._
+import geometry._
+import feature._
 import spray.json._
-import grasshopper.geojson.FeatureJsonProtocol._
+import io.geojson.FeatureJsonProtocol._
 
 class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
@@ -28,8 +28,9 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
 
   private def getPointFeature() = {
     val p = Point(-77.0590232, 38.9072597)
-    val props = Map("ADDRESS" -> "1311 30th St NW Washington DC 20007")
-    Feature(p, props)
+    val props = Map("geometry" -> p, "ADDRESS" -> "1311 30th St NW Washington DC 20007")
+    val schema = Schema(List(Field("geometry", GeometryType()), Field("ADDRESS", StringType())))
+    Feature(schema, props)
   }
 
   override def beforeAll = {

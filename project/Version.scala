@@ -6,4 +6,5 @@ object Version {
   val scalaCheck    = "1.12.1"
   val elasticsearch = "1.4.2"
   val jts           = "1.13"
+  val scale         = "0.0.1"
 }

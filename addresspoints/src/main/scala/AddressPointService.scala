@@ -5,7 +5,7 @@ import akka.event.{ LoggingAdapter, Logging }
 import akka.http.Http
 import akka.http.client.RequestBuilding
 import akka.http.marshallers.sprayjson.SprayJsonSupport._
-import grasshopper.geojson.FeatureJsonProtocol._
+import io.geojson.FeatureJsonProtocol._
 import akka.http.marshalling.ToResponseMarshallable
 import akka.http.model.{ HttpResponse, HttpRequest }
 import akka.http.model.MediaTypes._
