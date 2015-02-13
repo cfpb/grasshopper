@@ -1,7 +1,7 @@
 package grasshopper.elasticsearch
 
-import grasshopper.feature.Feature
-import grasshopper.geojson.FeatureJsonProtocol._
+import feature._
+import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.client.Client
 import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchResponse
