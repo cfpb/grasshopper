@@ -19,14 +19,14 @@ Submitting entities should file data with the following file naming conventions;
 If a State:
   * `<FIPS Code>_addresspoints_<yyyymmdd>.<shp|shx|dbf|prj>` where;
     * `<FIPS Code>` is the two digit State FIPS code
-    * `<yyyymmdd>` is the four digit year, two digit month and two digit year of the publication date (as good of date) for the source data
+    * `<yyyymmdd>` is the four digit year, two digit month and two digit day of the publication date (as good of date) for the source data
     * `<shp|shx|dbf|prj>` are the file suffixes for the four minimum required files for a complete shapefile
     * e.g `06_addresspoints_20150101.shp` for California
 
 If a County:
   * `<FIPS Code>_addresspoints_<yyyymmdd>.<shp|shx|dbf|prj>` where;
     * `<FIPS Code>` is the five digit State FIPS code
-    * `<yyyymmdd>` is the four digit year, two digit month and two digit year of the publication date (as good of date) for the source data
+    * `<yyyymmdd>` is the four digit year, two digit month and two digit day of the publication date (as good of date) for the source data
     * `<shp|shx|dbf|prj>` are the file suffixes for the four minimum required files for a complete shapefile
     * e.g `06076_addresspoints_20150101.shp` for Sacramento California
 
