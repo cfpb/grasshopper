@@ -65,7 +65,7 @@ Return: GeoJSON object that includes the point that resulted from geocoding, as 
     "properties": {
         "id":1,
         "address": "16410 N AR 94 Hwy Pea Ridge 72751 AR",
-				"alt_address": ""
+        "alt_address": ""
     }
 }
 ```
