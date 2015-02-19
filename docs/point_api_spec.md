@@ -43,7 +43,7 @@ Example:
 }
 ```
 
-http://typesafe.com/products/typesafe-subscription?_ga=1.19036913.853750375.1415798919Return: GeoJSON object that includes the id sent in the request as a field, and the point that resulted from geocoding, as well as other attributes including the address that was found.
+Return: GeoJSON object that includes the id sent in the request as a field, and the point that resulted from geocoding, as well as other attributes including the address that was found.
 
 
 ```json
