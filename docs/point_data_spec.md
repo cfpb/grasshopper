@@ -5,9 +5,9 @@ Data is stored in Elasticsearch, by convention in an index called `address` with
 * type: "Feature"
 * geometry: GeoJSON geometry representation
 * properties: Fields that include address information, in particular:
-	* ADDRESS: Full address text
-	* ALT_ADDRESS: Full alternate address text (if available)
-	* LOAD_DATE: Date for record at origin (if available). ISO 8601 format
+	* address: Full address text
+	* alt_address: Full alternate address text (if available)
+	* load_date: Date for record at origin (if available). ISO 8601 format
 
 Example:
 
@@ -15,9 +15,9 @@ Example:
 {
   "type": "Feature",
 	"properties": {
-    "ADDRESS": "11175 N AR 59 Hwy Gravette 72736 AR",
-    "ALT_ADDRESS": "",
-    "LOAD_DATE": "2015-02-19T10:28:00-05:00"
+    "address": "11175 N AR 59 Hwy Gravette 72736 AR",
+    "alt_address": "",
+    "load_date": "2015-02-19T10:28:00-05:00"
 	},
 	"geometry": {
       "type": "Point",
@@ -40,8 +40,8 @@ A typical search will return records in the following format when using ElasticS
   "_source": {
   "type": "Feature",
     "properties": {
-      "ADDRESS": "11175 N AR 59 Hwy Gravette 72736 AR",
-			"LOAD_DATE": "2015-02-19T10:28:00-05:00"
+      "address": "11175 N AR 59 Hwy Gravette 72736 AR",
+      "load_date": "2015-02-19T10:28:00-05:00"
     },
     "geometry": {
       "type": "Point",
