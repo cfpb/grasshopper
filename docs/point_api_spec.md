@@ -25,7 +25,7 @@ Returns a message with current status and date
 ```json
 {
     "status": "OK",
-    "time": "Wed Feb 18 10:30:55 EST 2015"
+    "time": "2015-02-18T04:57:56Z"
 }
 ```
 
