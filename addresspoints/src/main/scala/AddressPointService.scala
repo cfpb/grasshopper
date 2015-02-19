@@ -13,7 +13,7 @@ import akka.http.model.MediaTypes._
 import akka.http.model.StatusCodes._
 import akka.http.server.Directives._
 import akka.http.unmarshalling.Unmarshal
-import akka.stream.FlowMaterializer
+import akka.stream.ActorFlowMaterializer
 import akka.stream.scaladsl.{ Sink, Source }
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
@@ -40,7 +40,7 @@ trait JsonProtocol extends DefaultJsonProtocol {
 trait Service extends JsonProtocol with Geocode {
   implicit val system: ActorSystem
   implicit def executor: ExecutionContextExecutor
-  implicit val materializer: FlowMaterializer
+  implicit val materializer: ActorFlowMaterializer
   implicit val client: Client
 
   def config: Config
@@ -85,7 +85,7 @@ trait Service extends JsonProtocol with Geocode {
 object AddressPointService extends App with Service {
   override implicit val system = ActorSystem()
   override implicit val executor = system.dispatcher
-  override implicit val materializer = FlowMaterializer()
+  override implicit val materializer = ActorFlowMaterializer()
 
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
