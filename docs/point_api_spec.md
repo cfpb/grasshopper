@@ -16,6 +16,8 @@ Requests that don't specify their content type will be rejected
 
 ### API Endpoints
 
+**1. Status**
+
 `GET  /status`
 
 Returns a message with current status and date
@@ -27,24 +29,28 @@ Returns a message with current status and date
 }
 ```
 
-`POST /address/point`
+**2. Single Point Geocode**
+
+`GET  /addresses/points?search=<address>` where <address> is the search string to return
+
+`GET /address/point?search=16410+N+AR+94+Hwy+Pea+Ridge+72751+AR`
+
+
+`POST /addresses/points`
 
 Payload: JSON object with the following structure:
 
-* id: Identifier for the record (Integer)
 * address: Address to geocode (String)
 
 Example:
 
 ```json
 {
-  "id": 1,
   "address": "16410 N AR 94 Hwy Pea Ridge 72751 AR"
 }
 ```
 
-Return: GeoJSON object that includes the id sent in the request as a field, and the point that resulted from geocoding, as well as other attributes including the address that was found.
-
+Return: GeoJSON object that includes the point that resulted from geocoding, as well as other attributes including the address that was found as well as alternate address (if available).
 
 ```json
 {
@@ -53,14 +59,13 @@ Return: GeoJSON object that includes the id sent in the request as a field, and 
         "type": "Point",
         "coordinates": [
             -94.15513718509897,
-            36.48036108322251,
-            0
+            36.48036108322251
         ]
     },
     "properties": {
         "id":1,
-        "AID": 28101,
-        "ADDRESS": "16410 N AR 94 Hwy Pea Ridge 72751 AR"
+        "address": "16410 N AR 94 Hwy Pea Ridge 72751 AR",
+				"alt_address": ""
     }
 }
 ```
