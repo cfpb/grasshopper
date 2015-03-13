@@ -7,8 +7,9 @@ import akka.event.{ Logging, LoggingAdapter }
 import akka.http.Http
 import akka.http.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.marshalling.ToResponseMarshallable
-import akka.http.model.StatusCodes._
+import akka.http.model.StatusCodes.{ NotFound, InternalServerError }
 import akka.http.server.Directives._
+import akka.http.server.StandardRoute
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.{ Config, ConfigFactory }
 import grasshopper.elasticsearch.Geocode
@@ -18,7 +19,7 @@ import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import spray.json._
 import scala.concurrent.ExecutionContextExecutor
-import scala.util.Properties
+import scala.util.{ Success, Failure, Properties }
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
@@ -40,7 +41,7 @@ trait Service extends JsonProtocol with Geocode {
   def config: Config
   val logger: LoggingAdapter
 
-  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-addresspoints"))
+  override lazy val log = Logger(LoggerFactory.getLogger("grasshopper-address-points"))
 
   val routes = {
     path("status") {
@@ -55,28 +56,40 @@ trait Service extends JsonProtocol with Geocode {
         }
       }
     } ~
-      pathPrefix("address") {
-        path("point") {
-          post {
+      pathPrefix("addresses") {
+
+        path("points") {
+          get {
             compressResponseIfRequested() {
-              entity(as[String]) { json =>
-                val addressInput = json.parseJson.convertTo[AddressInput]
-                val point = geocodePoint(client, "address", "point", addressInput.address)
-                point match {
-                  case Some(p) =>
-                    complete {
-                      ToResponseMarshallable(point)
-                    }
-                  case None =>
-                    complete {
-                      NotFound
-                    }
+              parameter('search.as[String]) { address =>
+                geocodePoint(address)
+              }
+            }
+          } ~
+            post {
+              compressResponseIfRequested() {
+                entity(as[String]) { json =>
+                  val addressInput = json.parseJson.convertTo[AddressInput]
+                  geocodePoint(addressInput.address)
                 }
               }
             }
-          }
         }
       }
+  }
+
+  private def geocodePoint(address: String): StandardRoute = {
+    val point = geocode(client, "address", "point", address)
+    point match {
+      case Success(p) =>
+        complete {
+          ToResponseMarshallable(p)
+        }
+      case Failure(_) =>
+        complete {
+          NotFound
+        }
+    }
   }
 }
 

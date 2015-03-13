@@ -56,7 +56,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
   it should "return NotFound when searching for address that doesn't exist" in {
     val address = AddressInput(1, "1311 31th St NW Washington DC 20007")
     val json = address.toJson.toString
-    Post("/address/point", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
+    Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe NotFound
     }
   }
@@ -64,7 +64,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
   it should "geocode a single point" in {
     val address = AddressInput(1, "1311 30th St NW Washington DC 20007")
     val json = address.toJson.toString
-    Post("/address/point", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
+    Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val f = responseAs[Feature]

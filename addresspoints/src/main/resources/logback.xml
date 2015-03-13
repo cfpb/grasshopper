@@ -9,7 +9,7 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="stash" />
     </root>
 </configuration>
