@@ -1,4 +1,4 @@
-package protocol
+package addresspoints.protocol
 
 import addresspoints.model.{ AddressInput, Status }
 import spray.json.DefaultJsonProtocol

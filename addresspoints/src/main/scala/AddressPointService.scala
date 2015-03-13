@@ -1,92 +1,15 @@
 package grasshopper.addresspoints
 
-import java.util.Calendar
-import addresspoints.model.{ Status, AddressInput }
+import addresspoints.api.Service
 import akka.actor.ActorSystem
-import akka.event.{ Logging, LoggingAdapter }
+import akka.event.Logging
 import akka.http.Http
-import akka.http.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.marshalling.ToResponseMarshallable
-import akka.http.model.StatusCodes.{ NotFound, InternalServerError }
-import akka.http.server.Directives._
-import akka.http.server.StandardRoute
 import akka.stream.ActorFlowMaterializer
-import com.typesafe.config.{ Config, ConfigFactory }
-import grasshopper.elasticsearch.Geocode
-import io.geojson.FeatureJsonProtocol._
-import org.elasticsearch.client.Client
+import com.typesafe.config.ConfigFactory
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-import spray.json._
-import scala.concurrent.ExecutionContextExecutor
-import scala.util.{ Success, Failure, Properties }
-import com.typesafe.scalalogging.Logger
-import org.slf4j.LoggerFactory
-import protocol.JsonProtocol
 
-trait Service extends JsonProtocol with Geocode {
-  implicit val system: ActorSystem
-
-  implicit def executor: ExecutionContextExecutor
-
-  implicit val materializer: ActorFlowMaterializer
-  implicit val client: Client
-
-  def config: Config
-
-  val logger: LoggingAdapter
-
-  override lazy val log = Logger(LoggerFactory.getLogger("grasshopper-address-points"))
-
-  val routes = {
-    path("status") {
-      get {
-        compressResponseIfRequested() {
-          complete {
-            val now = Calendar.getInstance().getTime()
-            val status = Status("OK", now.toString)
-            log.info(status.toJson.toString())
-            ToResponseMarshallable(status)
-          }
-        }
-      }
-    } ~
-      pathPrefix("addresses") {
-
-        path("points") {
-          get {
-            compressResponseIfRequested() {
-              parameter('search.as[String]) { address =>
-                geocodePoint(address)
-              }
-            }
-          } ~
-            post {
-              compressResponseIfRequested() {
-                entity(as[String]) { json =>
-                  val addressInput = json.parseJson.convertTo[AddressInput]
-                  geocodePoint(addressInput.address)
-                }
-              }
-            }
-        }
-      }
-  }
-
-  private def geocodePoint(address: String): StandardRoute = {
-    val point = geocode(client, "address", "point", address)
-    point match {
-      case Success(p) =>
-        complete {
-          ToResponseMarshallable(p)
-        }
-      case Failure(_) =>
-        complete {
-          NotFound
-        }
-    }
-  }
-}
+import scala.util.Properties
 
 object AddressPointService extends App with Service {
   override implicit val system = ActorSystem()

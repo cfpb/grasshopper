@@ -1,23 +1,21 @@
 package grasshopper.addresspoints
 
+import addresspoints.api.Service
 import addresspoints.model
 import addresspoints.model.AddressInput
 import akka.event.NoLogging
 import akka.http.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.model.{ HttpResponse, HttpRequest, HttpMethods, HttpEntity, ContentTypes }
-import akka.http.model.headers._
 import akka.http.model.MediaTypes._
 import akka.http.model.StatusCodes._
+import akka.http.model.{ ContentTypes, HttpEntity }
 import akka.http.testkit.ScalatestRouteTest
-import akka.util.ByteString
-import akka.stream.scaladsl._
-import org.scalatest._
-import grasshopper.elasticsearch._
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
-import geometry._
 import feature._
-import spray.json._
+import geometry._
+import grasshopper.elasticsearch._
 import io.geojson.FeatureJsonProtocol._
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import org.scalatest._
+import spray.json._
 
 class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
