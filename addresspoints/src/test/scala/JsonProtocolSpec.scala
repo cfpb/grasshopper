@@ -1,6 +1,8 @@
 package grasshopper.addresspoints
 
+import addresspoints.model.{ Status, AddressInput }
 import org.scalatest._
+import protocol.JsonProtocol
 import spray.json._
 import java.util.Calendar
 

@@ -1,5 +1,7 @@
 package grasshopper.addresspoints
 
+import addresspoints.model
+import addresspoints.model.AddressInput
 import akka.event.NoLogging
 import akka.http.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.model.{ HttpResponse, HttpRequest, HttpMethods, HttpEntity, ContentTypes }
@@ -48,7 +50,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     Get("/status") ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val resp = responseAs[Status]
+      val resp = responseAs[model.Status]
       resp.status mustBe "OK"
     }
   }

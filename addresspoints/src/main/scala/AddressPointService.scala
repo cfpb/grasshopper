@@ -1,7 +1,7 @@
 package grasshopper.addresspoints
 
 import java.util.Calendar
-
+import addresspoints.model.{ Status, AddressInput }
 import akka.actor.ActorSystem
 import akka.event.{ Logging, LoggingAdapter }
 import akka.http.Http
@@ -22,23 +22,18 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.util.{ Success, Failure, Properties }
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
-
-case class Status(status: String, time: String)
-
-case class AddressInput(id: Int, address: String)
-
-trait JsonProtocol extends DefaultJsonProtocol {
-  implicit val statusFormat = jsonFormat2(Status.apply)
-  implicit val addressInputFormat = jsonFormat2(AddressInput.apply)
-}
+import protocol.JsonProtocol
 
 trait Service extends JsonProtocol with Geocode {
   implicit val system: ActorSystem
+
   implicit def executor: ExecutionContextExecutor
+
   implicit val materializer: ActorFlowMaterializer
   implicit val client: Client
 
   def config: Config
+
   val logger: LoggingAdapter
 
   override lazy val log = Logger(LoggerFactory.getLogger("grasshopper-address-points"))
