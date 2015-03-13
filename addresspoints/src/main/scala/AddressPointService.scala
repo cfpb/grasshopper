@@ -1,32 +1,26 @@
 package grasshopper.addresspoints
 
-import scala.util.Properties
+import java.util.Calendar
+
 import akka.actor.ActorSystem
-import akka.event.{ LoggingAdapter, Logging }
+import akka.event.{ Logging, LoggingAdapter }
 import akka.http.Http
-import akka.http.client.RequestBuilding
 import akka.http.marshallers.sprayjson.SprayJsonSupport._
-import io.geojson.FeatureJsonProtocol._
 import akka.http.marshalling.ToResponseMarshallable
-import akka.http.model.{ HttpResponse, HttpRequest }
-import akka.http.model.MediaTypes._
 import akka.http.model.StatusCodes._
 import akka.http.server.Directives._
-import akka.http.unmarshalling.Unmarshal
 import akka.stream.ActorFlowMaterializer
-import akka.stream.scaladsl.{ Sink, Source }
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
-import java.io.IOException
-import scala.concurrent.{ ExecutionContextExecutor, Future }
-import scala.math._
-import spray.json.DefaultJsonProtocol
-import java.util.Calendar
+import com.typesafe.config.{ Config, ConfigFactory }
 import grasshopper.elasticsearch.Geocode
+import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import spray.json._
+import scala.concurrent.ExecutionContextExecutor
+import scala.util.Properties
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 
 case class Status(status: String, time: String)
 
@@ -46,13 +40,17 @@ trait Service extends JsonProtocol with Geocode {
   def config: Config
   val logger: LoggingAdapter
 
+  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-addresspoints"))
+
   val routes = {
     path("status") {
       get {
         compressResponseIfRequested() {
           complete {
             val now = Calendar.getInstance().getTime()
-            ToResponseMarshallable(Status("OK", now.toString))
+            val status = Status("OK", now.toString)
+            log.info(status.toJson.toString())
+            ToResponseMarshallable(status)
           }
         }
       }

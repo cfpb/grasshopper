@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <!-- remoteHost and port are optional (default values shown) -->
+        <remoteHost>${LOGSTASH_HOST:-localhost}</remoteHost>
+        <port>${LOGSTASH_PORT:-9001}</port>
+
+        <!-- encoder is required -->
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="stash" />
+    </root>
+</configuration>
