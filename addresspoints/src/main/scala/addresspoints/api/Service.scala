@@ -51,22 +51,22 @@ trait Service extends JsonProtocol with Geocode {
       pathPrefix("addresses") {
 
         path("points") {
-          get {
+          post {
             compressResponseIfRequested() {
-              parameter('search.as[String]) { address =>
+              entity(as[String]) { json =>
+                val addressInput = json.parseJson.convertTo[AddressInput]
+                geocodePoint(addressInput.address)
+              }
+            }
+          }
+        } ~
+          path("points" / Segment) { address =>
+            get {
+              compressResponseIfRequested() {
                 geocodePoint(address)
               }
             }
-          } ~
-            post {
-              compressResponseIfRequested() {
-                entity(as[String]) { json =>
-                  val addressInput = json.parseJson.convertTo[AddressInput]
-                  geocodePoint(addressInput.address)
-                }
-              }
-            }
-        }
+          }
       }
   }
 

@@ -55,3 +55,4 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 scalastyle-config.xml
+.idea/
