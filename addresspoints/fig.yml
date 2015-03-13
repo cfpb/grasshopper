@@ -1,5 +1,0 @@
-addresspoints:
-  build: target/docker/.
-  ports: "8080:8080"
-
-
