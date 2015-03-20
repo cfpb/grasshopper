@@ -15,7 +15,7 @@ import com.typesafe.config.Config
 import grasshopper.elasticsearch.Geocode
 import org.elasticsearch.client.Client
 import scala.concurrent.ExecutionContextExecutor
-import scala.util.{ Failure, Success }
+import scala.util.{ Try, Failure, Success }
 import spray.json._
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
@@ -49,13 +49,17 @@ trait Service extends JsonProtocol with Geocode {
       }
     } ~
       pathPrefix("addresses") {
-
         path("points") {
           post {
             compressResponseIfRequested() {
               entity(as[String]) { json =>
-                val addressInput = json.parseJson.convertTo[AddressInput]
-                geocodePoint(addressInput.address)
+                try {
+                  val addressInput = json.parseJson.convertTo[AddressInput]
+                  geocodePoint(addressInput.address)
+                } catch {
+                  case e: spray.json.DeserializationException =>
+                    complete(BadRequest)
+                }
               }
             }
           }

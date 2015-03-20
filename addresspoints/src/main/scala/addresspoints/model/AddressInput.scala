@@ -1,3 +1,3 @@
 package addresspoints.model
 
-case class AddressInput(id: Int, address: String)
+case class AddressInput(address: String)

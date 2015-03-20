@@ -15,7 +15,7 @@ class JsonProtocolSpec extends FlatSpec with MustMatchers with JsonProtocol {
   }
 
   "AddressInput" should "convert to and from JSON" in {
-    val addressInput = AddressInput(1, "1311 30th St NW Washington DC 20007")
+    val addressInput = AddressInput("1311 30th St NW Washington DC 20007")
     addressInput.toJson.convertTo[AddressInput] mustBe addressInput
   }
 }

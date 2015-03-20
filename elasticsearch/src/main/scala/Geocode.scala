@@ -14,8 +14,6 @@ trait Geocode {
 
   lazy val log = Logger(LoggerFactory.getLogger("grasshopper-geocode"))
 
-  class AddressNotFoundException extends Exception("Address Not Found")
-
   def geocode(client: Client, index: String, indexType: String, address: String): Try[Feature] = {
     Try {
       val response = client.prepareSearch(index)
@@ -31,7 +29,7 @@ trait Geocode {
         log.debug(str)
         str.parseJson.convertTo[Feature]
       } else {
-        val e = new AddressNotFoundException
+        val e = new Exception(s"Address not Found: ${address}")
         log.error(e.getLocalizedMessage)
         throw e
       }
