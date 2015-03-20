@@ -1,18 +1,24 @@
 # Grasshopper
 
-### This is a work in progress. This software is in alpha status and is not ready for production use ###
+Faster than you can snatch the pebble from our hand, we will return a location.
 
-**Description**:  Put a meaningful, short, plain-language description of what
-this project is trying to accomplish and why it matters. 
-Describe the problem(s) this project solves.
-Describe how this software can improve the lives of its audience.
+What Problem This Solves
+------------------------
+This repo solves the problem of finding a location for geographic text, in particular postal address input. Often called geocoding, this project returns a latitude and longitude (y and x) value for entered postal addresses.  
 
-Other things to include:
 
-  - **Technology stack**: Indicate the technological nature of the software, including primary programming language(s) and whether the software is intended as standalone or as a module in a framework or other ecosystem.
-  - **Status**:  Alpha, Beta, 1.1, etc. It's OK to write a sentence, too. The goal is to let interested people know where this project is at. This is also a good place to link to the [CHANGELOG](CHANGELOG.md).
-  - **Links to production or demo instances**
-  - Describe what sets this apart from related-projects. Linking to another doc or page is OK if this can't be expressed in a sentence or two.
+How This Solves The Problem
+---------------------------
+Using Elasticsearch and a fabric of high value data, this project offers an API built off of microservices.  These services receive entered text, parses that text for postal address attributes, searches authoritative local, state, and national data on those attributes and then returns the best fit answer location for that entered text.  The intent of this project is a high availability, high volume and high use geocoding.  Other projects contain data source/loading functions and user interface functions, and this project is the back end code for the search algorythm and API services.
+
+
+Why We Wanted to Solve It
+-------------------------
+Our goal is to reduce burden for financial institutions who need to report location information.  This project was built in order to establish a federal authoritative function for morgtage market needs.  In particular, the Consumer Finance Protection Bureau has has elected to provide a geocoding service for those financial institutions which need to establish location attributes in order to meet regulatory functions for rules like [Qualified Mortgage](link) and [Home Mortgage Disclosure Act](link) rules.  These rules require financial institutions to report data on mortgage activities for these financial institutions, and this service offers an authoritative function to meet this need.
+
+We also noticed a gap in approaches to traditional geocoding and wanted to allow an opportunity for growth in the technology around this area.  Many federal, state and local entities have generic needs for geocoding, which this service may help provide.  Many traditional geocoding services hamper government use with a) inflexible terms and conditions (e.g. share alike clauses), b) proprietary technology requiring continuous licensing and/or c) in-ability to use local more relavent data for the searching
+
+We encourage forking, adding to the code base and/or general use of the service.  
 
 
 ## Dependencies
@@ -28,7 +34,7 @@ If specific versions of other software are required, or known not to work, call 
 
 To build the project, `sbt` is required. Please refer to the [installation instructions](http://www.scala-sbt.org/0.13/tutorial/Setup.html) for your platform
 
-Grasshopper is a multi-module sbt project, each project has a specific task and usually represents a Microservice. 
+Grasshopper is a multi-module sbt project, each project has a specific task and usually represents a [Microservice](http://en.wikipedia.org/wiki/Microservices).
 
 Once installed, from the project directory run the following:
 
@@ -36,17 +42,8 @@ Once installed, from the project directory run the following:
 sbt
 ```
 
-From the sbt prompt, type `re-start` to fork a JVM and start the geocoding service.
+From the sbt prompt, type `re-start` to fork a JVM and start the geocoding service. Currently the addresspoints project will expose a REST API to resolve addresses to locations in GeoJSON.
 
-## Configuration
-
-If the software is configurable, describe it in detail, either here or in other documentation to which you link.
-
-## Usage
-
-Show users how to use the software. 
-Be specific. 
-Use appropriate formatting when showing code snippets.
 
 ## How to test the software
 
@@ -60,24 +57,12 @@ This will run unit and integration tests. The integration tests will stand up a 
 
 ## Known issues
 
-Document any known significant shortcomings with the software.
+The tests will print out a stack trace, the in memory Elasticsearch node doesn't load all libraries. So far this is not an issue for the purposes of testing.
 
-## Getting help
-
-Instruct users how to get help with this software; this might include links to an issue tracker, wiki, mailing list, etc.
-
-**Example**
-
-If you have questions, concerns, bug reports, etc, please file an issue in this repository's Issue Tracker.
 
 ## Getting involved
 
-This section should detail why people should get involved and describe key areas you are
-currently focusing on; e.g., trying to get feedback on features, fixing certain bugs, building
-important pieces, etc.
-
-General instructions on _how_ to contribute should be stated with a link to [CONTRIBUTING](CONTRIBUTING.md).
-
+For details on how to get involved, please first read our [CONTRIBUTING](CONTRIBUTING.md) guidelines.
 
 ----
 
@@ -85,12 +70,3 @@ General instructions on _how_ to contribute should be stated with a link to [CON
 1. [TERMS](TERMS.md)
 2. [LICENSE](LICENSE)
 3. [CFPB Source Code Policy](https://github.com/cfpb/source-code-policy/)
-
-
-----
-
-## Credits and references
-
-1. Projects that inspired you
-2. Related projects
-3. Books, papers, talks, or other sources that have meaniginful impact or influence on this project 
