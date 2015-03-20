@@ -19,7 +19,7 @@ trait Geocode {
       val response = client.prepareSearch(index)
         .setTypes(indexType)
         .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-        .setQuery(QueryBuilders.matchPhraseQuery("ADDRESS", address))
+        .setQuery(QueryBuilders.matchPhraseQuery("address", address))
         .execute
         .actionGet
 
