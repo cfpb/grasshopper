@@ -39,10 +39,11 @@ Grasshopper is a multi-module sbt project, each project has a specific task and 
 Once installed, from the project directory run the following:
 
 ```
-sbt
+$ sbt
+> ~re-start
 ```
 
-From the sbt prompt, type `re-start` to fork a JVM and start the geocoding service. Currently the addresspoints project will expose a REST API to resolve addresses to locations in GeoJSON.
+This will fork a JVM and start the geocoding service. Currently the addresspoints project will expose a REST API to resolve addresses to locations in GeoJSON.
 
 
 ## How to test the software
@@ -50,7 +51,8 @@ From the sbt prompt, type `re-start` to fork a JVM and start the geocoding servi
 To run the tests, from the project directory: 
 
 ```
-sbt test
+$ sbt
+> test
 ```
 
 This will run unit and integration tests. The integration tests will stand up a temporary Elasticsearch node, no additional dependencies are needed.  
