@@ -28,8 +28,8 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
 
   private def getPointFeature() = {
     val p = Point(-77.0590232, 38.9072597)
-    val props = Map("geometry" -> p, "ADDRESS" -> "1311 30th St NW Washington DC 20007")
-    val schema = Schema(List(Field("geometry", GeometryType()), Field("ADDRESS", StringType())))
+    val props = Map("geometry" -> p, "address" -> "1311 30th St NW Washington DC 20007")
+    val schema = Schema(List(Field("geometry", GeometryType()), Field("address", StringType())))
     Feature(schema, props)
   }
 
