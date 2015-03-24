@@ -23,27 +23,53 @@ We encourage forking, adding to the code base and/or general use of the service.
 
 ## Dependencies
 
-Grasshopper needs [Elasticsearch](http://www.elasticsearch.org/) as a backend to store data for geocoding. 
-The services layer runs on the Java Virtual Machine (JVM). The project is being built and tested on JDK 8, but JDK 7 and OpenJDK versions 7 and 8 should also work. 
+### Java JDK
+The services layer runs on the Java Virtual Machine (JVM). The project is being built and 
+tested on [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+See [Oracle's JDK Install Overview](http://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html) 
+for install instructions.
 
-Describe any dependencies that must be installed for this software to work. 
-This includes programming languages, databases or other storage mechanisms, build tools, frameworks, and so forth.
-If specific versions of other software are required, or known not to work, call that out.
+Oracle JDK 7 and OpenJDK versions 7 and 8 should also work.
+
+### Scala
+To build the project, `sbt` is required. Please refer to the 
+[installation instructions](http://www.scala-sbt.org/0.13/tutorial/Setup.html) for your platform
+
+### Elasticsearch
+Grasshopper uses [Elasticsearch](http://www.elasticsearch.org/) as a backend to store data for geocoding. 
+
 
 ## Building
-
-To build the project, `sbt` is required. Please refer to the [installation instructions](http://www.scala-sbt.org/0.13/tutorial/Setup.html) for your platform
-
-Grasshopper is a multi-module sbt project, each project has a specific task and usually represents a [Microservice](http://en.wikipedia.org/wiki/Microservices).
-
-Once installed, from the project directory run the following:
+Grasshopper is a multi-module sbt project, each project has a specific task and usually represents 
+a [Microservice](http://en.wikipedia.org/wiki/Microservices).
 
 ```
 $ sbt
 > ~re-start
 ```
 
-This will fork a JVM and start the geocoding service. Currently the addresspoints project will expose a REST API to resolve addresses to locations in GeoJSON.
+This will fork a JVM and start the geocoding service. Currently the addresspoints project will expose 
+a REST API to resolve addresses to locations in GeoJSON.
+
+### Endpoints
+
+To confirm the service is running, you can test the following 
+
+1. Status
+
+```
+GET http://localhost:8080/status
+
+{
+  status: "OK",
+  time: "2015-03-24T16:15:14Z"
+}
+```
+
+2. Point - Single
+
+3. Point - Bulk
+
 
 
 ## How to test the software
@@ -66,7 +92,6 @@ The tests will print out a stack trace, the in memory Elasticsearch node doesn't
 
 For details on how to get involved, please first read our [CONTRIBUTING](CONTRIBUTING.md) guidelines.
 
-----
 
 ## Open source licensing info
 1. [TERMS](TERMS.md)
