@@ -68,8 +68,8 @@ GET http://localhost:8080/status
 ```
 ```json
 {
-  status: "OK",
-  time: "2015-03-24T16:15:14Z"
+  "status": "OK",
+  "time": "2015-03-24T21:03:51.244Z"
 }
 ```
 
