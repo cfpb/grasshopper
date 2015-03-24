@@ -23,25 +23,31 @@ We encourage forking, adding to the code base and/or general use of the service.
 
 ## Dependencies
 
-### Java JDK
-The services layer runs on the Java Virtual Machine (JVM). The project is being built and 
-tested on [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+### Java 8 JDK
+Grasshopper's service layer runs on the Java Virtual Machine (JVM), and requires the Java 8 JDK to build the project.
+This project is currenly being built and tested on [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 See [Oracle's JDK Install Overview](http://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html) 
 for install instructions.
 
-Oracle JDK 7 and OpenJDK versions 7 and 8 should also work.
+Grasshopper _should_ also run on OpenJDK 8, but has not been tested.
 
 ### Scala
-To build the project, `sbt` is required. Please refer to the 
-[installation instructions](http://www.scala-sbt.org/0.13/tutorial/Setup.html) for your platform
+Grasshopper's service layer is written in [Scala](http://www.scala-lang.org/).  You will need to 
+[download](http://www.scala-lang.org/download/) and [install]() Scala 2.11.x
+
+In addition, you'll need Scala's interactive build tool [sbt](http://www.scala-sbt.org/0.13/tutorial/index.html).
+Please refer to the [installation instructions](http://www.scala-sbt.org/0.13/tutorial/Setup.html) to get going.
 
 ### Elasticsearch
-Grasshopper uses [Elasticsearch](http://www.elasticsearch.org/) as a backend to store data for geocoding. 
+Grasshopper uses [Elasticsearch](http://www.elasticsearch.org/) as a backend to store data for geocoding.
+For dev and test purposes, grasshopper includes an in-memory
+[ElasticsearchServer](https://github.com/cfpb/grasshopper/blob/master/elasticsearch/src/main/scala/ElasticsearchServer.scala).
+For non-dev environments, you'll want a dedicated Elasticsearch instance.
 
 
 ## Building
-Grasshopper is a multi-module sbt project, each project has a specific task and usually represents 
-a [Microservice](http://en.wikipedia.org/wiki/Microservices).
+Grasshopper uses [sbt's multi-project builds](http://www.scala-sbt.org/0.13/tutorial/Multi-Project.html), 
+each project representing a specific task and usually a [Microservice](http://en.wikipedia.org/wiki/Microservices).
 
 ```
 $ sbt
@@ -51,28 +57,23 @@ $ sbt
 This will fork a JVM and start the geocoding service. Currently the addresspoints project will expose 
 a REST API to resolve addresses to locations in GeoJSON.
 
-### Endpoints
+## Usage
 
-To confirm the service is running, you can test the following 
+Once running locally, the following endpoints should be available 
 
 1. Status
 
 ```
 GET http://localhost:8080/status
-
+```
+```json
 {
   status: "OK",
   time: "2015-03-24T16:15:14Z"
 }
 ```
 
-2. Point - Single
-
-3. Point - Bulk
-
-
-
-## How to test the software
+## Testing 
 
 To run the tests, from the project directory: 
 
