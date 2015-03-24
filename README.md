@@ -63,15 +63,15 @@ Once running locally, the following endpoints should be available
 
 1. Status
 
-```
-GET http://localhost:8080/status
-```
-```json
-{
-  "status": "OK",
-  "time": "2015-03-24T21:03:51.244Z"
-}
-```
+    ```
+    GET http://localhost:8080/status
+    ```
+    ```json
+    {
+      "status": "OK",
+      "time": "2015-03-24T21:03:51.244Z"
+    }
+    ```
 
 ## Testing 
 
