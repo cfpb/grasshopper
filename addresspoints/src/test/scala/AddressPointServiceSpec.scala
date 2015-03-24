@@ -1,5 +1,6 @@
 package grasshopper.addresspoints
 
+import java.text.SimpleDateFormat
 import addresspoints.api.Service
 import addresspoints.model
 import addresspoints.model.AddressInput
@@ -49,7 +50,13 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[model.Status]
+
+      // Test for correct "status"
       resp.status mustBe "OK"
+
+      // Test that "time" is correctly formatted
+      val iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+      resp.time mustBe iso8601.format(iso8601.parse(resp.time))
     }
   }
 

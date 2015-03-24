@@ -1,6 +1,8 @@
 package addresspoints.api
 
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.time.{ ZoneOffset, LocalDateTime, ZoneId }
+import java.util.{ TimeZone, Date, Calendar }
 import addresspoints.model.{ AddressInput, Status }
 import addresspoints.protocol.JsonProtocol
 import akka.actor.ActorSystem
@@ -40,8 +42,8 @@ trait Service extends JsonProtocol with Geocode {
       get {
         compressResponseIfRequested() {
           complete {
-            val now = Calendar.getInstance().getTime()
-            val status = Status("OK", now.toString)
+            val now = formatIso8601(new Date())
+            val status = Status("OK", now)
             log.info(status.toJson.toString())
             ToResponseMarshallable(status)
           }
@@ -87,4 +89,15 @@ trait Service extends JsonProtocol with Geocode {
         }
     }
   }
+
+  /**
+   * Translates a [[java.util.Date]] into ISO-8601 formatted with UTC timezone
+   */
+  private def formatIso8601(date: Date): String = {
+    val utc = TimeZone.getTimeZone("UTC")
+    val iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    iso8601.setTimeZone(utc)
+    iso8601.format(date)
+  }
+
 }
