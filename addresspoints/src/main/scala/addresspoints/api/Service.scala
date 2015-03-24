@@ -1,8 +1,7 @@
 package addresspoints.api
 
-import java.text.SimpleDateFormat
-import java.time.{ ZoneOffset, LocalDateTime, ZoneId }
-import java.util.{ TimeZone, Date, Calendar }
+import java.time.Instant
+
 import addresspoints.model.{ AddressInput, Status }
 import addresspoints.protocol.JsonProtocol
 import akka.actor.ActorSystem
@@ -17,7 +16,7 @@ import com.typesafe.config.Config
 import grasshopper.elasticsearch.Geocode
 import org.elasticsearch.client.Client
 import scala.concurrent.ExecutionContextExecutor
-import scala.util.{ Try, Failure, Success }
+import scala.util.{ Failure, Success }
 import spray.json._
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
@@ -42,7 +41,8 @@ trait Service extends JsonProtocol with Geocode {
       get {
         compressResponseIfRequested() {
           complete {
-            val now = formatIso8601(new Date())
+            // Creates ISO-8601 date string in UTC down to millisecond precision
+            val now = Instant.now.toString
             val status = Status("OK", now)
             log.info(status.toJson.toString())
             ToResponseMarshallable(status)
@@ -88,16 +88,6 @@ trait Service extends JsonProtocol with Geocode {
           NotFound
         }
     }
-  }
-
-  /**
-   * Translates a [[java.util.Date]] into ISO-8601 formatted with UTC timezone
-   */
-  private def formatIso8601(date: Date): String = {
-    val utc = TimeZone.getTimeZone("UTC")
-    val iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    iso8601.setTimeZone(utc)
-    iso8601.format(date)
   }
 
 }

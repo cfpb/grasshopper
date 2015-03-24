@@ -1,6 +1,8 @@
 package grasshopper.addresspoints
 
-import java.text.SimpleDateFormat
+import java.time.temporal.TemporalUnit
+import java.time.{ Duration, Instant }
+
 import addresspoints.api.Service
 import addresspoints.model
 import addresspoints.model.AddressInput
@@ -54,9 +56,10 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
       // Test for correct "status"
       resp.status mustBe "OK"
 
-      // Test that "time" is correctly formatted
-      val iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-      resp.time mustBe iso8601.format(iso8601.parse(resp.time))
+      // Test that "time" is formatted correctly, and close to current time (1 sec.)
+      val statusTime = Instant.parse(resp.time)
+      val timeDiff = Duration.between(statusTime, Instant.now).getSeconds
+      timeDiff must be <= 1l
     }
   }
 
