@@ -1,5 +1,8 @@
 package grasshopper.addresspoints
 
+import java.time.temporal.TemporalUnit
+import java.time.{ Duration, Instant }
+
 import addresspoints.api.Service
 import addresspoints.model
 import addresspoints.model.AddressInput
@@ -49,7 +52,14 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[model.Status]
+
+      // Test for correct "status"
       resp.status mustBe "OK"
+
+      // Test that "time" is formatted correctly, and close to current time (1 sec.)
+      val statusTime = Instant.parse(resp.time)
+      val timeDiff = Duration.between(statusTime, Instant.now).getSeconds
+      timeDiff must be <= 1l
     }
   }
 

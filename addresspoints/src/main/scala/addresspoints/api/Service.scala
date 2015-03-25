@@ -1,6 +1,7 @@
 package addresspoints.api
 
-import java.util.Calendar
+import java.time.Instant
+
 import addresspoints.model.{ AddressInput, Status }
 import addresspoints.protocol.JsonProtocol
 import akka.actor.ActorSystem
@@ -15,7 +16,7 @@ import com.typesafe.config.Config
 import grasshopper.elasticsearch.Geocode
 import org.elasticsearch.client.Client
 import scala.concurrent.ExecutionContextExecutor
-import scala.util.{ Try, Failure, Success }
+import scala.util.{ Failure, Success }
 import spray.json._
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
@@ -40,8 +41,9 @@ trait Service extends JsonProtocol with Geocode {
       get {
         compressResponseIfRequested() {
           complete {
-            val now = Calendar.getInstance().getTime()
-            val status = Status("OK", now.toString)
+            // Creates ISO-8601 date string in UTC down to millisecond precision
+            val now = Instant.now.toString
+            val status = Status("OK", now)
             log.info(status.toJson.toString())
             ToResponseMarshallable(status)
           }
@@ -87,4 +89,5 @@ trait Service extends JsonProtocol with Geocode {
         }
     }
   }
+
 }
