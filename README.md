@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/hkeeler/grasshopper.svg?branch=master)](https://travis-ci.org/hkeeler/grasshopper)
+[![Build Status](https://travis-ci.org/cfpb/grasshopper.svg?branch=master)](https://travis-ci.org/cfpb/grasshopper)
 
 # Grasshopper
 
