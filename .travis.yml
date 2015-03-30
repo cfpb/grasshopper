@@ -1,3 +1,4 @@
+# Travis for Scala: http://docs.travis-ci.com/user/languages/scala/
 language: scala
 scala:
   - 2.11.6 
