@@ -1,7 +1,6 @@
 # Travis for Scala: http://docs.travis-ci.com/user/languages/scala/
 language: scala
-scala:
-  - 2.11.6 
+scala: 2.11.6 
 jdk:
   # - openjdk8 not yet supported by Travis CI
   - oraclejdk8

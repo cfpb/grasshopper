@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/hkeeler/grasshopper.svg?branch=master)](https://travis-ci.org/hkeeler/grasshopper)
+
 # Grasshopper
 
 Faster than you can snatch the pebble from our hand, we will return a location.
