@@ -36,10 +36,18 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     Feature(schema, props)
   }
 
+  private def getPointFeature1() = {
+    val p = Point(-77.059017, 38.907271)
+    val props = Map("geometry" -> p, "address" -> "1315 30th St NW Washington DC 20007")
+    val schema = Schema(List(Field("geometry", GeometryType()), Field("address", StringType())))
+    Feature(schema, props)
+  }
+
   override def beforeAll = {
     server.start()
     server.createAndWaitForIndex("address")
     server.loadFeature("address", "point", getPointFeature)
+    server.loadFeature("address", "point", getPointFeature1)
     client.admin().indices().refresh(new RefreshRequest("address")).actionGet()
   }
 
@@ -77,15 +85,25 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val f = responseAs[Feature]
-      f mustBe getPointFeature
+      val f = responseAs[Array[Feature]]
+      f(0) mustBe getPointFeature
     }
     val a = "1311+30th+St+NW+Washington+DC+20007"
     Get("/addresses/points/" + a) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val f = responseAs[Feature]
-      f mustBe getPointFeature
+      val f = responseAs[Array[Feature]]
+      f(0) mustBe getPointFeature
+    }
+  }
+
+  it should "suggest a few addresses" in {
+    val a = "30th+St+NW"
+    Get("/addresses/points/" + a + "?suggest=2") ~> routes ~> check {
+      status mustBe OK
+      contentType.mediaType mustBe `application/json`
+      val features = responseAs[Array[Feature]]
+      features.size mustBe 2
     }
   }
 
