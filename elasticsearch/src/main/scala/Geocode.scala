@@ -9,30 +9,31 @@ import spray.json._
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 import scala.util.{ Success, Failure, Try }
+import org.elasticsearch.search.SearchHit
 
 trait Geocode {
 
   lazy val log = Logger(LoggerFactory.getLogger("grasshopper-geocode"))
 
-  def geocode(client: Client, index: String, indexType: String, address: String): Try[Feature] = {
+  def geocode(client: Client, index: String, indexType: String, address: String, count: Int): Try[Array[Feature]] = {
     Try {
-      val response = client.prepareSearch(index)
-        .setTypes(indexType)
-        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-        .setQuery(QueryBuilders.matchPhraseQuery("address", address))
-        .execute
-        .actionGet
-
-      val hits = response.getHits().getHits
-      if (hits.size > 0) {
-        val str = hits.map(hit => hit.getSourceAsString).take(1).mkString
-        log.debug(str)
-        str.parseJson.convertTo[Feature]
-      } else {
-        val e = new Exception(s"Address not Found: ${address}")
-        log.error(e.getLocalizedMessage)
-        throw e
-      }
+      val hits = searchAddress(client, index, indexType, address)
+      hits
+        .map(hit => hit.getSourceAsString)
+        .take(count)
+        .map(s => s.parseJson.convertTo[Feature])
     }
+  }
+
+  private def searchAddress(client: Client, index: String, indexType: String, address: String): Array[SearchHit] = {
+    val qb = QueryBuilders.matchPhraseQuery("address", address)
+    val response = client.prepareSearch(index)
+      .setTypes(indexType)
+      .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+      .setQuery(qb)
+      .execute
+      .actionGet
+
+    response.getHits().getHits
   }
 }

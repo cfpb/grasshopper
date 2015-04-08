@@ -51,37 +51,45 @@ trait Service extends JsonProtocol with Geocode {
       }
     } ~
       pathPrefix("addresses") {
-        path("points") {
+        pathPrefix("points") {
           post {
             compressResponseIfRequested() {
               entity(as[String]) { json =>
                 try {
                   val addressInput = json.parseJson.convertTo[AddressInput]
-                  geocodePoint(addressInput.address)
+                  geocodePoints(addressInput.address, 1)
                 } catch {
                   case e: spray.json.DeserializationException =>
                     complete(BadRequest)
                 }
               }
             }
-          }
-        } ~
-          path("points" / Segment) { address =>
+          } ~
             get {
-              compressResponseIfRequested() {
-                geocodePoint(address)
+              path(Segment) { address =>
+                parameters('suggest.as[Int] ? 1) { suggest =>
+                  get {
+                    compressResponseIfRequested() {
+                      geocodePoints(address, suggest)
+                    }
+                  }
+                }
               }
             }
-          }
+        }
       }
   }
 
-  private def geocodePoint(address: String): StandardRoute = {
-    val point = geocode(client, "address", "point", address)
-    point match {
-      case Success(p) =>
-        complete {
-          ToResponseMarshallable(p)
+  private def geocodePoints(address: String, count: Int): StandardRoute = {
+    val points = geocode(client, "address", "point", address, count)
+    points match {
+      case Success(pts) =>
+        if (pts.size > 0) {
+          complete {
+            ToResponseMarshallable(pts)
+          }
+        } else {
+          complete(NotFound)
         }
       case Failure(_) =>
         complete {
@@ -89,5 +97,4 @@ trait Service extends JsonProtocol with Geocode {
         }
     }
   }
-
 }
