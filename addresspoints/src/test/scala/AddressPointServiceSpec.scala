@@ -79,6 +79,13 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     }
   }
 
+  it should "return BadRequest when invalid JSON is POSTed" in {
+    val badJson = """{"invalid":"json"}"""
+    Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, badJson)) ~> routes ~> check(
+      status mustBe BadRequest
+    )
+  }
+
   it should "geocode a single point" in {
     val address = AddressInput("1311 30th St NW Washington DC 20007")
     val json = address.toJson.toString
