@@ -17,11 +17,22 @@ The project can also be run on a Docker container with the following commands (a
 
 First, run a Docker container with Elasticsearch:
 
-`docker run --name elasticsearch elasticsearch`
+`docker run --name elasticsearch -p 9200:9200 -p 9300:9300 elasticsearch`
+
+From the root project, build the project and package it in a single jar:
+
+```
+$ sbt
+> test assembly
+````
+
+From the addresspoints directory, build the docker image:
+
+`docker build --rm -t=hmda/addresspoints`
 
 And then run the service linking to the previous container:
 
-`docker run --name addresspoints -e ELASTICSEARCH_HOST=192.168.59.103 -e ELASTICSEARCH_PORT=9300 -p 8080:8080 --link elasticsearch:elasticsearch addresspoints:<version>`
+`docker run --name addresspoints -e ELASTICSEARCH_HOST=192.168.59.103 -e ELASTICSEARCH_PORT=9300 -p 8080:8080 --link elasticsearch:elasticsearch hmda/addresspoints:<version>`
 
 The Elasticsearch host and port are configurable, passing them as environment variables to the docker container. If not specified, the defaults are _localhost_ and _9300_, respectively.
 Version is the current version of the software as specified in `build.sbt`
