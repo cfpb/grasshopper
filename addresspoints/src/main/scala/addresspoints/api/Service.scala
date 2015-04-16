@@ -45,7 +45,6 @@ trait Service extends JsonProtocol with Geocode {
             // Creates ISO-8601 date string in UTC down to millisecond precision
             val now = Instant.now.toString
             val host = InetAddress.getLocalHost.getHostName
-            println(host)
             val status = Status("OK", now, host)
             log.info(status.toJson.toString())
             ToResponseMarshallable(status)
