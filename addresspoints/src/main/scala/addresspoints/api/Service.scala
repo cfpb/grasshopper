@@ -1,5 +1,6 @@
 package addresspoints.api
 
+import java.net.InetAddress
 import java.time.Instant
 
 import addresspoints.model.{ AddressInput, Status }
@@ -43,7 +44,8 @@ trait Service extends JsonProtocol with Geocode {
           complete {
             // Creates ISO-8601 date string in UTC down to millisecond precision
             val now = Instant.now.toString
-            val status = Status("OK", now)
+            val host = InetAddress.getLocalHost.getHostName
+            val status = Status("OK", now, host)
             log.info(status.toJson.toString())
             ToResponseMarshallable(status)
           }
