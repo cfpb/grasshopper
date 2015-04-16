@@ -61,19 +61,7 @@ a REST API to resolve addresses to locations in GeoJSON.
 
 ## Usage
 
-Once running locally, the following endpoints should be available 
-
-1. Status
-
-    ```
-    GET http://localhost:8080/status
-    ```
-    ```json
-    {
-      "status": "OK",
-      "time": "2015-03-24T21:03:51.244Z"
-    }
-    ```
+The API documentation is specified in the docs folder, i.e. [Point API](docs/point_api_spec.md)
 
 ## Testing 
 
@@ -88,7 +76,7 @@ This will run unit and integration tests. The integration tests will stand up a 
 
 ## Known issues
 
-The tests will print out a stack trace, the in memory Elasticsearch node doesn't load all libraries. So far this is not an issue for the purposes of testing.
+The tests will occasionally print out a stack trace, the in memory Elasticsearch node doesn't load all libraries. So far this is not an issue for the purposes of testing.
 
 
 ## Getting involved

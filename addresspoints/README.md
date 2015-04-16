@@ -19,6 +19,8 @@ First, run a Docker container with Elasticsearch:
 
 `docker run --name elasticsearch -p 9200:9200 -p 9300:9300 elasticsearch`
 
+To load data to Elasticsearch, see the [loader](https://github.com/cfpb/grasshopper-loader)
+
 From the root project, build the project and package it in a single jar:
 
 ```
