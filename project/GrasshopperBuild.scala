@@ -2,6 +2,7 @@ import sbt._
 import sbt.Keys._
 import com.typesafe.sbt.SbtScalariform._
 import spray.revolver.RevolverPlugin._
+import wartremover._
 
 object BuildSettings {
   val buildOrganization = "cfpb"
@@ -10,11 +11,13 @@ object BuildSettings {
 
   val buildSettings = Defaults.coreDefaultSettings ++
     scalariformSettings ++
+    wartremoverSettings ++
     Seq(
       organization  := buildOrganization,
       version       := buildVersion,
       scalaVersion  := buildScalaVersion,
-      scalacOptions := Seq("-deprecation", "-unchecked", "-feature")
+      wartremoverWarnings ++= Warts.allBut(Wart.NoNeedForMonad, Wart.NonUnitStatements),
+      scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
     )
 }
 
