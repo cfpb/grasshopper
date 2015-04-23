@@ -4,4 +4,5 @@ scala: 2.11.6
 jdk:
   # - openjdk8 not yet supported by Travis CI
   - oraclejdk8
-
+script: "sbt clean coverage test && sbt coverageAggregate"
+after_success: "sbt coveralls"
