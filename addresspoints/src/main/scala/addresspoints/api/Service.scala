@@ -46,7 +46,7 @@ trait Service extends JsonProtocol with Geocode {
             val now = Instant.now.toString
             val host = InetAddress.getLocalHost.getHostName
             val status = Status("OK", now, host)
-            log.info(status.toJson.toString())
+            log.debug(status.toJson.toString())
             ToResponseMarshallable(status)
           }
         }

@@ -16,12 +16,16 @@ trait Geocode {
   lazy val log = Logger(LoggerFactory.getLogger("grasshopper-geocode"))
 
   def geocode(client: Client, index: String, indexType: String, address: String, count: Int): Try[Array[Feature]] = {
+    log.debug(s"Search Address: ${address}")
     Try {
       val hits = searchAddress(client, index, indexType, address)
       hits
         .map(hit => hit.getSourceAsString)
         .take(count)
-        .map(s => s.parseJson.convertTo[Feature])
+        .map { s =>
+          log.info(s)
+          s.parseJson.convertTo[Feature]
+        }
     }
   }
 
