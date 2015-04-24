@@ -2,13 +2,16 @@ package grasshopper.elasticsearch
 
 import java.io.File
 import java.nio.file.Files
+import com.typesafe.scalalogging.Logger
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.node.Node
 import org.elasticsearch.node.NodeBuilder._
 import feature._
 import io.geojson.FeatureJsonProtocol._
+import org.slf4j.LoggerFactory
 import spray.json._
 
 class ElasticsearchServer {
@@ -20,11 +23,13 @@ class ElasticsearchServer {
     .put("cluster.name", clusterName)
     .build
 
+  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-elasticsearchserver"))
+
   private lazy val node = nodeBuilder().local(true).settings(settings).build
 
   def client: Client = node.client
 
-  def start(): Unit = {
+  def start(): Node = {
     node.start()
   }
 
@@ -40,8 +45,8 @@ class ElasticsearchServer {
   }
 
   def createAndWaitForIndex(index: String): Unit = {
-    client.admin.indices.prepareCreate(index).execute.actionGet()
-    client.admin.cluster.prepareHealth(index).setWaitForActiveShards(1).execute.actionGet()
+    val a = client.admin.indices.prepareCreate(index).execute.actionGet()
+    val b = client.admin.cluster.prepareHealth(index).setWaitForActiveShards(1).execute.actionGet()
   }
 
   def loadFeature(index: String, indexType: String, f: Feature): Boolean = {
@@ -67,7 +72,7 @@ class ElasticsearchServer {
     }
     loop(new File(path)).foreach { f =>
       if (!f.delete())
-        throw new RuntimeException(s"Failed to delete ${f.getAbsolutePath}")
+        log.error(s"Failed to delete ${f.getAbsolutePath}")
     }
   }
 

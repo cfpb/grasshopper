@@ -23,5 +23,5 @@ object AddressPointService extends App with Service {
   lazy val port = Properties.envOrElse("ELASTICSEARCH_PORT", config.getString("elasticsearch.port"))
   lazy val client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
 
-  Http().bind(interface = config.getString("http.interface"), port = config.getInt("http.port")).startHandlingWith(routes)
+  val http = Http().bind(interface = config.getString("http.interface"), port = config.getInt("http.port")).startHandlingWith(routes)
 }
