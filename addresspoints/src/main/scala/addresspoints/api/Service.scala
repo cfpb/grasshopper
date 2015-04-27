@@ -83,20 +83,14 @@ trait Service extends JsonProtocol with Geocode {
   }
 
   private def geocodePoints(address: String, count: Int): StandardRoute = {
-    val points = geocode(client, "address", "point", address, count)
-    points match {
-      case Success(pts) =>
-        if (pts.size > 0) {
-          complete {
-            ToResponseMarshallable(pts)
-          }
-        } else {
-          complete(NotFound)
-        }
-      case Failure(_) =>
-        complete {
-          NotFound
-        }
+    val points = geocode(client, "address", "point", address, count) getOrElse (Nil.toArray)
+    if (points.length > 0) {
+      complete {
+        ToResponseMarshallable(points)
+      }
+    } else {
+      complete(NotFound)
     }
+
   }
 }

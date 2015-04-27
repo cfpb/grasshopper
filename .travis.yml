@@ -1,7 +1,9 @@
-# Travis for Scala: http://docs.travis-ci.com/user/languages/scala/
 language: scala
-scala: 2.11.6 
+scala: 2.11.6
 jdk:
-  # - openjdk8 not yet supported by Travis CI
-  - oraclejdk8
-
+- oraclejdk8
+script: sbt clean coverage test && sbt coverageAggregate
+after_success: sbt coveralls
+env:
+  global:
+    secure: U9JES0PngtEiAq4xG9AJM/dA+PqeApx9X5KyLarIUcD8OC802cM75UyTHs3BfeZFZQD16rADacUE7MZnZca/LHLaUJgfwlvWwW4Qcy3goSyoFnI5ki3dKORICksJ1kaaWnU0dnTPRe7W2DGwfX06s2CNc90BBJZRwG0Du48hQQU=

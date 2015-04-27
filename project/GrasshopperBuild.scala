@@ -7,7 +7,7 @@ import wartremover._
 object BuildSettings {
   val buildOrganization = "cfpb"
   val buildVersion      = "0.0.1"
-  val buildScalaVersion = "2.11.5"
+  val buildScalaVersion = "2.11.6"
 
   val buildSettings = Defaults.coreDefaultSettings ++
     scalariformSettings ++
@@ -17,7 +17,12 @@ object BuildSettings {
       version       := buildVersion,
       scalaVersion  := buildScalaVersion,
       wartremoverWarnings ++= Warts.allBut(Wart.NoNeedForMonad, Wart.NonUnitStatements),
-      scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
+      scalacOptions ++= Seq(
+        "-Xlint",
+        "-deprecation",
+        "-unchecked",
+        "-feature",
+        "-Xfatal-warnings")
     )
 }
 
