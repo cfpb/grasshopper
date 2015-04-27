@@ -12,7 +12,6 @@ object BuildSettings {
   val buildSettings = Defaults.coreDefaultSettings ++
     scalariformSettings ++
     wartremoverSettings ++
-    coverallsSettings ++
     Seq(
       organization  := buildOrganization,
       version       := buildVersion,
