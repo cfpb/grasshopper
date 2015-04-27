@@ -17,7 +17,12 @@ object BuildSettings {
       version       := buildVersion,
       scalaVersion  := buildScalaVersion,
       wartremoverWarnings ++= Warts.allBut(Wart.NoNeedForMonad, Wart.NonUnitStatements),
-      scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
+      scalacOptions ++= Seq(
+        "-Xlint",
+        "-deprecation",
+        "-unchecked",
+        "-feature",
+        "-Xfatal-warnings")
     )
 }
 
