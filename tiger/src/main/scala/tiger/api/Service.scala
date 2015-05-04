@@ -11,16 +11,16 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import elasticsearch.TigerGeocode
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import tiger.model.Status
 import tiger.protocol.JsonProtocol
 import spray.json._
+import tiger.search.CensusGeocode
 
 import scala.concurrent.ExecutionContextExecutor
 
-trait Service extends JsonProtocol with TigerGeocode {
+trait Service extends JsonProtocol with CensusGeocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor

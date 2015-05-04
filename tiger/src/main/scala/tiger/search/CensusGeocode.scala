@@ -1,9 +1,9 @@
-package elasticsearch
+package tiger.search
 
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
-trait TigerGeocode {
+trait CensusGeocode {
 
   lazy val log = Logger(LoggerFactory.getLogger("grasshopper-geocode"))
 }
