@@ -1,4 +1,4 @@
-package elasticsearch
+package addresspoints.search
 
 import com.typesafe.scalalogging.Logger
 import feature._

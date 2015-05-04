@@ -4,6 +4,7 @@ import java.net.InetAddress
 import java.time.Instant
 import addresspoints.model.{ AddressInput, Status }
 import addresspoints.protocol.JsonProtocol
+import addresspoints.search.Geocode
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
@@ -15,7 +16,6 @@ import akka.http.scaladsl.server.StandardRoute
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import elasticsearch.Geocode
 import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
