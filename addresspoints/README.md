@@ -6,8 +6,7 @@ Service that geocodes a single address string into a point.
 ## Building
 
 From the grasshopper root directory, run `sbt` and then `project addresspoints`. This will set the current sbt project to addresspoints.
-From this prompt run `test` to run the automated unit and integration tests. If everything passes, run `docker:publishLocal` to create a Docker image. 
-The Dockerfile is created in `target/docker/Dockerfile`
+From this prompt run `test` to run the automated unit and integration tests.
 
 ## Running
 
@@ -30,11 +29,11 @@ $ sbt
 
 From the addresspoints directory, build the docker image:
 
-`docker build --rm -t=hmda/addresspoints`
+`docker build --rm -t=hmda/grasshopper-addresspoints`
 
 And then run the service linking to the previous container:
 
-`docker run --name addresspoints -e ELASTICSEARCH_HOST=192.168.59.103 -e ELASTICSEARCH_PORT=9300 -p 8080:8080 --link elasticsearch:elasticsearch hmda/addresspoints:<version>`
+`docker run --name addresspoints -e ELASTICSEARCH_HOST=192.168.59.103 -e ELASTICSEARCH_PORT=9300 -p 8080:8080 --link elasticsearch:elasticsearch hmda/grasshopper-addresspoints:<version>`
 
 The Elasticsearch host and port are configurable, passing them as environment variables to the docker container. If not specified, the defaults are _localhost_ and _9300_, respectively.
 Version is the current version of the software as specified in `build.sbt`
