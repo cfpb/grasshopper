@@ -12,7 +12,7 @@ import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
 import tiger.model
 
-class TigerLineServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
+class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
   override def config = testConfig
   override val logger = NoLogging

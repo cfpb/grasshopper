@@ -11,7 +11,7 @@ import tiger.api.Service
 
 import scala.util.Properties
 
-object TigerLineService extends App with Service {
+object CensusGeocodeService extends App with Service {
   override implicit val system: ActorSystem = ActorSystem("grasshopper-tiger")
 
   override implicit val executor = system.dispatcher
