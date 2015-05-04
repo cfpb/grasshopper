@@ -3,12 +3,11 @@ package grasshopper.addresspoints
 import addresspoints.api.Service
 import akka.actor.ActorSystem
 import akka.event.Logging
-import akka.http.Http
+import akka.http.scaladsl.Http
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-
 import scala.util.Properties
 
 object AddressPointService extends App with Service {
@@ -23,5 +22,5 @@ object AddressPointService extends App with Service {
   lazy val port = Properties.envOrElse("ELASTICSEARCH_PORT", config.getString("elasticsearch.port"))
   lazy val client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
 
-  val http = Http().bind(interface = config.getString("http.interface"), port = config.getInt("http.port")).startHandlingWith(routes)
+  val http = Http(system).bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
 }

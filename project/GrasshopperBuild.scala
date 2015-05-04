@@ -50,7 +50,7 @@ object GrasshopperBuild extends Build {
     "grasshopper",
     file("."),
     settings = buildSettings 
-  ).aggregate(addresspoints)
+  ).aggregate(addresspoints, tiger)
 
   lazy val elasticsearch = Project(
     "elasticsearch",
@@ -63,6 +63,12 @@ object GrasshopperBuild extends Build {
     "addresspoints",
     file("addresspoints"),
     settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++= geocodeDeps, resolvers ++= repos)
+  ).dependsOn(elasticsearch)
+
+  lazy val tiger = Project(
+    "tiger",
+    file("tiger"),
+    settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++=geocodeDeps, resolvers ++= repos)
   ).dependsOn(elasticsearch)
 
 
