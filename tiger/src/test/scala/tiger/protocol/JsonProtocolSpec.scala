@@ -1,12 +1,11 @@
-package grasshopper.addresspoints
+package tiger.protocol
 
 import java.net.InetAddress
-
-import addresspoints.model.{ Status, AddressInput }
-import addresspoints.protocol.JsonProtocol
-import org.scalatest._
-import spray.json._
 import java.util.Calendar
+import org.scalatest.FlatSpec
+import org.scalatest.MustMatchers
+import tiger.model.{ AddressInput, Status }
+import spray.json._
 
 class JsonProtocolSpec extends FlatSpec with MustMatchers with JsonProtocol {
 

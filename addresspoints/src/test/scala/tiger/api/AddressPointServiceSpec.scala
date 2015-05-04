@@ -1,6 +1,7 @@
-package grasshopper.addresspoints
+package tiger.api
 
-import java.time.{ Instant, Duration }
+import java.time.{ Duration, Instant }
+
 import addresspoints.api.Service
 import addresspoints.model
 import addresspoints.model.AddressInput

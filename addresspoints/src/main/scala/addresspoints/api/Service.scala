@@ -15,7 +15,7 @@ import akka.http.scaladsl.server.StandardRoute
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import grasshopper.elasticsearch.Geocode
+import elasticsearch.Geocode
 import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory

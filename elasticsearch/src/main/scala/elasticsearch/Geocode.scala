@@ -1,15 +1,16 @@
-package grasshopper.elasticsearch
+package elasticsearch
 
+import com.typesafe.scalalogging.Logger
 import feature._
 import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.QueryBuilders
-import spray.json._
-import com.typesafe.scalalogging.Logger
-import org.slf4j.LoggerFactory
-import scala.util.{ Success, Failure, Try }
 import org.elasticsearch.search.SearchHit
+import org.slf4j.LoggerFactory
+import spray.json._
+
+import scala.util.Try
 
 trait Geocode {
 
