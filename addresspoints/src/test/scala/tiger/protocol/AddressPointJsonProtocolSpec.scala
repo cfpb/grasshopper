@@ -2,12 +2,13 @@ package tiger.protocol
 
 import java.net.InetAddress
 import java.util.Calendar
-import org.scalatest.FlatSpec
-import org.scalatest.MustMatchers
-import tiger.model.{ AddressInput, Status }
+
+import addresspoints.model.{ AddressInput, Status }
+import addresspoints.protocol.AddressPointJsonProtocol
+import org.scalatest._
 import spray.json._
 
-class JsonProtocolSpec extends FlatSpec with MustMatchers with JsonProtocol {
+class AddressPointJsonProtocolSpec extends FlatSpec with MustMatchers with AddressPointJsonProtocol {
 
   "Status" should "convert to and from JSON" in {
     val date = Calendar.getInstance().getTime().toString

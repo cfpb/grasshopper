@@ -3,7 +3,7 @@ package addresspoints.api
 import java.net.InetAddress
 import java.time.Instant
 import addresspoints.model.{ AddressInput, Status }
-import addresspoints.protocol.JsonProtocol
+import addresspoints.protocol.AddressPointJsonProtocol
 import addresspoints.search.Geocode
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory
 import spray.json._
 import scala.concurrent.ExecutionContextExecutor
 
-trait Service extends JsonProtocol with Geocode {
+trait Service extends AddressPointJsonProtocol with Geocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor

@@ -14,7 +14,7 @@ import scala.util.Try
 
 trait Geocode {
 
-  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-geocode"))
+  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-addresspoints"))
 
   def geocode(client: Client, index: String, indexType: String, address: String, count: Int): Try[Array[Feature]] = {
     log.debug(s"Search Address: ${address}")

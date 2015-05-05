@@ -21,8 +21,7 @@ object BuildSettings {
         "-Xlint",
         "-deprecation",
         "-unchecked",
-        "-feature",
-        "-Xfatal-warnings")
+        "-feature")
     )
 }
 
@@ -50,7 +49,7 @@ object GrasshopperBuild extends Build {
     "grasshopper",
     file("."),
     settings = buildSettings 
-  ).aggregate(addresspoints, tiger)
+  ).aggregate(addresspoints, census)
 
   lazy val elasticsearch = Project(
     "elasticsearch",
@@ -65,9 +64,9 @@ object GrasshopperBuild extends Build {
     settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++= geocodeDeps, resolvers ++= repos)
   ).dependsOn(elasticsearch)
 
-  lazy val tiger = Project(
-    "tiger",
-    file("tiger"),
+  lazy val census = Project(
+    "census",
+    file("census"),
     settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++=geocodeDeps, resolvers ++= repos)
   ).dependsOn(elasticsearch)
 
