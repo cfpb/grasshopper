@@ -12,7 +12,7 @@ class AddressPointJsonProtocolSpec extends FlatSpec with MustMatchers with Addre
 
   "Status" should "convert to and from JSON" in {
     val date = Calendar.getInstance().getTime().toString
-    val status = Status("OK", date, InetAddress.getLocalHost.getHostName)
+    val status = Status("OK", "grasshopper-addresspoints", date, InetAddress.getLocalHost.getHostName)
     status.toJson.convertTo[Status] mustBe status
   }
 

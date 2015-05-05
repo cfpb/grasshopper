@@ -33,12 +33,13 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
     server.stop()
   }
 
-  "Address Point Service" should "respond to status" in {
+  "Tiger Address Line Service" should "respond to status" in {
     Get("/status") ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[model.Status]
       resp.status mustBe "OK"
+      resp.service mustBe "grasshopper-census"
       val statusTime = Instant.parse(resp.time)
       val timeDiff = Duration.between(statusTime, Instant.now).getSeconds
       timeDiff must be <= 1l

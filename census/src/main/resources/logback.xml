@@ -8,7 +8,7 @@
         </encoder>
     </appender>
 
-    <appender name="logstash" class="net.logstash.logback.appender.LogstashSocketAppender">
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <!-- remoteHost and port are optional (default values shown) -->
         <remoteHost>${LOGSTASH_HOST:-localhost}</remoteHost>
         <port>${LOGSTASH_PORT:-9001}</port>

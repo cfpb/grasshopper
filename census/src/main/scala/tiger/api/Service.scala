@@ -43,7 +43,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
           complete {
             val now = Instant.now.toString
             val host = InetAddress.getLocalHost.getHostName
-            val status = Status("OK", now, host)
+            val status = Status("OK", "grasshopper-census", now, host)
             log.debug(status.toJson.toString())
             ToResponseMarshallable(status)
           }
