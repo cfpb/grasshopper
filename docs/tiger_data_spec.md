@@ -1,6 +1,6 @@
 # ElasticSearch Address TIGER Data Schema
 
-Data is stored in Elasticsearch, by convention in an index called `census` with type `addrfeat`.Data format is GeoJSON objects with the following structure:
+Data is stored in Elasticsearch, by convention in an index called `census` with type `addrfeat`. Data format is GeoJSON objects with the following structure:
 
 * type: "Feature"
 * geometry: GeoJSON geometry representation
@@ -73,8 +73,8 @@ A typical search will return records in the following format when using ElasticS
 
 ```json
 {
-  "_index": "addrfeat",
-  "_type": "tiger",
+  "_index": "census",
+  "_type": "addrfeat",
   "_id": "AU0fPkzMfUUh7D1HEp9O",
   "_score": 1,
   "_source": {
