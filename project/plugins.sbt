@@ -21,3 +21,4 @@ addSbtPlugin("org.scoverage" %% "sbt-coveralls" % "1.0.0.BETA1")
 //SBT WartRemover
 addSbtPlugin("org.brianmckenna" % "sbt-wartremover" % "0.12")
 
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0-RC1")

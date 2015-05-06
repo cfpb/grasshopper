@@ -34,11 +34,19 @@ trait CensusGeocode {
     }
   }
 
-  private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedAddressInput): Array[SearchHit] = {
+  private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedAddressInput) = {
     val number = addressInput.number
     val street = addressInput.streetName
     val zipCode = addressInput.zipCode
     val state = addressInput.state
+
+    val stateQuery = QueryBuilders.matchQuery("STATE", state)
+
+    val streetQuery = QueryBuilders.matchPhraseQuery("FULLNAME", street)
+
+    val zipLeftFilter = FilterBuilders.termFilter("ZIPL", zipCode)
+    val zipRightFilter = FilterBuilders.termFilter("ZIPR", zipCode)
+    val zipFilter = FilterBuilders.orFilter(zipLeftFilter, zipRightFilter)
 
     val rightHouseFilter = FilterBuilders.andFilter(
       FilterBuilders.rangeFilter("RFROMHN").lte(number),
@@ -52,29 +60,23 @@ trait CensusGeocode {
 
     val houseFilter = FilterBuilders.orFilter(rightHouseFilter, leftHouseFilter)
 
-    val zipLeftFilter = FilterBuilders.termFilter("ZIPL", zipCode)
-    val zipRightFilter = FilterBuilders.termFilter("ZIPR", zipCode)
-    val zipFilter = FilterBuilders.orFilter(zipLeftFilter, zipRightFilter)
-
     val filter = FilterBuilders.andFilter(houseFilter, zipFilter)
 
-    val stateQuery = QueryBuilders.matchQuery("STATE", state)
-    val streetQuery = QueryBuilders.matchPhraseQuery("FULLNAME", filter)
     val boolQuery = QueryBuilders
       .boolQuery()
       .must(stateQuery)
       .must(streetQuery)
 
-    val q = QueryBuilders.filteredQuery(boolQuery, filter)
+    val query = QueryBuilders.filteredQuery(boolQuery, filter)
 
-    log.debug(s"query: " + q)
+    log.debug(query.toString)
 
     val response = client.prepareSearch(index)
       .setTypes(indexType)
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-      .setQuery(q)
+      .setQuery(query)
       .execute
-      .actionGet
+      .actionGet()
 
     response.getHits.getHits
 

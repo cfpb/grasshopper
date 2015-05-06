@@ -67,7 +67,7 @@ object GrasshopperBuild extends Build {
   lazy val census = Project(
     "census",
     file("census"),
-    settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++=geocodeDeps, resolvers ++= repos)
+    settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++= geocodeDeps, resolvers ++= repos)
   ).dependsOn(elasticsearch)
 
 
