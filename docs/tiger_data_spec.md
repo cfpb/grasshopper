@@ -64,7 +64,8 @@ Example:
      "TFIDR": "208595636",
      "TLID": "11961970",
      "ZIPL": "72160",
-     "ZIPR": ""
+     "ZIPR": "",
+     "STATE": "AR"
   }
 }
 ```
@@ -125,7 +126,8 @@ A typical search will return records in the following format when using ElasticS
        "TFIDR": "208595636",
        "TLID": "11961970",
        "ZIPL": "72160",
-       "ZIPR": ""
+       "ZIPR": "",
+       "STATE": "AR"
     }
   }
 
