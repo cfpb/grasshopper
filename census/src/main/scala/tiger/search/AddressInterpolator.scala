@@ -41,9 +41,25 @@ object AddressInterpolator {
     val geomField = Field("geometry", GeometryType())
     val numberField = Field("number", IntType())
     val schema = Schema(geomField, addressField, numberField)
-    val fullname = feature.values.get("FULLNAME").getOrElse("")
-    val address = a.toString + " " + fullname
-    val values: Map[String, Any] = Map("geometry" -> geometry, "address" -> address, "number" -> a)
+    val fullname = feature.values.getOrElse("FULLNAME", "")
+    val zipL = feature.values.getOrElse("ZIPL", "")
+    val zipR = feature.values.getOrElse("ZIPR", "")
+    val lfromhn = feature.values.getOrElse("LFROMHN", "")
+    val ltohn = feature.values.getOrElse("LTOHN", "")
+    val rfromhn = feature.values.getOrElse("RFROMHN", "")
+    val rtohn = feature.values.getOrElse("RTOHN", "")
+    val state = feature.values.getOrElse("STATE", "")
+    val values: Map[String, Any] = Map(
+      "geometry" -> geometry,
+      "FULLNAME" -> fullname,
+      "RFROMHN" -> rfromhn,
+      "RTOHN" -> rtohn,
+      "LFROMHN" -> lfromhn,
+      "LTOHN" -> ltohn,
+      "ZIPR" -> zipR,
+      "ZIPL" -> zipL,
+      "STATE" -> state
+    )
     Feature(schema, values)
   }
 }

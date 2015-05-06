@@ -24,7 +24,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     server.stop()
   }
 
-  "Census Geocode" must "find the correct line segment from an address" in {
+  "Census Geocode" must "interpolate an address location from a line segment" in {
     val addressInput = ParsedAddressInput(
       3146,
       "M St NW",
@@ -33,18 +33,44 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     )
 
     val expectedPoint = Point(-77.06204609363698, 38.90508501171226)
-    val expectedValues = Map("geometry" -> expectedPoint, "address" -> "3146 M St NW")
+    val expectedValues = Map(
+      "geometry" -> expectedPoint,
+      "FULLNAME" -> "M St NW",
+      "ZIPL" -> "20007",
+      "ZIPR" -> "20007",
+      "LFROMHN" -> "3100",
+      "LTOHN" -> "3198",
+      "RFROMHN" -> "3101",
+      "RTOHN" -> "3199",
+      "STATE" -> "DC"
+
+    )
     val expectedSchema = Schema(
       List(
         Field("geometry", GeometryType()),
-        Field("address", StringType())
+        Field("FULLNAME", StringType()),
+        Field("ZIPL", StringType()),
+        Field("ZIPR", StringType()),
+        Field("LFROMHN", StringType()),
+        Field("LTOHN", StringType()),
+        Field("RFROMHN", StringType()),
+        Field("RTOHN", StringType()),
+        Field("STATE", StringType())
       )
     )
 
     val expectedFeature = Feature(expectedSchema, expectedValues)
     val features = geocodeLine(client, "census", "addrfeat", addressInput, 1) getOrElse emptyFeatures
-    assert(features(0).geometry == expectedFeature.geometry)
-    assert(features(0).values.get("address").toString == expectedFeature.values.get("address").toString)
+    features(0).geometry mustBe expectedFeature.geometry
+    features(0).values.getOrElse("FULLNAME", "") mustBe expectedFeature.values.getOrElse("FULLNAME", "")
+    features(0).values.getOrElse("ZIPL", "") mustBe expectedFeature.values.getOrElse("ZIPL", "")
+    features(0).values.getOrElse("ZIPR", "") mustBe expectedFeature.values.getOrElse("ZIPR", "")
+    features(0).values.getOrElse("LFROMHN", "") mustBe expectedFeature.values.getOrElse("LFROMHN", "")
+    features(0).values.getOrElse("LTOHN", "") mustBe expectedFeature.values.getOrElse("LTOHN", "")
+    features(0).values.getOrElse("RFROMHN", "") mustBe expectedFeature.values.getOrElse("RFROMHN", "")
+    features(0).values.getOrElse("RTOHN", "") mustBe expectedFeature.values.getOrElse("RTOHN", "")
+    features(0).values.getOrElse("STATE", "") mustBe expectedFeature.values.getOrElse("STATE", "")
+
   }
 
 }
