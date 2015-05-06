@@ -1,4 +1,4 @@
-package tiger.api
+package addresspoints.api
 
 import java.time.{ Duration, Instant }
 
