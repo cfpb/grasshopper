@@ -1,8 +1,6 @@
 package addresspoints.api
 
 import java.time.{ Duration, Instant }
-
-import addresspoints.api.Service
 import addresspoints.model
 import addresspoints.model.AddressInput
 import akka.event.NoLogging

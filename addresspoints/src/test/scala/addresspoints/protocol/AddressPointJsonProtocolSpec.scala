@@ -4,7 +4,6 @@ import java.net.InetAddress
 import java.util.Calendar
 
 import addresspoints.model.{ AddressInput, Status }
-import addresspoints.protocol.AddressPointJsonProtocol
 import org.scalatest._
 import spray.json._
 
