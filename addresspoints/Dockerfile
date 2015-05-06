@@ -1,4 +1,4 @@
-# Addresspoints Dockerfile
+# Grasshopper Addresspoints Dockerfile
 # Version: 0.0.1
 
 # Image builds from the official Docker Java image
@@ -11,9 +11,9 @@ WORKDIR /
 
 USER daemon
 
-ADD target/scala-2.11/addresspoints-assembly-0.0.1.jar /opt/addresspoints.jar
+COPY target/scala-2.11/grasshopper-addresspoints.jar /opt/grasshopper-addresspoints.jar
 
-ENTRYPOINT ["java", "-jar", "/opt/addresspoints.jar"]
+ENTRYPOINT ["java", "-jar", "/opt/grasshopper-addresspoints.jar"]
 
 EXPOSE 8080
 
