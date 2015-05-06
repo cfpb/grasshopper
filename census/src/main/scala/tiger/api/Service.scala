@@ -49,27 +49,27 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
           }
         }
       }
-    } //~
-    //pathPrefix("addresses") {
-    //  pathPrefix("tiger") {
-    //    post {
-    //      encodeResponseWith(NoCoding, Gzip, Deflate) {
-    //        entity(as[String]) { json =>
-    //          val addressInput = json.parseJson.convertTo[ParsedAddressInput]
-    //          geocodeLines(addressInput, 1)
-    //        }
-    //      }
-    //    }
-    //  }
-    //}
+    } ~
+      pathPrefix("census") {
+        path("addrfeat") {
+          post {
+            encodeResponseWith(NoCoding, Gzip, Deflate) {
+              entity(as[String]) { json =>
+                val addressInput = json.parseJson.convertTo[ParsedAddressInput]
+                geocodeLines(addressInput, 1)
+              }
+            }
+          }
+        }
+      }
 
   }
 
-  //private def geocodeLines(addressInput: ParsedAddressInput, count: Int): StandardRoute = {
-  //  val points = geocodeLine(client, "census", "addrfeat", addressInput, count) getOrElse (Nil.toArray)
-  //  if (points.length > 0)
-  //    complete(ToResponseMarshallable(points))
-  //  else
-  //    complete(NotFound)
-  //}
+  private def geocodeLines(addressInput: ParsedAddressInput, count: Int): StandardRoute = {
+    val points = geocodeLine(client, "census", "addrfeat", addressInput, count) getOrElse (Nil.toArray)
+    if (points.length > 0)
+      complete(ToResponseMarshallable(points))
+    else
+      complete(NotFound)
+  }
 }
