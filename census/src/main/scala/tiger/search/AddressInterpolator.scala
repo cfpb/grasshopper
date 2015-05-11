@@ -32,7 +32,7 @@ object AddressInterpolator {
     val sign = if (a % 2 == 0) 1 else -1
     val line = feature.geometry.asInstanceOf[Line]
     val l = line.length
-    val d = range.end - range.start
+    val d = calculateDistance(range)
     val x = a - range.start
     val dist = x * l / d
     //TODO: Review how offset is being calculated
@@ -61,5 +61,14 @@ object AddressInterpolator {
       "STATE" -> state
     )
     Feature(schema, values)
+  }
+
+  private def calculateDistance(range: AddressRange): Double = {
+    val start = range.start
+    val end = range.end
+    if (start < end)
+      start - end
+    else
+      end - start
   }
 }
