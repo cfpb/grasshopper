@@ -55,7 +55,6 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
       "DC"
     )
     val json = addressInput.toJson.toString
-    println(json)
     Post("/census/addrfeat", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
