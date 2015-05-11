@@ -52,14 +52,27 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
     } ~
       pathPrefix("census") {
         path("addrfeat") {
-          post {
-            encodeResponseWith(NoCoding, Gzip, Deflate) {
-              entity(as[String]) { json =>
-                val addressInput = json.parseJson.convertTo[ParsedAddressInput]
-                geocodeLines(addressInput, 1)
+          get {
+            parameters(
+              'number.as[Int] ? 0,
+              'streetName.as[String] ? "",
+              'zipCode.as[Int] ? 0,
+              'state.as[String] ? ""
+            ) { (number, streetName, zipCode, state) =>
+                val addressInput = ParsedAddressInput(number, streetName, zipCode, state)
+                encodeResponseWith(NoCoding, Gzip, Deflate) {
+                  geocodeLines(addressInput, 1)
+                }
+              }
+          } ~
+            post {
+              encodeResponseWith(NoCoding, Gzip, Deflate) {
+                entity(as[String]) { json =>
+                  val addressInput = json.parseJson.convertTo[ParsedAddressInput]
+                  geocodeLines(addressInput, 1)
+                }
               }
             }
-          }
         }
       }
 
