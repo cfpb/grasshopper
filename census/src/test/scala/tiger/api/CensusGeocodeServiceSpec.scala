@@ -59,6 +59,10 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
       status mustBe OK
       contentType.mediaType mustBe `application/json`
     }
+    Get("/census/addrfeat?number=3146&streetName=M+St+NW&zipCode=20007&state=DC") ~> routes ~> check {
+      status mustBe OK
+      contentType.mediaType mustBe `application/json`
+    }
 
   }
 
