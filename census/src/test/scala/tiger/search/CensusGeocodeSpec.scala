@@ -32,7 +32,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
       "DC"
     )
 
-    val expectedPoint = Point(-77.06204609363698, 38.90508501171226)
+    val expectedPoint = Point(-77.062, 38.905)
     val expectedValues = Map(
       "geometry" -> expectedPoint,
       "FULLNAME" -> "M St NW",
@@ -61,7 +61,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
 
     val expectedFeature = Feature(expectedSchema, expectedValues)
     val features = geocodeLine(client, "census", "addrfeat", addressInput, 1) getOrElse emptyFeatures
-    features(0).geometry mustBe expectedFeature.geometry
+    features(0).geometry.asInstanceOf[Point].roundCoordinates(3) mustBe expectedFeature.geometry
     features(0).values.getOrElse("FULLNAME", "") mustBe expectedFeature.values.getOrElse("FULLNAME", "")
     features(0).values.getOrElse("ZIPL", "") mustBe expectedFeature.values.getOrElse("ZIPL", "")
     features(0).values.getOrElse("ZIPR", "") mustBe expectedFeature.values.getOrElse("ZIPR", "")
