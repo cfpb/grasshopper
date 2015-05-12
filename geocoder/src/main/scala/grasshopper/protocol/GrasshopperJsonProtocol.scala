@@ -1,8 +1,8 @@
 package grasshopper.protocol
 
-import grasshopper.model.Status
+import grasshopper.model.ParserStatus
 import spray.json.DefaultJsonProtocol
 
 trait GrasshopperJsonProtocol extends DefaultJsonProtocol {
-  implicit val statusFormat = jsonFormat4(Status.apply)
+  implicit val statusFormat = jsonFormat4(ParserStatus.apply)
 }

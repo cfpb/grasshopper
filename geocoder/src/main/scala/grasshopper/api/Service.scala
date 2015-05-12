@@ -10,7 +10,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import akka.event.LoggingAdapter
 import grasshopper.protocol.GrasshopperJsonProtocol
-import grasshopper.model.Status
+import grasshopper.model.ParserStatus
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._
@@ -38,7 +38,7 @@ trait Service extends GrasshopperJsonProtocol {
           complete {
             val now = Instant.now.toString
             val host = InetAddress.getLocalHost.getHostName
-            val status = Status("OK", "grasshopper-geocoder", now, host)
+            val status = ParserStatus("OK", "grasshopper-geocoder", now, host)
             log.debug(status.toJson.toString())
             ToResponseMarshallable(status)
           }
