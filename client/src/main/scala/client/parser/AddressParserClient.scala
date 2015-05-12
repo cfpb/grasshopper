@@ -9,12 +9,12 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
 import grasshopper.client.ServiceClient
-import grasshopper.model.ParserStatus
-import grasshopper.protocol.GrasshopperJsonProtocol
+import grasshopper.client.parser.model.ParserStatus
+import grasshopper.client.parser.protocol.ParserJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
-object AddressParserClient extends ServiceClient with GrasshopperJsonProtocol {
+object AddressParserClient extends ServiceClient with ParserJsonProtocol {
   override implicit val system: ActorSystem = ActorSystem("grasshopper-client-parser")
   override implicit val materializer: ActorFlowMaterializer = ActorFlowMaterializer()
   override val config = ConfigFactory.load()

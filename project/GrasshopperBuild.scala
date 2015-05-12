@@ -49,7 +49,7 @@ object GrasshopperBuild extends Build {
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
-    .aggregate(geocoder, addresspoints, census)
+    .aggregate(geocoder, addresspoints, census, client)
 
 
   lazy val elasticsearch = (project in file("elasticsearch"))
@@ -92,6 +92,16 @@ object GrasshopperBuild extends Build {
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
         libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps,
         resolvers ++= repos
+      )
+    )
+
+  lazy val client = (project in file("client"))
+    .settings(buildSettings: _*)
+    .settings(
+      Revolver.settings ++
+      Seq(
+        assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps
       )
     )
 
