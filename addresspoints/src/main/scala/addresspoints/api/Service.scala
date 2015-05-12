@@ -2,28 +2,27 @@ package addresspoints.api
 
 import java.net.InetAddress
 import java.time.Instant
-
 import addresspoints.model.{ AddressInput, Status }
-import addresspoints.protocol.JsonProtocol
+import addresspoints.protocol.AddressPointJsonProtocol
+import addresspoints.search.Geocode
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
-import akka.http.marshalling.ToResponseMarshallable
-import akka.http.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.model.StatusCodes._
-import akka.http.server.Directives._
-import akka.http.server.StandardRoute
+import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.StandardRoute
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.Config
-import grasshopper.elasticsearch.Geocode
-import org.elasticsearch.client.Client
-import scala.concurrent.ExecutionContextExecutor
-import scala.util.{ Failure, Success }
-import spray.json._
 import com.typesafe.scalalogging.Logger
-import org.slf4j.LoggerFactory
 import io.geojson.FeatureJsonProtocol._
+import org.elasticsearch.client.Client
+import org.slf4j.LoggerFactory
+import spray.json._
+import scala.concurrent.ExecutionContextExecutor
 
-trait Service extends JsonProtocol with Geocode {
+trait Service extends AddressPointJsonProtocol with Geocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
@@ -40,12 +39,12 @@ trait Service extends JsonProtocol with Geocode {
   val routes = {
     path("status") {
       get {
-        compressResponseIfRequested() {
+        encodeResponseWith(NoCoding, Gzip, Deflate) {
           complete {
             // Creates ISO-8601 date string in UTC down to millisecond precision
             val now = Instant.now.toString
             val host = InetAddress.getLocalHost.getHostName
-            val status = Status("OK", now, host)
+            val status = Status("OK", "grasshopper-addresspoints", now, host)
             log.debug(status.toJson.toString())
             ToResponseMarshallable(status)
           }
@@ -55,7 +54,7 @@ trait Service extends JsonProtocol with Geocode {
       pathPrefix("addresses") {
         pathPrefix("points") {
           post {
-            compressResponseIfRequested() {
+            encodeResponseWith(NoCoding, Gzip, Deflate) {
               entity(as[String]) { json =>
                 try {
                   val addressInput = json.parseJson.convertTo[AddressInput]
@@ -71,7 +70,7 @@ trait Service extends JsonProtocol with Geocode {
               path(Segment) { address =>
                 parameters('suggest.as[Int] ? 1) { suggest =>
                   get {
-                    compressResponseIfRequested() {
+                    encodeResponseWith(NoCoding, Gzip, Deflate) {
                       geocodePoints(address, suggest)
                     }
                   }

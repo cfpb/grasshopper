@@ -3,6 +3,7 @@ import sbt.Keys._
 import com.typesafe.sbt.SbtScalariform._
 import spray.revolver.RevolverPlugin._
 import wartremover._
+import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
   val buildOrganization = "cfpb"
@@ -21,15 +22,13 @@ object BuildSettings {
         "-Xlint",
         "-deprecation",
         "-unchecked",
-        "-feature",
-        "-Xfatal-warnings")
+        "-feature")
     )
 }
 
 object GrasshopperBuild extends Build {
   import Dependencies._
   import BuildSettings._
-
 
   val commonDeps = Seq(logback, scalaLogging, logstashLogback, scalaTest, scalaCheck)
 
@@ -45,25 +44,42 @@ object GrasshopperBuild extends Build {
 
   val geocodeDeps = akkaHttpDeps ++ esDeps ++ scaleDeps
 
-  
-  lazy val grasshopper = Project(
-    "grasshopper",
-    file("."),
-    settings = buildSettings 
-  ).aggregate(addresspoints)
-
-  lazy val elasticsearch = Project(
-    "elasticsearch",
-    file("elasticsearch"),
-    settings = buildSettings ++ Seq(libraryDependencies ++= esDeps, resolvers ++= repos)
-  )
+    
+  lazy val grasshopper = (project in file("."))
+    .settings(buildSettings: _*)
+    .aggregate(addresspoints, census)
 
 
-  lazy val addresspoints = Project(
-    "addresspoints",
-    file("addresspoints"),
-    settings = buildSettings ++ Revolver.settings ++ Seq(libraryDependencies ++= geocodeDeps, resolvers ++= repos)
-  ).dependsOn(elasticsearch)
+  lazy val elasticsearch = (project in file("elasticsearch"))
+    .settings(buildSettings: _*)
+    .settings(
+      Seq(
+        libraryDependencies ++= esDeps,
+        resolvers ++= repos
+      )
+    )
+
+  lazy val addresspoints = (project in file("addresspoints"))
+    .settings(buildSettings: _*)
+    .settings(
+      Revolver.settings ++
+      Seq(
+        assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        libraryDependencies ++= geocodeDeps,
+        resolvers ++= repos
+      )
+    ).dependsOn(elasticsearch)
+
+  lazy val census = (project in file("census"))
+    .settings(buildSettings: _*)
+    .settings(
+      Revolver.settings ++ 
+      Seq(
+        assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        libraryDependencies ++= geocodeDeps,
+        resolvers ++= repos
+      )
+    ).dependsOn(elasticsearch)
 
 
 }

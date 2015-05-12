@@ -1,6 +1,5 @@
-package grasshopper.addresspoints
+package tiger
 
-import addresspoints.api.Service
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
@@ -8,10 +7,13 @@ import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import tiger.api.Service
+
 import scala.util.Properties
 
-object AddressPointService extends App with Service {
-  override implicit val system = ActorSystem("grasshopper-addresspoints")
+object CensusGeocodeService extends App with Service {
+  override implicit val system: ActorSystem = ActorSystem("grasshopper-tiger")
+
   override implicit val executor = system.dispatcher
   override implicit val materializer = ActorFlowMaterializer()
 
@@ -23,4 +25,5 @@ object AddressPointService extends App with Service {
   lazy val client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
 
   val http = Http(system).bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
+
 }

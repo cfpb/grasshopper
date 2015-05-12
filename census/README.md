@@ -1,12 +1,12 @@
-# Addresspoints
+# Census
 
 Service that geocodes a single address string into a point. 
 
 
 ## Building
 
-From the grasshopper root directory, run `sbt` and then `project addresspoints`. This will set the current sbt project to addresspoints.
-From this prompt run `test` to run the automated unit and integration tests. 
+From the grasshopper root directory, run `sbt` and then `project census`. This will set the current sbt project to census.
+From this prompt run `test` to run the automated unit and integration tests
 
 ## Running
 
@@ -27,13 +27,13 @@ $ sbt
 > test assembly
 ````
 
-From the addresspoints directory, build the docker image:
+From the census directory, build the docker image:
 
-`docker build --rm -t=hmda/grasshopper-addresspoints .`
+`docker build --rm -t=hmda/grasshopper-census .`
 
 And then run the service linking to the previous container:
 
-`docker run --rm --name grasshopper-addresspoints -e ELASTICSEARCH_HOST=192.168.59.103 -e ELASTICSEARCH_PORT=9300 -p 8080:8080 --link elasticsearch:elasticsearch hmda/grasshopper-addresspoints`
+`docker run --rm --name grasshopper-census -e ELASTICSEARCH_HOST=192.168.59.103 -e ELASTICSEARCH_PORT=9300 -p 8081:8081 --link elasticsearch:elasticsearch hmda/grasshopper-census
 
 The Elasticsearch host and port are configurable, passing them as environment variables to the docker container. If not specified, the defaults are _localhost_ and _9300_, respectively.
 Version is the current version of the software as specified in `build.sbt`
