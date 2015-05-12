@@ -44,6 +44,8 @@ object GrasshopperBuild extends Build {
 
   val geocodeDeps = akkaHttpDeps ++ esDeps ++ scaleDeps
 
+  val asyncDeps = Seq(async)
+
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
@@ -88,7 +90,7 @@ object GrasshopperBuild extends Build {
       Revolver.settings ++
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
-        libraryDependencies ++= akkaHttpDeps ++ scaleDeps,
+        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps,
         resolvers ++= repos
       )
     )

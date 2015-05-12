@@ -25,4 +25,6 @@ object Dependencies {
 
   val scaleGeoJson    = "com.github.jmarin"          %% "scale-geojson"                        % Version.scale
 
+  val async           = "org.scala-lang.modules"     %% "scala-async"                          % Version.async
+
 }
