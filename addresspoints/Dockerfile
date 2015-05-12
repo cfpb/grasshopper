@@ -15,6 +15,6 @@ COPY target/scala-2.11/grasshopper-addresspoints.jar /opt/grasshopper-addresspoi
 
 ENTRYPOINT ["java", "-jar", "/opt/grasshopper-addresspoints.jar"]
 
-EXPOSE 8080
+EXPOSE 8081
 
 
