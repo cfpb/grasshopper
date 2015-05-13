@@ -1,6 +1,7 @@
 # Addresspoints
 
 Service that geocodes a single address string into a point. 
+The service API is described in the [docs](../docs) folder
 
 
 ## Building
