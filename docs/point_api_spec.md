@@ -24,17 +24,24 @@ Returns a message with current status and date
 
 ```json
 {
-    "status": "OK",
-    "time": "2015-02-18T04:57:56Z"
+  status: "OK",
+  service: "grasshopper-addresspoints",
+  time: "2015-05-13T15:52:25.856Z",
+  host: "localhost"
 }
 ```
 
 **2. Single Point Geocode**
 
-`GET  /addresses/points?search=<address>` where <address> is the search string to return
+`GET  /addresses/points/<address>` where <address> is the address search
 
-`GET /address/point?search=16410+N+AR+94+Hwy+Pea+Ridge+72751+AR`
+`GET /addresses/points/16410+N+AR+94+Hwy+Pea+Ridge+AR+72751`
 
+The endpoint can also suggest alternative results, by passing the `suggest` parameter:
+
+`GET /addresses/points/main+st?suggest=5`
+
+This will return up to 5 candidates
 
 `POST /addresses/points`
 
@@ -46,20 +53,22 @@ Example:
 
 ```json
 {
-  "address": "16410 N AR 94 Hwy Pea Ridge 72751 AR"
+  "address": "16410 N AR 94 Hwy Pea Ridge AR 72751"
 }
 ```
 
-Return: GeoJSON object that includes the point that resulted from geocoding, as well as other attributes including the address that was found as well as alternate address (if available).
+Return: GeoJSON array that includes the point that resulted from geocoding, as well as other attributes including the address that was found as well as alternate address (if available).
 
 ```json
-{
+[
+  {
     "type": "Feature",
     "geometry": {
         "type": "Point",
         "coordinates": [
             -94.15513718509897,
-            36.48036108322251
+            36.48036108322251,
+            0
         ]
     },
     "properties": {
@@ -67,7 +76,8 @@ Return: GeoJSON object that includes the point that resulted from geocoding, as 
         "alt_address": "",
         "load_date": 1426878172094
     }
-}
+  }
+]
 ```
 
 
