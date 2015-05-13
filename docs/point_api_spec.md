@@ -24,10 +24,10 @@ Returns a message with current status and date
 
 ```json
 {
-  status: "OK",
-  service: "grasshopper-addresspoints",
-  time: "2015-05-13T15:52:25.856Z",
-  host: "localhost"
+  "status": "OK",
+  "service": "grasshopper-addresspoints",
+  "time": "2015-05-13T15:52:25.856Z",
+  "host": "localhost"
 }
 ```
 
