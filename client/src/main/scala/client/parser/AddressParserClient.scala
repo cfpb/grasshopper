@@ -9,7 +9,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
 import grasshopper.client.ServiceClient
-import grasshopper.client.parser.model.ParserStatus
+import grasshopper.client.parser.model.{ ParserStatus, ParsedAddress }
 import grasshopper.client.parser.protocol.ParserJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
@@ -35,4 +35,20 @@ object AddressParserClient extends ServiceClient with ParserJsonProtocol {
       }
     }
   }
+
+  def parse(address: String): Future[Either[String, ParsedAddress]] = {
+    implicit val ec: ExecutionContext = system.dispatcher
+    sendGetRequest(host, port.toInt, s"parse?address=${address}").flatMap { response =>
+      response.status match {
+        case OK => Unmarshal(response.entity).to[ParsedAddress].map(Right(_))
+        case BadRequest => Future.successful(Left("Bad Request"))
+        case _ => Unmarshal(response.entity).to[String].flatMap { entity =>
+          val error = s"Request failed with status code ${response.status} and entity ${entity}}"
+          Future.failed(new IOException(error))
+        }
+      }
+
+    }
+  }
+
 }
