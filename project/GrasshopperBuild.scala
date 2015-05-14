@@ -87,6 +87,16 @@ object GrasshopperBuild extends Build {
       )
     ).dependsOn(elasticsearch)
 
+  lazy val client = (project in file("client"))
+    .configs( IntegrationTest )
+    .settings(buildSettings: _*)
+    .settings(
+      Revolver.settings ++
+        Seq(
+          assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+          libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps
+        )
+    )
 
   lazy val geocoder = (project in file("geocoder"))
     .configs( IntegrationTest )
@@ -98,18 +108,9 @@ object GrasshopperBuild extends Build {
         libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps,
         resolvers ++= repos
       )
-    )
+    ).dependsOn(client)
 
-  lazy val client = (project in file("client"))
-    .configs( IntegrationTest )
-    .settings(buildSettings: _*)
-    .settings(
-      Revolver.settings ++
-      Seq(
-        assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
-        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps
-      )
-    )
+
 
 
 }
