@@ -5,7 +5,7 @@ import geometry._
 import feature._
 import grasshopper.elasticsearch.ElasticsearchServer
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
-import grasshopper.census.model.ParsedAddressInput
+import grasshopper.census.model.ParsedInputAddress
 import grasshopper.census.util.TestData._
 
 class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAll with CensusGeocode {
@@ -25,7 +25,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
   }
 
   "Census Geocode" must "interpolate an address location from a line segment" in {
-    val addressInput = ParsedAddressInput(
+    val addressInput = ParsedInputAddress(
       3146,
       "M St NW",
       20007,

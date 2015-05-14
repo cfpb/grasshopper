@@ -4,7 +4,7 @@ import java.net.InetAddress
 import java.util.Calendar
 import org.scalatest.FlatSpec
 import org.scalatest.MustMatchers
-import grasshopper.census.model.{ ParsedAddressInput, Status }
+import grasshopper.census.model.{ ParsedInputAddress, Status }
 import spray.json._
 
 class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonProtocol {
@@ -16,8 +16,8 @@ class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonP
   }
 
   "ParsedAddressInput" should "convert to and from JSON" in {
-    val addressInput = ParsedAddressInput(1311, "30th St NW", 20007, "DC")
-    addressInput.toJson.convertTo[ParsedAddressInput] mustBe addressInput
+    val addressInput = ParsedInputAddress(1311, "30th St NW", 20007, "DC")
+    addressInput.toJson.convertTo[ParsedInputAddress] mustBe addressInput
   }
 }
 

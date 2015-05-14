@@ -15,7 +15,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
-import grasshopper.census.model.{ ParsedAddressInput, Status }
+import grasshopper.census.model.{ ParsedInputAddress, Status }
 import grasshopper.census.protocol.CensusJsonProtocol
 import spray.json._
 import io.geojson.FeatureJsonProtocol._
@@ -59,7 +59,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
               'zipCode.as[Int] ? 0,
               'state.as[String] ? ""
             ) { (number, streetName, zipCode, state) =>
-                val addressInput = ParsedAddressInput(number, streetName, zipCode, state)
+                val addressInput = ParsedInputAddress(number, streetName, zipCode, state)
                 encodeResponseWith(NoCoding, Gzip, Deflate) {
                   geocodeLines(addressInput, 1)
                 }
@@ -68,7 +68,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
             post {
               encodeResponseWith(NoCoding, Gzip, Deflate) {
                 entity(as[String]) { json =>
-                  val addressInput = json.parseJson.convertTo[ParsedAddressInput]
+                  val addressInput = json.parseJson.convertTo[ParsedInputAddress]
                   geocodeLines(addressInput, 1)
                 }
               }
@@ -78,7 +78,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
 
   }
 
-  private def geocodeLines(addressInput: ParsedAddressInput, count: Int): StandardRoute = {
+  private def geocodeLines(addressInput: ParsedInputAddress, count: Int): StandardRoute = {
     val points = geocodeLine(client, "census", "addrfeat", addressInput, count) getOrElse (Nil.toArray)
     if (points.length > 0)
       complete(ToResponseMarshallable(points))

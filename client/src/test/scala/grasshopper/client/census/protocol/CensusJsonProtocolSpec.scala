@@ -4,7 +4,7 @@ import grasshopper.client.census.model._
 import org.scalatest.{ MustMatchers, FlatSpec }
 import spray.json._
 
-class TigerJsonProtocolSpec extends FlatSpec with MustMatchers with TigerJsonProtocol {
+class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonProtocol {
   "A CensusStatus" must "deserialize from JSON" in {
     val statusStr = """
     {

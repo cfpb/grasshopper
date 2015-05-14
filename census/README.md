@@ -1,7 +1,7 @@
 # Census
 
 Service that geocodes a single address string into a point. 
-
+The service API is described [here](../docs/tiger_api_spec.md)
 
 ## Building
 

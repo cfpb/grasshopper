@@ -7,7 +7,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.{ QueryBuilders, FilterBuilders }
 import org.elasticsearch.search.SearchHit
 import org.slf4j.LoggerFactory
-import grasshopper.census.model.ParsedAddressInput
+import grasshopper.census.model.ParsedInputAddress
 import io.geojson.FeatureJsonProtocol._
 import spray.json._
 
@@ -17,7 +17,7 @@ trait CensusGeocode {
 
   lazy val log = Logger(LoggerFactory.getLogger("grasshopper-census"))
 
-  def geocodeLine(client: Client, index: String, indexType: String, addressInput: ParsedAddressInput, count: Int): Try[Array[Feature]] = {
+  def geocodeLine(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress, count: Int): Try[Array[Feature]] = {
     log.debug(s"Search Address: ${addressInput.toString()}")
     Try {
       val hits = searchAddress(client, index, indexType, addressInput)
@@ -34,7 +34,7 @@ trait CensusGeocode {
     }
   }
 
-  private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedAddressInput) = {
+  private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress) = {
     val number = addressInput.number
     val street = addressInput.streetName
     val zipCode = addressInput.zipCode

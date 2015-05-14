@@ -10,7 +10,7 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 import grasshopper.elasticsearch.ElasticsearchServer
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
-import grasshopper.census.model.{ Status, ParsedAddressInput }
+import grasshopper.census.model.{ Status, ParsedInputAddress }
 import grasshopper.census.util.TestData._
 import spray.json._
 
@@ -48,7 +48,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
   }
 
   it should "geocode an interpolated address point" in {
-    val addressInput = ParsedAddressInput(
+    val addressInput = ParsedInputAddress(
       3146,
       "M St NW",
       20007,

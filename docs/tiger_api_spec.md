@@ -24,12 +24,18 @@ Returns a message with current status and date
 
 ```json
 {
-    "status": "OK",
-    "time": "2015-02-18T04:57:56Z"
+  "status": "OK",
+  "service": "grasshopper-census",
+  "time": "2015-05-13T15:52:25.856Z",
+  "host": "localhost"
 }
 ```
 
 **2. Single Point Geocode**
+
+`GET /census/addrfeat?number=<number>&streetName=<streetName>&zipCode=<zipCode>&state=<state>`, i.e.
+
+`GET /census/addrfeat?number=3146&streetName=M+St+NW&zipCode=20007&state=DC`
 
 `POST /census/addrfeat`
 
