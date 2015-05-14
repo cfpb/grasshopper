@@ -6,5 +6,6 @@ case class AddressPart(
   StateName: String,
   StreetName: String,
   StreetNamePostType: String,
-  ZipCode: String)
+  ZipCode: String
+)
 case class ParsedAddress(input: String, parts: AddressPart)
