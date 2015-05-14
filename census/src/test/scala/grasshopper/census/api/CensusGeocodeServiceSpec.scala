@@ -40,7 +40,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[grasshopper.census.model.Status]
       resp.status mustBe "OK"
-      resp.service mustBe "grasshopper-grasshopper.census"
+      resp.service mustBe "grasshopper-census"
       val statusTime = Instant.parse(resp.time)
       val timeDiff = Duration.between(statusTime, Instant.now).getSeconds
       timeDiff must be <= 1l

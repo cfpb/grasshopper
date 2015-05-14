@@ -44,7 +44,7 @@ trait Service extends AddressPointJsonProtocol with Geocode {
             // Creates ISO-8601 date string in UTC down to millisecond precision
             val now = Instant.now.toString
             val host = InetAddress.getLocalHost.getHostName
-            val status = Status("OK", "grasshopper-grasshopper.addresspoints", now, host)
+            val status = Status("OK", "grasshopper-addresspoints", now, host)
             log.debug(status.toJson.toString())
             ToResponseMarshallable(status)
           }

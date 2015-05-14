@@ -34,7 +34,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
 
   val logger: LoggingAdapter
 
-  override lazy val log = Logger(LoggerFactory.getLogger("grasshopper-tiger"))
+  override lazy val log = Logger(LoggerFactory.getLogger("grasshopper-census"))
 
   val routes = {
     path("status") {
@@ -43,7 +43,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
           complete {
             val now = Instant.now.toString
             val host = InetAddress.getLocalHost.getHostName
-            val status = Status("OK", "grasshopper-grasshopper.census", now, host)
+            val status = Status("OK", "grasshopper-census", now, host)
             log.debug(status.toJson.toString())
             ToResponseMarshallable(status)
           }

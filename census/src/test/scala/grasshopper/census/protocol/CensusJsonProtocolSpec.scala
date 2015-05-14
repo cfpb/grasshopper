@@ -11,7 +11,7 @@ class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonP
 
   "Status" should "convert to and from JSON" in {
     val date = Calendar.getInstance().getTime().toString
-    val status = Status("OK", "grasshopper-grasshopper.census", date, InetAddress.getLocalHost.getHostName)
+    val status = Status("OK", "grasshopper-census", date, InetAddress.getLocalHost.getHostName)
     status.toJson.convertTo[Status] mustBe status
   }
 

@@ -9,8 +9,6 @@ import io.geojson.FeatureJsonProtocol._
 
 class AddressInterpolatorSpec extends FlatSpec with MustMatchers {
 
-  import AddressInterpolator._
-
   val p1 = Point(-77, 39)
   val p2 = Point(-76, 40)
   val p3 = Point(-75, 38)

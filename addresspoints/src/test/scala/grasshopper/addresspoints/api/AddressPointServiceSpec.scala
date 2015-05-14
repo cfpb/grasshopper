@@ -59,7 +59,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
       val resp = responseAs[model.Status]
 
       resp.status mustBe "OK"
-      resp.service mustBe "grasshopper-grasshopper.addresspoints"
+      resp.service mustBe "grasshopper-addresspoints"
 
       val statusTime = Instant.parse(resp.time)
       val timeDiff = Duration.between(statusTime, Instant.now).getSeconds

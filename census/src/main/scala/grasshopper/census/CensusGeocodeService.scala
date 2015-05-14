@@ -12,7 +12,7 @@ import grasshopper.census.api.Service
 import scala.util.Properties
 
 object CensusGeocodeService extends App with Service {
-  override implicit val system: ActorSystem = ActorSystem("grasshopper-tiger")
+  override implicit val system: ActorSystem = ActorSystem("grasshopper-census")
 
   override implicit val executor = system.dispatcher
   override implicit val materializer = ActorFlowMaterializer()
