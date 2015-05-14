@@ -8,11 +8,12 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
 import feature.Feature
+import io.geojson.FeatureJsonProtocol._
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import grasshopper.client.ServiceClient
 import grasshopper.client.addresspoints.model.AddressPointsStatus
 import grasshopper.client.addresspoints.protocol.AddressPointsJsonProtocol
-
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
 object AddressPointsClient extends ServiceClient with AddressPointsJsonProtocol {
