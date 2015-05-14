@@ -1,11 +1,8 @@
 package grasshopper.client.addresspoints
 
 import java.io.IOException
-
-import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
 import feature.Feature
 import io.geojson.FeatureJsonProtocol._
@@ -17,13 +14,10 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
 object AddressPointsClient extends ServiceClient with AddressPointsJsonProtocol {
-
-  override implicit val system: ActorSystem = ActorSystem("grasshopper-grasshopper.client-grasshopper.addresspoints")
-  override implicit val materializer: ActorFlowMaterializer = ActorFlowMaterializer()
   override val config = ConfigFactory.load()
 
-  lazy val host = Properties.envOrElse("GRASSHOPPER_ADDRESSPOINTS_HOST", config.getString("grasshopper.addresspoints.host"))
-  lazy val port = Properties.envOrElse("GRASSHOPPER_ADDRESSPOINTS_PORT", config.getString("grasshopper.addresspoints.port"))
+  lazy val host = Properties.envOrElse("GRASSHOPPER_ADDRESSPOINTS_HOST", config.getString("grasshopper.client.addresspoints.host"))
+  lazy val port = Properties.envOrElse("GRASSHOPPER_ADDRESSPOINTS_PORT", config.getString("grasshopper.client.addresspoints.port"))
 
   def status(): Future[Either[String, AddressPointsStatus]] = {
     implicit val ec: ExecutionContext = system.dispatcher

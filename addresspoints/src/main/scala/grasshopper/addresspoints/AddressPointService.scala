@@ -12,7 +12,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress
 import scala.util.Properties
 
 object AddressPointService extends App with Service {
-  override implicit val system = ActorSystem("grasshopper-grasshopper.addresspoints")
+  override implicit val system = ActorSystem("grasshopper-addresspoints")
   override implicit val executor = system.dispatcher
   override implicit val materializer = ActorFlowMaterializer()
 

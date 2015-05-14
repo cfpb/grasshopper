@@ -13,11 +13,9 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 
 trait ServiceClient {
-
   implicit val askTimeout: Timeout = 1000.millis
-
-  implicit val system: ActorSystem
-  implicit val materializer: ActorFlowMaterializer
+  implicit val system: ActorSystem = ActorSystem("grasshopper-client")
+  implicit val materializer: ActorFlowMaterializer = ActorFlowMaterializer()
 
   val config: Config
 
