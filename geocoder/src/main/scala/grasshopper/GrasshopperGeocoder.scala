@@ -16,6 +16,10 @@ object GrasshopperGeocoder extends App with Service {
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
 
-  val http = Http(system).bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
+  val http = Http(system).bindAndHandle(
+    routes,
+    config.getString("grasshopper.geocoder.http.interface"),
+    config.getInt("grasshopper.geocoder.http.port")
+  )
 
 }

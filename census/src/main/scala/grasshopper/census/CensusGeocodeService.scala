@@ -20,10 +20,14 @@ object CensusGeocodeService extends App with Service {
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
 
-  lazy val host = Properties.envOrElse("ELASTICSEARCH_HOST", config.getString("elasticsearch.host"))
-  lazy val port = Properties.envOrElse("ELASTICSEARCH_PORT", config.getString("elasticsearch.port"))
+  lazy val host = Properties.envOrElse("ELASTICSEARCH_HOST", config.getString("grasshopper.census.elasticsearch.host"))
+  lazy val port = Properties.envOrElse("ELASTICSEARCH_PORT", config.getString("grasshopper.census.elasticsearch.port"))
   lazy val client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
 
-  val http = Http(system).bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
+  val http = Http(system).bindAndHandle(
+    routes,
+    config.getString("grasshopper.census.http.interface"),
+    config.getInt("grasshopper.census.http.port")
+  )
 
 }
