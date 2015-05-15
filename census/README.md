@@ -6,7 +6,7 @@ The service API is described [here](../docs/tiger_api_spec.md)
 ## Building
 
 From the grasshopper root directory, run `sbt` and then `project census`. This will set the current sbt project to census.
-From this prompt run `test` to run the automated unit and integration tests
+From this prompt run `test` to compile the project and run the automated unit tests
 
 ## Running
 

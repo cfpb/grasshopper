@@ -7,7 +7,7 @@ The service API is described [here](../docs/point_api_spec.md)
 ## Building
 
 From the grasshopper root directory, run `sbt` and then `project addresspoints`. This will set the current sbt project to addresspoints.
-From this prompt run `test` to run the automated unit and integration tests. 
+From this prompt run `test` to compile the project and run the automated unit tests.
 
 ## Running
 
