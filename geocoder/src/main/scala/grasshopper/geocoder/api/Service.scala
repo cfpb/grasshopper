@@ -1,4 +1,4 @@
-package grasshopper.api
+package grasshopper.geocoder.api
 
 import java.net.InetAddress
 import java.time.Instant
@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import akka.event.LoggingAdapter
-import grasshopper.protocol.GrasshopperJsonProtocol
-import grasshopper.model.Status
+import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
+import grasshopper.geocoder.model.Status
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.Directives._

@@ -1,11 +1,11 @@
-package grasshopper
+package grasshopper.geocoder
 
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
-import grasshopper.api.Service
+import grasshopper.geocoder.api.Service
 
 object GrasshopperGeocoder extends App with Service {
   override implicit val system: ActorSystem = ActorSystem("grasshopper-geocoder")

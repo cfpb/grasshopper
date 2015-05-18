@@ -1,3 +1,3 @@
-package grasshopper.model
+package grasshopper.geocoder.model
 
 case class Status(status: String, service: String, time: String, host: String)
