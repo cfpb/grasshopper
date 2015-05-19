@@ -35,13 +35,10 @@ trait Service extends GrasshopperJsonProtocol {
 
   val routes = {
     path("status") {
-      def addressPointsStatus = AddressPointsClient.status.map(s => s.right.getOrElse(AddressPointsStatus.empty))
-      def censusStatus = CensusClient.status.map(s => s.right.getOrElse(CensusStatus.empty))
-      def parserStatus = AddressParserClient.status.map(s => s.right.getOrElse(ParserStatus.empty))
       val fStatus: Future[GeocodeStatus] = async {
-        val as = addressPointsStatus
-        val cs = censusStatus
-        val ps = parserStatus
+        val as = AddressPointsClient.status.map(s => s.right.getOrElse(AddressPointsStatus.empty))
+        val cs = CensusClient.status.map(s => s.right.getOrElse(CensusStatus.empty))
+        val ps = AddressParserClient.status.map(s => s.right.getOrElse(ParserStatus.empty))
         GeocodeStatus(await(as), await(cs), await(ps))
       }
 
