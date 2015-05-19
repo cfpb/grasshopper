@@ -1,7 +1,5 @@
 package grasshopper.client.census
 
-import java.io.IOException
-
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import feature.Feature

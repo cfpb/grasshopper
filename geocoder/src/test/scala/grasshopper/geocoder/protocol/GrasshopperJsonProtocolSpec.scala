@@ -1,6 +1,6 @@
 package grasshopper.geocoder.protocol
 
-import grasshopper.geocoder.model.{ GeocodeResult, Status }
+import grasshopper.geocoder.model.GeocodeResult
 import org.scalatest.{ MustMatchers, FlatSpec }
 import spray.json._
 

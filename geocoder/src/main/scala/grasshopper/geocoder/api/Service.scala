@@ -1,23 +1,25 @@
 package grasshopper.geocoder.api
 
-import java.net.InetAddress
-import java.time.Instant
-import scala.concurrent.ExecutionContextExecutor
 import akka.actor.ActorSystem
+import akka.event.LoggingAdapter
+import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorFlowMaterializer
-import org.slf4j.LoggerFactory
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import akka.event.LoggingAdapter
+import grasshopper.client.addresspoints.AddressPointsClient
+import grasshopper.client.addresspoints.model.AddressPointsStatus
+import grasshopper.client.census.CensusClient
+import grasshopper.client.census.model.CensusStatus
+import grasshopper.client.parser.AddressParserClient
+import grasshopper.client.parser.model.ParserStatus
+import grasshopper.geocoder.model.GeocodeStatus
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
-import grasshopper.geocoder.model.Status
-import akka.http.scaladsl.marshalling.ToResponseMarshallable
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
-import spray.json._
-import io.geojson.FeatureJsonProtocol._
+import org.slf4j.LoggerFactory
+import scala.async.Async.{ async, await }
+import scala.concurrent.{ ExecutionContextExecutor, Future }
 
 trait Service extends GrasshopperJsonProtocol {
   implicit val system: ActorSystem
@@ -33,14 +35,20 @@ trait Service extends GrasshopperJsonProtocol {
 
   val routes = {
     path("status") {
-      get {
-        encodeResponseWith(NoCoding, Gzip, Deflate) {
-          complete {
-            val now = Instant.now.toString
-            val host = InetAddress.getLocalHost.getHostName
-            val status = Status("OK", "grasshopper-geocoder", now, host)
-            log.debug(status.toJson.toString())
-            ToResponseMarshallable(status)
+      def addressPointsStatus = AddressPointsClient.status.map(s => s.right.getOrElse(AddressPointsStatus.empty))
+      def censusStatus = CensusClient.status.map(s => s.right.getOrElse(CensusStatus.empty))
+      def parserStatus = AddressParserClient.status.map(s => s.right.getOrElse(ParserStatus.empty))
+      val fStatus: Future[GeocodeStatus] = async {
+        val as = addressPointsStatus
+        val cs = censusStatus
+        val ps = parserStatus
+        GeocodeStatus(await(as), await(cs), await(ps))
+      }
+
+      encodeResponseWith(NoCoding, Gzip, Deflate) {
+        complete {
+          fStatus.map { s =>
+            ToResponseMarshallable(s)
           }
         }
       }

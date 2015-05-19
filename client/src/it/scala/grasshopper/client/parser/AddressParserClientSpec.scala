@@ -1,8 +1,6 @@
 package grasshopper.client.parser
 
-import grasshopper.client.parser.model.ParserStatus
 import org.scalatest._
-
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
