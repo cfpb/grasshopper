@@ -5,3 +5,8 @@ case class ParsedInputAddress(number: Int, streetName: String, zipCode: Int, sta
     s"${number} ${streetName} ${state} ${zipCode}"
   }
 }
+
+object ParsedInputAddress {
+  def empty: ParsedInputAddress =
+    ParsedInputAddress(0, "", 0, "")
+}

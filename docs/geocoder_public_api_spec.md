@@ -66,7 +66,7 @@ GET /geocode/1311+30th+St+NW+Washington+DC+20007
   },
   "features": [
       {
-        "service": "addresspoints",
+        "service": "census",
         "data": {
           "type": "Feature",
           "geometry": {
@@ -90,7 +90,7 @@ GET /geocode/1311+30th+St+NW+Washington+DC+20007
         }
       },
       {
-        "service": "census",
+        "service": "addresspoints",
         "data": {
           "type": "Feature",
           "geometry": {

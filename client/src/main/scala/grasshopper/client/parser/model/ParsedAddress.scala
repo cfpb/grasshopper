@@ -9,3 +9,7 @@ case class AddressPart(
   ZipCode: String
 )
 case class ParsedAddress(input: String, parts: AddressPart)
+
+object ParsedAddress {
+  def empty: ParsedAddress = ParsedAddress("", AddressPart("", "", "", "", "", ""))
+}
