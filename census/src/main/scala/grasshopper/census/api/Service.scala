@@ -13,6 +13,7 @@ import akka.http.scaladsl.server.StandardRoute
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
+import feature.Feature
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import grasshopper.census.model.{ ParsedInputAddress, Status }
@@ -21,6 +22,7 @@ import spray.json._
 import io.geojson.FeatureJsonProtocol._
 import grasshopper.census.search.CensusGeocode
 import scala.concurrent.ExecutionContextExecutor
+import scala.util.{ Success, Failure, Try }
 
 trait Service extends CensusJsonProtocol with CensusGeocode {
   implicit val system: ActorSystem
@@ -68,8 +70,13 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
             post {
               encodeResponseWith(NoCoding, Gzip, Deflate) {
                 entity(as[String]) { json =>
-                  val addressInput = json.parseJson.convertTo[ParsedInputAddress]
-                  geocodeLines(addressInput, 1)
+                  val tryAddressInput = Try(json.parseJson.convertTo[ParsedInputAddress])
+                  tryAddressInput match {
+                    case Success(a) => geocodeLines(a, 1)
+                    case Failure(e) =>
+                      log.error(e.getLocalizedMessage)
+                      complete(BadRequest)
+                  }
                 }
               }
             }
@@ -80,9 +87,12 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
 
   private def geocodeLines(addressInput: ParsedInputAddress, count: Int): StandardRoute = {
     val points = geocodeLine(client, "census", "addrfeat", addressInput, count) getOrElse (Nil.toArray)
-    if (points.length > 0)
+    if (points.length > 0) {
       complete(ToResponseMarshallable(points))
-    else
-      complete(NotFound)
+    } else {
+      val pts: Array[Feature] = Nil.toArray
+      complete(ToResponseMarshallable(pts))
+    }
+
   }
 }

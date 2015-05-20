@@ -7,12 +7,14 @@ import akka.http.scaladsl.model.MediaTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ ContentTypes, HttpEntity }
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import feature.Feature
 import grasshopper.elasticsearch.ElasticsearchServer
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
 import grasshopper.census.model.{ Status, ParsedInputAddress }
 import grasshopper.census.util.TestData._
 import spray.json._
+import io.geojson.FeatureJsonProtocol._
 
 class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
@@ -64,6 +66,28 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
       contentType.mediaType mustBe `application/json`
     }
 
+  }
+
+  it should "return BadRequest when invalid JSON is POSTed" in {
+    val badJson = """{"invalid":"json"}"""
+    Post("/census/addrfeat", HttpEntity(ContentTypes.`application/json`, badJson)) ~> routes ~> check(
+      status mustBe BadRequest
+    )
+  }
+
+  it should "return empty array when searching for address that doesn't exist" in {
+    val addressInput = ParsedInputAddress(
+      5000,
+      "M St NW",
+      20007,
+      "DC"
+    )
+    val json = addressInput.toJson.toString
+    Post("/census/addrfeat", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
+      status mustBe OK
+      val resp = responseAs[Array[Feature]]
+      resp.size mustBe 0
+    }
   }
 
 }
