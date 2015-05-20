@@ -67,11 +67,13 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     }
   }
 
-  it should "return NotFound when searching for address that doesn't exist" in {
+  it should "return empty array when searching for address that doesn't exist" in {
     val address = AddressInput("1311 31th St NW Washington DC 20007")
     val json = address.toJson.toString
     Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
-      status mustBe NotFound
+      status mustBe OK
+      val resp = responseAs[Array[Feature]]
+      resp.size mustBe 0
     }
   }
 

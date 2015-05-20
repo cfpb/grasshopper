@@ -2,6 +2,7 @@ package grasshopper.addresspoints.api
 
 import java.net.InetAddress
 import java.time.Instant
+import feature.Feature
 import grasshopper.addresspoints.model.{ AddressInput, Status }
 import grasshopper.addresspoints.protocol.AddressPointJsonProtocol
 import grasshopper.addresspoints.search.Geocode
@@ -88,7 +89,10 @@ trait Service extends AddressPointJsonProtocol with Geocode {
         ToResponseMarshallable(points)
       }
     } else {
-      complete(NotFound)
+      val pts: Array[Feature] = Nil.toArray
+      complete {
+        ToResponseMarshallable(pts)
+      }
     }
 
   }
