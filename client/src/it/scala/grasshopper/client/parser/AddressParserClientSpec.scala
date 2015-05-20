@@ -16,7 +16,7 @@ class AddressParserClientSpec extends FlatSpec with MustMatchers {
     }
   }
 
-  it must "parse an address string" in {
+  "A request to /parse" must "parse an address string" in {
     val maybeAddress = Await.result(AddressParserClient.parse("1311+30th+st+nw+washington+dc+20007"), 2.seconds)
     maybeAddress match {
       case Right(a) =>

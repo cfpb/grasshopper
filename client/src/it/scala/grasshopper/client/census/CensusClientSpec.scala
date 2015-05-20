@@ -17,7 +17,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
   }
 
 
-  it must "geocode an address string" in {
+  "A request to /geocode" must "geocode an address string" in {
     val parsedAddress = ParsedInputAddress(1311, "30th+St+NW", 20007, "DC")
     val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), 10.seconds)
     maybeAddress match {
