@@ -10,20 +10,24 @@ import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import feature.Feature
+import grasshopper.client.protocol.ClientJsonProtocol
+import io.geojson.FeatureJsonProtocol._
 import grasshopper.client.addresspoints.AddressPointsClient
-import grasshopper.client.addresspoints.model.AddressPointsStatus
+import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
 import grasshopper.client.census.CensusClient
-import grasshopper.client.census.model.{ CensusStatus, ParsedInputAddress }
+import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInputAddress }
 import grasshopper.client.model.ResponseError
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
-import grasshopper.geocoder.model.{ ServiceResult, GeocodeResult, GeocodeStatus }
+import grasshopper.geocoder.model.{ GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
+import io.geojson.FeatureJsonProtocol._
 import org.slf4j.LoggerFactory
 import scala.async.Async.{ async, await }
 import scala.concurrent.{ ExecutionContextExecutor, Future }
+import spray.json._
 
-trait Service extends GrasshopperJsonProtocol {
+trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
@@ -72,31 +76,33 @@ trait Service extends GrasshopperJsonProtocol {
         }
 
         val fGeocoded = async {
-          val ptGeocode = await(AddressPointsClient.geocode(address))
-          val addressPointsGeocode: List[Feature] =
-            if (ptGeocode.isLeft) {
-              log.error(ptGeocode.left.get.desc)
-              Nil
-            } else {
-              ptGeocode.right.getOrElse(Nil)
-            }
-
-          val pointServiceResult = ServiceResult("grasshopper-addresspoints", addressPointsGeocode)
-
           val parsed = await(fParsed)
           val parsedAddress = parsed._1
           val parsedInputAddress = parsed._2
-          val cGeocode = await(CensusClient.geocode(parsedInputAddress))
-          val censusGeocode: List[Feature] =
-            if (cGeocode.isLeft) {
-              log.error(cGeocode.left.get.desc)
-              Nil
-            } else {
-              cGeocode.right.getOrElse(Nil)
-            }
-          val censusServiceResult = ServiceResult("grasshopper-census", censusGeocode)
+          println(parsedAddress)
 
-          GeocodeResult("OK", parsedAddress, List(pointServiceResult, censusServiceResult))
+          val ptGeocode = await(AddressPointsClient.geocode(address))
+          val addressPointGeocode: AddressPointsResult =
+            if (ptGeocode.isLeft) {
+              log.error(ptGeocode.left.get.desc)
+              AddressPointsResult.empty
+            } else {
+              ptGeocode.right.getOrElse(AddressPointsResult.empty)
+            }
+
+          val censusPointGeocode: CensusResult =
+            if (parsedInputAddress.isEmpty) {
+              CensusResult.empty
+            } else {
+              val cGeocode = await(CensusClient.geocode(parsedInputAddress))
+              if (cGeocode.isLeft) {
+                log.error(cGeocode.left.get.desc)
+                CensusResult.empty
+              } else {
+                cGeocode.right.getOrElse(CensusResult.empty)
+              }
+            }
+          GeocodeResult("OK", parsedAddress, addressPointGeocode, censusPointGeocode)
         }
 
         encodeResponseWith(NoCoding, Gzip, Deflate) {
