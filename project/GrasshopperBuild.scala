@@ -13,6 +13,7 @@ object BuildSettings {
   val buildSettings = Defaults.coreDefaultSettings ++
     scalariformSettings ++
     wartremoverSettings ++
+    Defaults.itSettings ++
     Seq(
       organization  := buildOrganization,
       version       := buildVersion,
@@ -44,13 +45,16 @@ object GrasshopperBuild extends Build {
 
   val geocodeDeps = akkaHttpDeps ++ esDeps ++ scaleDeps
 
+  val asyncDeps = Seq(async)
+
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
-    .aggregate(addresspoints, census)
+    .aggregate(geocoder, addresspoints, census, client)
 
 
   lazy val elasticsearch = (project in file("elasticsearch"))
+    .configs( IntegrationTest )
     .settings(buildSettings: _*)
     .settings(
       Seq(
@@ -60,6 +64,7 @@ object GrasshopperBuild extends Build {
     )
 
   lazy val addresspoints = (project in file("addresspoints"))
+    .configs( IntegrationTest )
     .settings(buildSettings: _*)
     .settings(
       Revolver.settings ++
@@ -71,6 +76,7 @@ object GrasshopperBuild extends Build {
     ).dependsOn(elasticsearch)
 
   lazy val census = (project in file("census"))
+    .configs( IntegrationTest )
     .settings(buildSettings: _*)
     .settings(
       Revolver.settings ++ 
@@ -80,6 +86,31 @@ object GrasshopperBuild extends Build {
         resolvers ++= repos
       )
     ).dependsOn(elasticsearch)
+
+  lazy val client = (project in file("client"))
+    .configs( IntegrationTest )
+    .settings(buildSettings: _*)
+    .settings(
+      Revolver.settings ++
+        Seq(
+          assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+          libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps
+        )
+    )
+
+  lazy val geocoder = (project in file("geocoder"))
+    .configs( IntegrationTest )
+    .settings(buildSettings: _*)
+    .settings(
+      Revolver.settings ++
+      Seq(
+        assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps,
+        resolvers ++= repos
+      )
+    ).dependsOn(client)
+
+
 
 
 }

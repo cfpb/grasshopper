@@ -18,11 +18,13 @@ object Dependencies {
   val scalaLogging    = "com.typesafe.scala-logging" %% "scala-logging"                        % Version.scalaLogging
   val logstashLogback = "net.logstash.logback"        % "logstash-logback-encoder"             % Version.logstashLogback
 
-  val scalaTest       = "org.scalatest"              %% "scalatest"                            % Version.scalaTest   % "test"
-  val scalaCheck      = "org.scalacheck"             %% "scalacheck"                           % Version.scalaCheck  % "test"
+  val scalaTest       = "org.scalatest"              %% "scalatest"                            % Version.scalaTest   % "it, test"
+  val scalaCheck      = "org.scalacheck"             %% "scalacheck"                           % Version.scalaCheck  % "it, test"
 
   val es              = "org.elasticsearch"           % "elasticsearch"                        % Version.elasticsearch
 
   val scaleGeoJson    = "com.github.jmarin"          %% "scale-geojson"                        % Version.scale
+
+  val async           = "org.scala-lang.modules"     %% "scala-async"                          % Version.async
 
 }
