@@ -13,6 +13,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
         s.status mustBe "OK"
       case Left(b) =>
         b.desc mustBe "503 Service Unavailable"
+        fail("SERVICE_UNAVAILABLE")
     }
   }
 
@@ -21,13 +22,15 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
     val parsedAddress = ParsedInputAddress(1311, "30th+St+NW", 20007, "DC")
     val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), 10.seconds)
     maybeAddress match {
-      case Right(features) =>
+      case Right(result) =>
+        val features = result.features
         features.size mustBe 1
         val f = features(0)
         val address = f.values.getOrElse("FULLNAME", "")
         address mustBe "30th St NW"
       case Left(b) =>
         b.desc mustBe "503 Service Unavailable"
+        fail("SERVICE_UNAVAILABLE")
     }
   }
 
