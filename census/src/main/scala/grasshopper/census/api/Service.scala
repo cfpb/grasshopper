@@ -16,7 +16,7 @@ import com.typesafe.scalalogging.Logger
 import feature.Feature
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
-import grasshopper.census.model.{ ParsedInputAddress, Status }
+import grasshopper.census.model.{ CensusResult, ParsedInputAddress, Status }
 import grasshopper.census.protocol.CensusJsonProtocol
 import spray.json._
 import io.geojson.FeatureJsonProtocol._
@@ -82,16 +82,15 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
             }
         }
       }
-
   }
 
   private def geocodeLines(addressInput: ParsedInputAddress, count: Int): StandardRoute = {
     val points = geocodeLine(client, "census", "addrfeat", addressInput, count) getOrElse (Nil.toArray)
     if (points.length > 0) {
-      complete(ToResponseMarshallable(points))
+      complete(ToResponseMarshallable(CensusResult(points)))
     } else {
       val pts: Array[Feature] = Nil.toArray
-      complete(ToResponseMarshallable(pts))
+      complete(ToResponseMarshallable(CensusResult(pts)))
     }
 
   }

@@ -11,7 +11,7 @@ import feature.Feature
 import grasshopper.elasticsearch.ElasticsearchServer
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
-import grasshopper.census.model.{ Status, ParsedInputAddress }
+import grasshopper.census.model.{ CensusResult, Status, ParsedInputAddress }
 import grasshopper.census.util.TestData._
 import spray.json._
 import io.geojson.FeatureJsonProtocol._
@@ -75,7 +75,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
     )
   }
 
-  it should "return empty array when searching for address that doesn't exist" in {
+  it should "return empty features array when searching for address that doesn't exist" in {
     val addressInput = ParsedInputAddress(
       5000,
       "M St NW",
@@ -85,8 +85,8 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
     val json = addressInput.toJson.toString
     Post("/census/addrfeat", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
-      val resp = responseAs[Array[Feature]]
-      resp.size mustBe 0
+      val resp = responseAs[CensusResult]
+      resp.features.size mustBe 0
     }
   }
 
