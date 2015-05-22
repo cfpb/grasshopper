@@ -34,6 +34,7 @@ trait CensusGeocode {
     }
   }
 
+  // An alternative geocoding implementation, uses less Elasticsearch query and more filtering in code. Not using for now
   def geocodeLine2(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress, count: Int): Try[Array[Feature]] = {
     Try {
       val number = addressInput.number
