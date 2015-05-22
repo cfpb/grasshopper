@@ -17,11 +17,25 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     server.start()
     server.createAndWaitForIndex("census")
     server.loadFeature("census", "addrfeat", getTigerLine1)
+    server.loadFeature("census", "addrfeat", getTigerLine2)
     client.admin().indices().refresh(new RefreshRequest("census")).actionGet()
   }
 
   override def afterAll = {
     server.stop()
+  }
+
+  "Census Geocode" must "find address" in {
+    val addressInput = ParsedInputAddress(
+      704,
+      "Chambersville Rd",
+      71742,
+      "AR"
+    )
+
+    val features = geocodeLine(client, "census", "addrfeat", addressInput, 1) getOrElse emptyFeatures
+    log.info(features.toString)
+    features(0).get("FULLNAME").getOrElse("") mustBe "Chambersville Rd"
   }
 
   "Census Geocode" must "interpolate an address location from a line segment" in {

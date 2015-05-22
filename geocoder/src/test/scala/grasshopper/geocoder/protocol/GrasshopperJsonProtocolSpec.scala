@@ -1,6 +1,6 @@
 package grasshopper.geocoder.protocol
 
-import grasshopper.client.addresspoints.model.AddressPointsStatus
+import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
 import grasshopper.client.census.model.CensusStatus
 import grasshopper.client.parser.model.ParserStatus
 import grasshopper.geocoder.model.{ GeocodeStatus, GeocodeResult }
@@ -51,14 +51,30 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
   "AddressPointService" must "serialize from JSON" in {
     val addressPointsServiceStr =
       """
-         {
-           "service": "grasshopper-addresspoints",
-           "data": [ ]
-         }
-      """.stripMargin
-    val addressPointService = addressPointsServiceStr.parseJson.convertTo[ServiceResult]
-    addressPointService.service mustBe "grasshopper-addresspoints"
-    addressPointService.data.size mustBe 1
+           {
+             "features": [
+               {
+                 "type": "Feature",
+                 "geometry": {
+                   "type": "Point",
+                     "coordinates": [
+                       -92.48266322840489,
+                        33.77129525636826,
+                         0
+                     ]
+                 },
+                 "properties": {
+                   "address": "1489 Chambersville Rd Thornton AR 71766",
+                   "alt_address": "",
+                   "load_date": 1426878178730
+                 }
+               }
+             ]
+           }
+        """.stripMargin
+    val addressPointService = addressPointsServiceStr.parseJson.convertTo[AddressPointsResult]
+    addressPointService.features.size mustBe 1
+    addressPointService.features(0).get("load_date").getOrElse(0) mustBe 1426878178730L
   }
 
   //  "A geocode result" must "serialize from JSON" in {

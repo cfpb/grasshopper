@@ -8,9 +8,20 @@ import grasshopper.census.model.AddressRange
 object AddressInterpolator {
 
   def calculateAddressRange(f: Feature, a: Int): AddressRange = {
-    val addressIsEven = (a % 2 == 0)
-    val rightRangeIsEven = (f.values.getOrElse("RFROMHN", 0).toString.toInt % 2 == 0)
-    val leftRangeIsEven = (f.values.getOrElse("LFROMHN", 0).toString.toInt % 2 == 0)
+    val addressIsEven = a % 2 == 0
+    val rEven = f.values.getOrElse("RFROMHN", 0)
+    val rightRange = rEven match {
+      case "" => 0
+      case _ => rEven.toString.toInt
+    }
+    val rightRangeIsEven = rightRange % 2 == 0
+
+    val lEven = f.values.getOrElse("LFROMHN", 0)
+    val leftRange = lEven match {
+      case "" => 0
+      case _ => lEven.toString.toInt
+    }
+    val leftRangeIsEven = leftRange % 2 == 0
 
     val prefix =
       if (addressIsEven && rightRangeIsEven)
@@ -29,7 +40,7 @@ object AddressInterpolator {
   }
 
   def interpolate(feature: Feature, range: AddressRange, a: Int): Feature = {
-    val sign = if (a % 2 == 0) 1 else -1
+    val sign = if (a % 2 == 0) -1 else 1
     val line = feature.geometry.asInstanceOf[Line]
     val l = line.length
     val d = calculateDistance(range)

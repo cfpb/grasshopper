@@ -12,6 +12,11 @@ object TestData {
     fjson.parseJson.convertTo[Feature]
   }
 
+  def getTigerLine2(): Feature = {
+    val fjson = scala.io.Source.fromFile("census/src/test/resources/tiger_line2.geojson").getLines().mkString
+    fjson.parseJson.convertTo[Feature]
+  }
+
   def emptyFeature(): Feature = {
     val p = Point(0, 0)
     val values = Map("geometry" -> p, "desc" -> "empty")
