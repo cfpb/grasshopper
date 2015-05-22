@@ -26,7 +26,6 @@ trait CensusGeocode {
         .map(hit => hit.getSourceAsString)
         .take(count)
         .map { s =>
-          log.info(s)
           val line = s.parseJson.convertTo[Feature]
           val addressRange = AddressInterpolator.calculateAddressRange(line, addressNumber)
           AddressInterpolator.interpolate(line, addressRange, addressNumber)
