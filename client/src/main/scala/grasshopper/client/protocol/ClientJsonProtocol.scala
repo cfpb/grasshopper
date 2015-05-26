@@ -8,6 +8,4 @@ import io.geojson.FeatureJsonProtocol._
 
 trait ClientJsonProtocol extends DefaultJsonProtocol {
   implicit val responseErrorFormat = jsonFormat1(ResponseError.apply)
-  implicit val addressPointsResultFormat = jsonFormat1(AddressPointsResult.apply)
-  implicit val censusResultFormat = jsonFormat1(CensusResult.apply)
 }

@@ -22,6 +22,7 @@ class AddressPointsClientSpec extends FlatSpec with MustMatchers {
     val maybeAddress = Await.result(AddressPointsClient.geocode("108+S+Main+St+Bentonville+AR+72712"), 1.seconds)
     maybeAddress match {
       case Right(result) =>
+        result.status mustBe "OK"
         val features = result.features
         features.size mustBe 1
         val f = features(0)
@@ -37,6 +38,7 @@ class AddressPointsClientSpec extends FlatSpec with MustMatchers {
  val maybeAddress = Await.result(AddressPointsClient.geocode("president?suggest=5"), 1.seconds)
     maybeAddress match {
       case Right(result) =>
+        result.status mustBe "OK"
         val features = result.features
         features.size mustBe 5
         val f = features(0)

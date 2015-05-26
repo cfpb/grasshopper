@@ -23,6 +23,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
     val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), 10.seconds)
     maybeAddress match {
       case Right(result) =>
+        result.status mustBe "OK"
         val features = result.features
         features.size mustBe 1
         val f = features(0)
