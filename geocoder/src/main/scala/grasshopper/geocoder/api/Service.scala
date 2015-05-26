@@ -79,7 +79,6 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
           val parsed = await(fParsed)
           val parsedAddress = parsed._1
           val parsedInputAddress = parsed._2
-          println(parsedAddress)
 
           val ptGeocode = await(AddressPointsClient.geocode(address))
           val addressPointGeocode: AddressPointsResult =

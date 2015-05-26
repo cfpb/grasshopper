@@ -86,6 +86,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
     Post("/census/addrfeat", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
       val resp = responseAs[CensusResult]
+      resp.status mustBe "ADDRESS_NOT_FOUND"
       resp.features.size mustBe 0
     }
   }

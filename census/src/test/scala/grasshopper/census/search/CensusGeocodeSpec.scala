@@ -27,15 +27,15 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
 
   "Census Geocode" must "find address" in {
     val addressInput = ParsedInputAddress(
-      704,
-      "Chambersville Rd",
-      71742,
-      "AR"
+      3146,
+      "M St NW",
+      20007,
+      "DC"
     )
 
     val features = geocodeLine(client, "census", "addrfeat", addressInput, 1) getOrElse emptyFeatures
     log.info(features.toString)
-    features(0).get("FULLNAME").getOrElse("") mustBe "Chambersville Rd"
+    features(0).get("FULLNAME").getOrElse("") mustBe "M St NW"
   }
 
   "Census Geocode" must "interpolate an address location from a line segment" in {

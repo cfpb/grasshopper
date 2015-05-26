@@ -73,6 +73,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
       val resp = responseAs[AddressPointsResult]
+      resp.status mustBe "ADDRESS_NOT_FOUND"
       resp.features.size mustBe 0
     }
   }
