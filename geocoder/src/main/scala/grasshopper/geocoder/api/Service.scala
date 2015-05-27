@@ -66,10 +66,10 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
           } else {
             val parsedAddress = addr.right.getOrElse(ParsedAddress.empty)
             val parsedInputAddress = ParsedInputAddress(
-              parsedAddress.parts.AddressNumber.toInt,
-              parsedAddress.parts.StreetName,
-              parsedAddress.parts.ZipCode.toInt,
-              parsedAddress.parts.StateName
+              parsedAddress.parts.addressNumber.toInt,
+              parsedAddress.parts.streetName.replaceAll(" ", "+"),
+              parsedAddress.parts.zip.toInt,
+              parsedAddress.parts.state
             )
             (parsedAddress, parsedInputAddress)
           }

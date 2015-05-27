@@ -85,12 +85,11 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
           "query": {
             "input": "200 President St Arkansas City AR 71630",
             "parts": {
-              "StreetName": "President",
-              "StreetNamePostType": "St",
-              "StateName": "AR",
-              "PlaceName": "City",
-              "ZipCode": "71630",
-              "AddressNumber": "200"
+              "streetName": "President St",
+              "state": "AR",
+              "city": "City",
+              "zip": "71630",
+              "addressNumber": "200"
             }
           },
           "addressPointsService": {
@@ -133,11 +132,10 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
 
     val geocodeResult = geocodeResultStr.parseJson.convertTo[GeocodeResult]
     geocodeResult.status mustBe "OK"
-    geocodeResult.query.parts.AddressNumber mustBe "200"
-    geocodeResult.query.parts.StateName mustBe "AR"
-    geocodeResult.query.parts.StreetName mustBe "President"
-    geocodeResult.query.parts.StreetNamePostType mustBe "St"
-    geocodeResult.query.parts.ZipCode mustBe "71630"
+    geocodeResult.query.parts.addressNumber mustBe "200"
+    geocodeResult.query.parts.state mustBe "AR"
+    geocodeResult.query.parts.streetName mustBe "President St"
+    geocodeResult.query.parts.zip mustBe "71630"
 
   }
 
