@@ -27,7 +27,7 @@ object AddressParserClient extends ServiceClient with ParserJsonProtocol {
     }
   }
 
-  def parse(address: String): Future[Either[ResponseError, ParsedAddress]] = {
+  def standardize(address: String): Future[Either[ResponseError, ParsedAddress]] = {
     implicit val ec: ExecutionContext = system.dispatcher
     sendGetRequest(s"/standardize?address=${address}").flatMap { response =>
       response.status match {

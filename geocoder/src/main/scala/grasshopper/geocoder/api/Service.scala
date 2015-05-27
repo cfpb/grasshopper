@@ -59,7 +59,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
       path("geocode" / Segment) { address =>
 
         val fParsed: Future[(ParsedAddress, ParsedInputAddress)] = async {
-          val addr = await(AddressParserClient.parse(address))
+          val addr = await(AddressParserClient.standardize(address))
           if (addr.isLeft) {
             log.error(addr.left.get.desc)
             (ParsedAddress.empty, ParsedInputAddress.empty)
