@@ -48,7 +48,7 @@ and the `data` field containing the location in GeoJSON format.
 
 **Example:**
 
-GET /geocode/200+President+St+Arkansas+City+AR+71630
+`GET /geocode/200+President+St+Arkansas+City+AR+71630`
 
 ```json
 {
