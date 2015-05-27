@@ -6,6 +6,7 @@ import org.scalatest.{ MustMatchers, FlatSpec }
 import grasshopper.census.model.AddressRange
 import spray.json._
 import io.geojson.FeatureJsonProtocol._
+import grasshopper.census.util.TestData._
 
 class AddressInterpolatorSpec extends FlatSpec with MustMatchers {
 
@@ -46,5 +47,17 @@ class AddressInterpolatorSpec extends FlatSpec with MustMatchers {
     range.end % 2 mustBe 0
     range.start mustBe 100
     range.end mustBe 498
+  }
+
+  it must "interpolate in other side of the street" in {
+    val f = getTigerLine3
+    val an = 120
+    val r = AddressInterpolator.calculateAddressRange(f, an)
+    val expectedRange = AddressRange(100, 198)
+    r mustBe expectedRange
+    val p = AddressInterpolator.interpolate(f, r, an)
+    p.values.get("LFROMHN").get mustBe "100"
+    p.values.get("LTOHN").get mustBe "198"
+
   }
 }

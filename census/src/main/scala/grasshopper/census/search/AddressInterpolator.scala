@@ -9,19 +9,36 @@ object AddressInterpolator {
 
   def calculateAddressRange(f: Feature, a: Int): AddressRange = {
     val addressIsEven = a % 2 == 0
-    val rEven = f.values.getOrElse("RFROMHN", 0)
-    val rightRange = rEven match {
+    val rFromEven = f.values.getOrElse("RFROMHN", 0)
+    val rightFromRange = rFromEven match {
       case "" => 0
-      case _ => rEven.toString.toInt
+      case _ => rFromEven.toString.toInt
     }
-    val rightRangeIsEven = rightRange % 2 == 0
+    val rightFromIsEven = rFromEven != "" && rightFromRange % 2 == 0
 
-    val lEven = f.values.getOrElse("LFROMHN", 0)
-    val leftRange = lEven match {
+    val rToEven = f.values.getOrElse("RTOHN", 0)
+    val rightToRange = rFromEven match {
       case "" => 0
-      case _ => lEven.toString.toInt
+      case _ => rToEven.toString.toInt
     }
-    val leftRangeIsEven = leftRange % 2 == 0
+    val rightToIsEven = rToEven != "" && rightToRange % 2 == 0
+
+    val rightRangeIsEven = rightFromIsEven || rightToIsEven
+
+    val lFromEven = f.values.getOrElse("LFROMHN", 0)
+    val leftFromRange = lFromEven match {
+      case "" => 0
+      case _ => lFromEven.toString.toInt
+    }
+    val leftFromIsEven = lFromEven != "" && leftFromRange % 2 == 0
+
+    val ltoEven = f.values.getOrElse("LTOHN", 0)
+    val leftToRange = ltoEven match {
+      case "" => 0
+      case _ => ltoEven.toString.toInt
+    }
+    val leftToIsEven = ltoEven != "" && leftToRange % 2 == 0
+    val leftRangeIsEven = leftFromIsEven || leftToIsEven
 
     val prefix =
       if (addressIsEven && rightRangeIsEven)
@@ -33,8 +50,20 @@ object AddressInterpolator {
       else if (!addressIsEven && !leftRangeIsEven)
         "L"
 
-    val start = f.values.getOrElse(s"${prefix}FROMHN", "0").toString.toInt
-    val end = f.values.getOrElse(s"${prefix}TOHN", "0").toString.toInt
+    val s = f.values.getOrElse(s"${prefix}FROMHN", "0")
+    val e = f.values.getOrElse(s"${prefix}TOHN", "0")
+
+    val start = s match {
+      case "" => 0
+      case _ => s.toString.toInt
+    }
+    val end = e match {
+      case "" => 0
+      case _ => e.toString.toInt
+    }
+
+    //val start = f.values.getOrElse(s"${prefix}FROMHN", "0").toString.toInt
+    //val end = f.values.getOrElse(s"${prefix}TOHN", "0").toString.toInt
 
     AddressRange(start, end)
   }

@@ -18,6 +18,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     server.createAndWaitForIndex("census")
     server.loadFeature("census", "addrfeat", getTigerLine1)
     server.loadFeature("census", "addrfeat", getTigerLine2)
+    server.loadFeature("census", "addrfeat", getTigerLine3)
     client.admin().indices().refresh(new RefreshRequest("census")).actionGet()
   }
 
@@ -86,5 +87,4 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     features(0).values.getOrElse("STATE", "") mustBe expectedFeature.values.getOrElse("STATE", "")
 
   }
-
 }
