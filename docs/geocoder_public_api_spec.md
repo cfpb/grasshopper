@@ -48,67 +48,56 @@ and the `data` field containing the location in GeoJSON format.
 
 **Example:**
 
-GET /geocode/1311+30th+St+NW+Washington+DC+20007
+GET /geocode/200+President+St+Arkansas+City+AR+71630
 
 ```json
 {
   "status": "OK",
   "query": {
-    "input": "1311 30th St Washington DC 20007",
+    "input": "200 President St Arkansas City AR 71630",
     "parts": {
-      "AddressNumber": "1311",
-      "PlaceName": "washington",
-      "StateName": "dc",
-      "StreetName": "30th",
-      "StreetNamePostType": "st",
-      "ZipCode": "20007"
+      "city": "Arkansas City",
+      "zip": "71630",
+      "state": "AR",
+      "streetName": "President St",
+      "addressNumber": "200"
     }
   },
-  "features": [
-      {
-        "service": "census",
-        "data": {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [
-              -77.05908853531027,
-              38.90721451814751,
-              0
-            ]
-          },
-          "properties": {
-            "RFROMHN": "1301",
-            "RTOHN": "1323",
-            "ZIPL": "20007",
-            "FULLNAME": "30th St NW",
-            "LFROMHN": "1300",
-            "LTOHN": "1318",
-            "ZIPR": "20007",
-            "STATE": "DC"
-          }
-        }
+  "addressPointsService": {
+    "status": "OK",
+    "features": [{
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-91.19978780015629, 33.608091616155995, 0.0]
       },
-      {
-        "service": "addresspoints",
-        "data": {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-              "coordinates": [
-                 -77.05908853531027,
-                 38.90721451814751,
-                  0
-              ]
-          },
-          "properties": {
-            "address": "1311 30th st nw washington dc 20007",
-            "alt_address": "",
-            "load_date": 1426878185988
-          }
-        }
+      "properties": {
+        "address": "200 President St Arkansas City AR 71630",
+        "alt_address": "",
+        "load_date": 1426878185988
       }
-  ]
+    }]
+  },
+  "censusService": {
+    "status": "OK",
+    "features": [{
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-91.19960153268617, 33.60763673811005, 0.0]
+      },
+      "properties": {
+        "RFROMHN": "100",
+        "RTOHN": "498",
+        "ZIPL": "",
+        "FULLNAME": "President St",
+        "LFROMHN": "",
+        "LTOHN": "",
+        "ZIPR": "71630",
+        "STATE": "AR"
+      }
+    }]
+  }
 }
 ```
 
