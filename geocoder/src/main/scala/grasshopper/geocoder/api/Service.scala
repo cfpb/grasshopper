@@ -84,7 +84,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
           val addressPointGeocode: AddressPointsResult =
             if (ptGeocode.isLeft) {
               log.error(ptGeocode.left.get.desc)
-              AddressPointsResult.empty
+              AddressPointsResult.error
             } else {
               ptGeocode.right.getOrElse(AddressPointsResult.empty)
             }
@@ -96,7 +96,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
               val cGeocode = await(CensusClient.geocode(parsedInputAddress))
               if (cGeocode.isLeft) {
                 log.error(cGeocode.left.get.desc)
-                CensusResult.empty
+                CensusResult.error
               } else {
                 cGeocode.right.getOrElse(CensusResult.empty)
               }
