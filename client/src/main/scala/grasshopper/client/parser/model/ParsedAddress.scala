@@ -1,15 +1,14 @@
 package grasshopper.client.parser.model
 
 case class AddressPart(
-  AddressNumber: String,
-  PlaceName: String,
-  StateName: String,
-  StreetName: String,
-  StreetNamePostType: String,
-  ZipCode: String
+  addressNumber: String,
+  city: String,
+  state: String,
+  streetName: String,
+  zip: String
 )
 case class ParsedAddress(input: String, parts: AddressPart)
 
 object ParsedAddress {
-  def empty: ParsedAddress = ParsedAddress("", AddressPart("", "", "", "", "", ""))
+  def empty: ParsedAddress = ParsedAddress("", AddressPart("", "", "", "", ""))
 }
