@@ -101,14 +101,12 @@ and the `data` field containing the location in GeoJSON format.
 }
 ```
 
-* status: Contains metadata on the request. The following status codes can be returned:
+Each service has a status code that provides metadata about the geocode request performed:
 
 - `OK` indicates that no errors resulted in the geocoding operation.
-   A list of underlying services with a list of potential matches will be included in the response.
 - `ADDRESS_NOT_FOUND` indicates that the geocoding engine could not find the address passed.
    The input string is correctly formed, but the address does not exist in the Grasshopper geocoding databases.
-- `ADDRESS_INCOMPLETE` indicates an incomplete address. More information needs to be provided in order to resolve a location.
-- `UNKNOWN_ERROR` indicates an unexpected problem with the service. The request may succeed if you try again.
+- `SERVICE_UNAVAILABLE` indicates an unexpected problem with the underlying service. The request may succeed if you try again.
 
 
 
