@@ -2,7 +2,8 @@ package grasshopper.addresspoints.api
 
 import java.net.InetAddress
 import java.time.Instant
-import grasshopper.addresspoints.model.{ AddressInput, Status }
+import feature.Feature
+import grasshopper.addresspoints.model.{ AddressPointsResult, AddressInput, Status }
 import grasshopper.addresspoints.protocol.AddressPointJsonProtocol
 import grasshopper.addresspoints.search.Geocode
 import akka.actor.ActorSystem
@@ -85,10 +86,13 @@ trait Service extends AddressPointJsonProtocol with Geocode {
     val points = geocode(client, "address", "point", address, count) getOrElse (Nil.toArray)
     if (points.length > 0) {
       complete {
-        ToResponseMarshallable(points)
+        ToResponseMarshallable(AddressPointsResult("OK", points))
       }
     } else {
-      complete(NotFound)
+      val pts: Array[Feature] = Nil.toArray
+      complete {
+        ToResponseMarshallable(AddressPointsResult("ADDRESS_NOT_FOUND", pts))
+      }
     }
 
   }

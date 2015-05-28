@@ -8,9 +8,10 @@ import grasshopper.census.model.AddressRange
 object AddressInterpolator {
 
   def calculateAddressRange(f: Feature, a: Int): AddressRange = {
-    val addressIsEven = (a % 2 == 0)
-    val rightRangeIsEven = (f.values.getOrElse("RFROMHN", 0).toString.toInt % 2 == 0)
-    val leftRangeIsEven = (f.values.getOrElse("LFROMHN", 0).toString.toInt % 2 == 0)
+    val addressIsEven = a % 2 == 0
+    val rightRangeIsEven: Boolean = rangeIsEven(f, false)
+
+    val leftRangeIsEven: Boolean = rangeIsEven(f, true)
 
     val prefix =
       if (addressIsEven && rightRangeIsEven)
@@ -22,14 +23,41 @@ object AddressInterpolator {
       else if (!addressIsEven && !leftRangeIsEven)
         "L"
 
-    val start = f.values.getOrElse(s"${prefix}FROMHN", "0").toString.toInt
-    val end = f.values.getOrElse(s"${prefix}TOHN", "0").toString.toInt
+    val s = f.values.getOrElse(s"${prefix}FROMHN", "0")
+    val e = f.values.getOrElse(s"${prefix}TOHN", "0")
+
+    val start = s match {
+      case "" => 0
+      case _ => s.toString.toInt
+    }
+    val end = e match {
+      case "" => 0
+      case _ => e.toString.toInt
+    }
 
     AddressRange(start, end)
   }
 
+  private def rangeIsEven(f: Feature, isLeft: Boolean): Boolean = {
+    val prefix = if (isLeft) "L" else "R"
+    val fromEven = f.values.getOrElse(s"${prefix}FROMHN", 0)
+    val fromRange = fromEven match {
+      case "" => 0
+      case _ => fromEven.toString.toInt
+    }
+    val fromIsEven = fromEven != "" && fromRange % 2 == 0
+
+    val toEven = f.values.getOrElse(s"${prefix}TOHN", 0)
+    val toRange = fromEven match {
+      case "" => 0
+      case _ => toEven.toString.toInt
+    }
+    val toIsEven = toEven != "" && toRange % 2 == 0
+    fromIsEven || toIsEven
+  }
+
   def interpolate(feature: Feature, range: AddressRange, a: Int): Feature = {
-    val sign = if (a % 2 == 0) 1 else -1
+    val sign = if (a % 2 == 0) -1 else 1
     val line = feature.geometry.asInstanceOf[Line]
     val l = line.length
     val d = calculateDistance(range)
