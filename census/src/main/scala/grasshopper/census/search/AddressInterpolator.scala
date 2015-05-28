@@ -9,36 +9,9 @@ object AddressInterpolator {
 
   def calculateAddressRange(f: Feature, a: Int): AddressRange = {
     val addressIsEven = a % 2 == 0
-    val rFromEven = f.values.getOrElse("RFROMHN", 0)
-    val rightFromRange = rFromEven match {
-      case "" => 0
-      case _ => rFromEven.toString.toInt
-    }
-    val rightFromIsEven = rFromEven != "" && rightFromRange % 2 == 0
+    val rightRangeIsEven: Boolean = rangeIsEven(f, false)
 
-    val rToEven = f.values.getOrElse("RTOHN", 0)
-    val rightToRange = rFromEven match {
-      case "" => 0
-      case _ => rToEven.toString.toInt
-    }
-    val rightToIsEven = rToEven != "" && rightToRange % 2 == 0
-
-    val rightRangeIsEven = rightFromIsEven || rightToIsEven
-
-    val lFromEven = f.values.getOrElse("LFROMHN", 0)
-    val leftFromRange = lFromEven match {
-      case "" => 0
-      case _ => lFromEven.toString.toInt
-    }
-    val leftFromIsEven = lFromEven != "" && leftFromRange % 2 == 0
-
-    val ltoEven = f.values.getOrElse("LTOHN", 0)
-    val leftToRange = ltoEven match {
-      case "" => 0
-      case _ => ltoEven.toString.toInt
-    }
-    val leftToIsEven = ltoEven != "" && leftToRange % 2 == 0
-    val leftRangeIsEven = leftFromIsEven || leftToIsEven
+    val leftRangeIsEven: Boolean = rangeIsEven(f, true)
 
     val prefix =
       if (addressIsEven && rightRangeIsEven)
@@ -63,6 +36,24 @@ object AddressInterpolator {
     }
 
     AddressRange(start, end)
+  }
+
+  private def rangeIsEven(f: Feature, isLeft: Boolean): Boolean = {
+    val prefix = if (isLeft) "L" else "R"
+    val fromEven = f.values.getOrElse(s"${prefix}FROMHN", 0)
+    val fromRange = fromEven match {
+      case "" => 0
+      case _ => fromEven.toString.toInt
+    }
+    val fromIsEven = fromEven != "" && fromRange % 2 == 0
+
+    val toEven = f.values.getOrElse(s"${prefix}TOHN", 0)
+    val toRange = fromEven match {
+      case "" => 0
+      case _ => toEven.toString.toInt
+    }
+    val toIsEven = toEven != "" && toRange % 2 == 0
+    fromIsEven || toIsEven
   }
 
   def interpolate(feature: Feature, range: AddressRange, a: Int): Feature = {
