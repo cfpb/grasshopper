@@ -62,9 +62,6 @@ object AddressInterpolator {
       case _ => e.toString.toInt
     }
 
-    //val start = f.values.getOrElse(s"${prefix}FROMHN", "0").toString.toInt
-    //val end = f.values.getOrElse(s"${prefix}TOHN", "0").toString.toInt
-
     AddressRange(start, end)
   }
 
