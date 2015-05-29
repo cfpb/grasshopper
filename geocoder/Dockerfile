@@ -1,4 +1,4 @@
-# Grasshopper Addresspoints Dockerfile
+# Grasshopper Geocoder Dockerfile
 # Version: 0.0.1
 
 # Image builds from the official Docker Java image
@@ -11,10 +11,8 @@ WORKDIR /
 
 USER daemon
 
-COPY target/scala-2.11/grasshopper-geocoder.jar /opt/grasshopper-geocoder.jar
-
 ENTRYPOINT ["java", "-jar", "/opt/grasshopper-geocoder.jar"]
 
 EXPOSE 8081
 
-
+COPY target/scala-2.11/grasshopper-geocoder.jar /opt/grasshopper-geocoder.jar

@@ -2,7 +2,7 @@ package grasshopper.addresspoints.api
 
 import java.time.{ Duration, Instant }
 import grasshopper.addresspoints.model
-import grasshopper.addresspoints.model.AddressInput
+import grasshopper.addresspoints.model.{ AddressPointsResult, AddressInput }
 import akka.event.NoLogging
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.MediaTypes._
@@ -67,11 +67,14 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     }
   }
 
-  it should "return NotFound when searching for address that doesn't exist" in {
+  it should "return empty features array when searching for address that doesn't exist" in {
     val address = AddressInput("1311 31th St NW Washington DC 20007")
     val json = address.toJson.toString
     Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
-      status mustBe NotFound
+      status mustBe OK
+      val resp = responseAs[AddressPointsResult]
+      resp.status mustBe "ADDRESS_NOT_FOUND"
+      resp.features.size mustBe 0
     }
   }
 
@@ -88,15 +91,15 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val f = responseAs[Array[Feature]]
-      f(0) mustBe getPointFeature
+      val resp = responseAs[AddressPointsResult]
+      resp.features(0) mustBe getPointFeature
     }
     val a = "1311+30th+St+NW+Washington+DC+20007"
     Get("/addresses/points/" + a) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val f = responseAs[Array[Feature]]
-      f(0) mustBe getPointFeature
+      val resp = responseAs[AddressPointsResult]
+      resp.features(0) mustBe getPointFeature
     }
   }
 
@@ -105,8 +108,8 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     Get("/addresses/points/" + a + "?suggest=2") ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val features = responseAs[Array[Feature]]
-      features.size mustBe 2
+      val resp = responseAs[AddressPointsResult]
+      resp.features.size mustBe 2
     }
   }
 

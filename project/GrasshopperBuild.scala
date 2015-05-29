@@ -18,7 +18,7 @@ object BuildSettings {
       organization  := buildOrganization,
       version       := buildVersion,
       scalaVersion  := buildScalaVersion,
-      wartremoverWarnings ++= Warts.allBut(Wart.NoNeedForMonad, Wart.NonUnitStatements),
+      //wartremoverWarnings ++= Warts.allBut(Wart.NoNeedForMonad, Wart.NonUnitStatements),
       scalacOptions ++= Seq(
         "-Xlint",
         "-deprecation",
@@ -107,7 +107,7 @@ object GrasshopperBuild extends Build {
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
         assemblyMergeStrategy in assembly := {
           case "application.conf" => MergeStrategy.concat
-          case x => 
+          case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
         },

@@ -12,20 +12,20 @@ class AddressPointsJsonProtocolSpec extends FlatSpec with MustMatchers with Addr
       "host": "yourhost.local",
       "status": "OK",
       "time": "2015-05-06T19:14:19.304850+00:00",
-      "service": "grasshopper-grasshopper.addresspoints"
+      "service": "grasshopper-addresspoints"
     }
     """
     val addressStatus = statusStr.parseJson.convertTo[AddressPointsStatus]
     addressStatus.host mustBe "yourhost.local"
     addressStatus.status mustBe "OK"
     addressStatus.time mustBe "2015-05-06T19:14:19.304850+00:00"
-    addressStatus.service mustBe "grasshopper-grasshopper.addresspoints"
+    addressStatus.service mustBe "grasshopper-addresspoints"
   }
 
   it must "serialize to JSON" in {
     val parserStatus = AddressPointsStatus(
       "OK",
-      "grasshopper-grasshopper.addresspoints",
+      "grasshopper-addresspoints",
       "2015-05-06T19:14:19.304850+00:00",
       "localhost"
     )

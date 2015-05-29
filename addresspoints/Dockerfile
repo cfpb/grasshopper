@@ -11,10 +11,10 @@ WORKDIR /
 
 USER daemon
 
-COPY target/scala-2.11/grasshopper-addresspoints.jar /opt/grasshopper-addresspoints.jar
-
 ENTRYPOINT ["java", "-jar", "/opt/grasshopper-addresspoints.jar"]
 
 EXPOSE 8081
+
+COPY target/scala-2.11/grasshopper-addresspoints.jar /opt/grasshopper-addresspoints.jar
 
 

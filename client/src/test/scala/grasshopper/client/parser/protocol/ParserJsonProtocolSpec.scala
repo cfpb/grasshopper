@@ -39,21 +39,19 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
   "An AddressPart" must "deserialize from JSON" in {
     val addrPartStr = """
      {
-        "AddressNumber": "1311",
-        "PlaceName": "washington",
-        "StateName": "dc",
-        "StreetName": "30th",
-        "StreetNamePostType": "st",
-        "ZipCode": "20007"
+        "addressNumber": "1311",
+        "city": "washington",
+        "state": "dc",
+        "streetName": "30th St",
+        "zip": "20007"
       }
     """
     val addrPart = addrPartStr.parseJson.convertTo[AddressPart]
-    addrPart.AddressNumber mustBe "1311"
-    addrPart.PlaceName mustBe "washington"
-    addrPart.StateName mustBe "dc"
-    addrPart.StreetName mustBe "30th"
-    addrPart.StreetNamePostType mustBe "st"
-    addrPart.ZipCode mustBe "20007"
+    addrPart.addressNumber mustBe "1311"
+    addrPart.city mustBe "washington"
+    addrPart.state mustBe "dc"
+    addrPart.streetName mustBe "30th St"
+    addrPart.zip mustBe "20007"
   }
 
   it must "serialize to JSON" in {
@@ -61,8 +59,7 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
       "1311",
       "washington",
       "dc",
-      "30th",
-      "st",
+      "30th St",
       "20007"
     )
 
@@ -73,25 +70,23 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
   "A ParsedAddress" must "deserialize from JSON" in {
     val addrStr = """
     {
-      "input": "1311 30th st washington dc 20007",
+      "input": "1311 30th St washington dc 20007",
       "parts": {
-        "AddressNumber": "1311",
-        "PlaceName": "washington",
-        "StateName": "dc",
-        "StreetName": "30th",
-        "StreetNamePostType": "st",
-        "ZipCode": "20007"
+        "addressNumber": "1311",
+        "city": "washington",
+        "state": "dc",
+        "streetName": "30th St",
+        "zip": "20007"
       }
     } 
     """
     val parsedAddress = addrStr.parseJson.convertTo[ParsedAddress]
-    parsedAddress.input mustBe "1311 30th st washington dc 20007"
-    parsedAddress.parts.AddressNumber mustBe "1311"
-    parsedAddress.parts.PlaceName mustBe "washington"
-    parsedAddress.parts.StateName mustBe "dc"
-    parsedAddress.parts.StreetName mustBe "30th"
-    parsedAddress.parts.StreetNamePostType mustBe "st"
-    parsedAddress.parts.ZipCode mustBe "20007"
+    parsedAddress.input mustBe "1311 30th St washington dc 20007"
+    parsedAddress.parts.addressNumber mustBe "1311"
+    parsedAddress.parts.city mustBe "washington"
+    parsedAddress.parts.state mustBe "dc"
+    parsedAddress.parts.streetName mustBe "30th St"
+    parsedAddress.parts.zip mustBe "20007"
 
   }
 
@@ -100,14 +95,12 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
       "1311",
       "washington",
       "dc",
-      "30th",
-      "st",
+      "30th St",
       "20007"
     )
-    val inputStr = "1311 30th st washington dc 20007"
+    val inputStr = "1311 30th St washington dc 20007"
     val parsedAddress = ParsedAddress(inputStr, addrPart)
     val json = parsedAddress.toJson.toString
-    println(json)
     json.parseJson.convertTo[ParsedAddress] mustBe parsedAddress
   }
 
