@@ -1,0 +1,41 @@
+geocoder:
+  build: geocoder
+  links:
+    - lines
+    - points
+    - parser
+  ports:
+    - "8080:8080"
+lines:
+  build: census
+  links: 
+    - elasticsearch
+  ports:
+    - "8082:8082"
+points:
+  build: addresspoints
+  links: 
+    - elasticsearch
+  ports:
+    - "8081:8081"
+parser:
+  build: ../grasshopper-parser
+  ports:
+    - "5000:5000"
+loader:
+  build: ../grasshopper-loader
+  links:
+    - elasticsearch
+  #command: ./grasshopper-loader.js -d test/data/new_york.json
+elasticsearch:
+  image: elasticsearch
+ui:
+  build: ../grasshopper-ui
+  ports:
+    - "80:80"
+  links:
+    - geocoder
+    - lines
+    - points
+    - parser
+
