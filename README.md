@@ -35,7 +35,8 @@ Grasshopper _should_ also run on OpenJDK 8.
 
 ### Scala
 Grasshopper's service layer is written in [Scala](http://www.scala-lang.org/).  To build it, you will need to
-[download](http://www.scala-lang.org/download/) and [install]() Scala 2.11.x
+[download](http://www.scala-lang.org/download/) and [install](http://www.scala-lang.org/download/install.html)
+Scala 2.11.x
 
 In addition, you'll need Scala's interactive build tool [sbt](http://www.scala-sbt.org/0.13/tutorial/index.html).
 Please refer to the [installation instructions](http://www.scala-sbt.org/0.13/tutorial/Setup.html) to get going.
@@ -47,17 +48,80 @@ For dev and test purposes, grasshopper includes an in-memory
 For non-dev environments, you'll want a dedicated Elasticsearch instance.
 
 
-## Building
+## Building & Running
 Grasshopper uses [sbt's multi-project builds](http://www.scala-sbt.org/0.13/tutorial/Multi-Project.html), 
 each project representing a specific task and usually a [Microservice](http://en.wikipedia.org/wiki/Microservices).
 
-```
-$ sbt
-> ~re-start
-```
+### Interactive
 
-This will fork a JVM and start the geocoding service. Currently the addresspoints project will expose 
-a REST API to resolve addresses to locations in GeoJSON.
+1. Start `sbt`
+
+        $ sbt
+
+1. Select project to build and run
+
+        > projects
+        [info] In file:/Users/keelerh/Projects/grasshopper/
+        [info]       addresspoints
+        [info]       census
+        [info]       client
+        [info]       elasticsearch
+        [info]       geocoder
+        [info]     * grasshopper
+
+        > project addresspoints
+        [info] Set current project to addresspoints (in build file: /path/to/grasshopper/)
+
+1. Start the service
+
+    This will retrieve all necessary dependencies, compile Scala source, and
+    start a local server.  It also listens for changes to underlying
+    source code, and auto-deploys to local server.
+
+        > ~re-start
+
+1. Confirm service is up by browsing to http://localhost:8081/status.
+
+### Docker
+
+All grasshopper services and apps can be built as [Docker](https://docs.docker.com/) images.
+[Docker Compose](https://docs.docker.com/compose/) is also used simplify local development.
+
+**Note:** Docker is a Linux-only tool.  If you are running on Mac or Windows, you will need
+[boot2docker](http://boot2docker.io/) or a similar Docker VM setup.
+
+1. Install necessary dependencies (Mac-specific):
+
+        brew install docker docker-compose boot2docker
+
+1. Checkout all other grasshopper-related repos into the same directory as
+   grasshopper.  This currently includes:
+
+    1. [grasshopper-loader](https://github.com/cfpb/grasshopper-loader)
+    1. [grasshopper-parser](https://github.com/cfpb/grasshopper-parser)
+    1. [grasshopper-ui](https://github.com/cfpb/grasshopper-ui)
+
+
+1. Build grasshopper Scala artifacts:
+
+        $ cd grasshopper
+        $ sbt assembly
+
+1. Start **all** Build Docker images for all projects
+
+        $ docker-compose up -d
+
+    **Note:** The `-d` option is necessary since `grasshopper-loader` is
+    not intended to run as a service, and exits immediately.
+
+1. Browse to: http://{{docker-provided-ip}}:8080/status
+
+    If using `boot2docker`, the following with get you the  `docker-provided-ip`:
+
+        $ boot2docker ip
+
+For more details on running via Docker, see [Docker Compose](https://docs.docker.com/compose/).
+
 
 ## Usage
 
