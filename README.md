@@ -116,7 +116,32 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
 
 1. Browse to: http://{{docker-provided-ip}}:8080/status
 
-    If using `boot2docker`, the following with get you the  `docker-provided-ip`:
+    If all goes as expected, you should see a message similar to the following:
+
+    ```json
+    {
+      "addressPointsStatus": {
+        "status": "OK",
+        "service": "grasshopper-addresspoints",
+        "time": "2015-06-01T22:54:31.670Z",
+        "host": "b34fd3314b3b"
+      },
+      "censusStatus": {
+        "status": "OK",
+        "service": "grasshopper-census",
+        "time": "2015-06-01T22:54:31.652Z",
+        "host": "6f479f2a0cc6"
+      },
+      "parserStatus": {
+        "status": "OK",
+        "time": "2015-06-01T22:54:31.622532+00:00",
+        "upSince": "2015-06-01T22:38:17.859000+00:00",
+        "host": "a843db3dbe8e"
+      }
+    }
+    ```
+
+    **Note:** If using `boot2docker`, the following with get you the  `docker-provided-ip`:
 
         $ boot2docker ip
 
