@@ -50,6 +50,7 @@ loader:
 # Must be named "elasticsearch" to create expected ELASTICSEARCH_* envvars
 elasticsearch:
   image: elasticsearch
+
 ui:
   build: ../grasshopper-ui
   ports:
@@ -59,4 +60,14 @@ ui:
     - lines
     - points
     - parser
+
+cadvisor:
+  image: google/cadvisor
+  ports:
+    - "9090:8080"
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
 
