@@ -71,3 +71,53 @@ cadvisor:
     - /sys:/sys:ro
     - /var/lib/docker/:/var/lib/docker:ro
 
+# Logspout setup taken from:
+#   https://github.com/gliderlabs/logspout#route-all-container-output-to-remote-syslog
+logspout:
+  image: gliderlabs/logspout
+  ports:
+    - "8000:8000"
+  volumes: 
+    - /var/run/docker.sock:/tmp/docker.sock
+  links:
+    - logstash
+  command: syslog://logstash:5514
+
+logstash:
+  image: logstash
+  expose:
+    - 5514
+  links:
+    - elasticsearch
+  command: >
+    logstash -e '
+    input { tcp { port => 5514 type => syslog } udp { port => 5514 type => syslog } } 
+    filter {
+      if [type] == "syslog" {
+        grok {
+          match => { "message" => "%{SYSLOG5424PRI}%{NONNEGINT:ver} +(?:%{TIMESTAMP_ISO8601:ts}|-) +(?:%{HOSTNAME:containerid}|-) +(?:%{NOTSPACE:containername}|-) +(?:%{NOTSPACE:proc}|-) +(?:%{WORD:msgid}|-) +(?:%{SYSLOG5424SD:sd}|-|) +%{GREEDYDATA:msg}" }
+        }
+        syslog_pri { }
+        date {
+          match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+        }
+        if !("_grokparsefailure" in [tags]) {
+          mutate {
+            replace => [ "@source_host", "%{syslog_hostname}" ]
+            replace => [ "@message", "%{syslog_message}" ]
+          }
+        }
+        mutate {
+          remove_field => [ "syslog_hostname", "syslog_message", "syslog_timestamp" ]
+        }
+      }
+    }
+    output { elasticsearch { host => "elasticsearch" } }'
+
+kibana:
+  image: marcbachmann/kibana4
+  links:
+    - elasticsearch
+  ports:
+    - "5601:5601"
+
