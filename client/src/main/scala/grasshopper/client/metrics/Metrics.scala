@@ -1,17 +1,17 @@
-package grasshopper.census.metrics
+package grasshopper.client.metrics
 
 import java.net.InetAddress
 import java.time.{ Duration, Instant }
+
 import com.typesafe.scalalogging.Logger
-import grasshopper.census.model.Timer
-import grasshopper.census.protocol.CensusJsonProtocol
-import org.slf4j.LoggerFactory
+import grasshopper.client.model.Timer
+import grasshopper.client.protocol.ClientJsonProtocol
 import net.logstash.logback.marker.Markers._
-import spray.json._
+import org.slf4j.LoggerFactory
 
-trait Metrics extends CensusJsonProtocol {
+trait Metrics extends ClientJsonProtocol {
 
-  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-census-metrics"))
+  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-client-metrics"))
 
   def time[T](name: String, f: => T): T = {
     val start = Instant.now
