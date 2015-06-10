@@ -27,4 +27,8 @@ object Dependencies {
 
   val async           = "org.scala-lang.modules"     %% "scala-async"                          % Version.async
 
+
+  val kamonCore       = "io.kamon"                   %% "kamon-core"                           % Version.kamon
+  val kamonStatsd     = "io.kamon"                   %% "kamon-statsd"                         % Version.kamon
+  val kamonMetrics    = "io.kamon"                   %% "kamon-system-metrics"                 % Version.kamon
 }

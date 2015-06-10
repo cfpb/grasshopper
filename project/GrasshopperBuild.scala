@@ -47,6 +47,8 @@ object GrasshopperBuild extends Build {
 
   val asyncDeps = Seq(async)
 
+  val kamonDeps = Seq(kamonCore, kamonStatsd, kamonMetrics)
+
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
@@ -70,7 +72,7 @@ object GrasshopperBuild extends Build {
       Revolver.settings ++
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
-        libraryDependencies ++= geocodeDeps,
+        libraryDependencies ++= geocodeDeps ++ kamonDeps,
         resolvers ++= repos
       )
     ).dependsOn(elasticsearch)
@@ -82,7 +84,7 @@ object GrasshopperBuild extends Build {
       Revolver.settings ++ 
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
-        libraryDependencies ++= geocodeDeps,
+        libraryDependencies ++= geocodeDeps ++ kamonDeps,
         resolvers ++= repos
       )
     ).dependsOn(elasticsearch)
@@ -94,7 +96,7 @@ object GrasshopperBuild extends Build {
       Revolver.settings ++
         Seq(
           assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
-          libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps
+          libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps ++ kamonDeps
         )
     )
 
@@ -111,7 +113,7 @@ object GrasshopperBuild extends Build {
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
         },
-        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps,
+        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps ++ kamonDeps,
         resolvers ++= repos
       )
     ).dependsOn(client)
