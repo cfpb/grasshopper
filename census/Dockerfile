@@ -15,6 +15,7 @@ ENTRYPOINT ["java", "-jar", "/opt/grasshopper-census.jar"]
 
 EXPOSE 8082
 
+COPY src/main/resources/sigar /sigar
 COPY target/scala-2.11/grasshopper-census.jar /opt/grasshopper-census.jar
 
 

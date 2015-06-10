@@ -11,5 +11,6 @@ object Version {
   val jts             = "1.13"
   val scale           = "0.0.1"
   val async           = "0.9.2"
+  val kamon           = "0.4.0"
 
 }

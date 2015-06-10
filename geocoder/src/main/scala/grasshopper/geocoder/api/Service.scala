@@ -11,6 +11,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import feature.Feature
 import grasshopper.client.protocol.ClientJsonProtocol
+import grasshopper.geocoder.metrics.Metrics
 import io.geojson.FeatureJsonProtocol._
 import grasshopper.client.addresspoints.AddressPointsClient
 import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
@@ -27,7 +28,7 @@ import scala.async.Async.{ async, await }
 import scala.concurrent.{ ExecutionContextExecutor, Future }
 import spray.json._
 
-trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
+trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol with Metrics {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
@@ -37,7 +38,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
 
   val logger: LoggingAdapter
 
-  lazy val log = Logger(LoggerFactory.getLogger("grashopper-geocoder"))
+  override lazy val log = Logger(LoggerFactory.getLogger("grashopper-geocoder"))
 
   val routes = {
     path("status") {
@@ -59,7 +60,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
       path("geocode" / Segment) { address =>
 
         val fParsed: Future[(ParsedAddress, ParsedInputAddress)] = async {
-          val addr = await(AddressParserClient.standardize(address))
+          val addr = await(time("parser-standardize", AddressParserClient.standardize(address)))
           if (addr.isLeft) {
             log.error(addr.left.get.desc)
             (ParsedAddress.empty, ParsedInputAddress.empty)
@@ -80,7 +81,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
           val parsedAddress = parsed._1
           val parsedInputAddress = parsed._2
 
-          val ptGeocode = await(AddressPointsClient.geocode(address))
+          val ptGeocode = await(time("addresspoints-geocode", AddressPointsClient.geocode(address)))
           val addressPointGeocode: AddressPointsResult =
             if (ptGeocode.isLeft) {
               log.error(ptGeocode.left.get.desc)
@@ -93,7 +94,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
             if (parsedInputAddress.isEmpty) {
               CensusResult.empty
             } else {
-              val cGeocode = await(CensusClient.geocode(parsedInputAddress))
+              val cGeocode = await(time("census-geocode", CensusClient.geocode(parsedInputAddress)))
               if (cGeocode.isLeft) {
                 log.error(cGeocode.left.get.desc)
                 CensusResult.error

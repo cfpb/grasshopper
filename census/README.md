@@ -36,3 +36,7 @@ And then run the service linking to the previous container:
 `docker run --rm --name grasshopper-census -e ELASTICSEARCH_HOST=192.168.59.103 -e ELASTICSEARCH_PORT=9300 -p 8082:8082 --link elasticsearch:elasticsearch hmda/grasshopper-census`
 
 The Elasticsearch host and port are configurable, passing them as environment variables to the docker container. If not specified, the defaults are _localhost_ and _9300_, respectively.
+
+Additionally, runtime monitoring metrics can be sent to a StatsD host by passing the following additional environment variable:
+
+`-e STATSD_HOST=192.168.59.103` (change value as appropriate for your environment)
