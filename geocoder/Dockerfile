@@ -13,6 +13,7 @@ USER daemon
 
 ENTRYPOINT ["java", "-jar", "/opt/grasshopper-geocoder.jar"]
 
-EXPOSE 8081
+EXPOSE 8080
 
+COPY src/main/resources/sigar /sigar
 COPY target/scala-2.11/grasshopper-geocoder.jar /opt/grasshopper-geocoder.jar
