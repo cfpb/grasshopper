@@ -18,6 +18,6 @@
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="logstash" />
+        <appender-ref ref="STDOUT" />
     </root>
 </configuration>
