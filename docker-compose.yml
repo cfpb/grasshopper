@@ -14,6 +14,7 @@ geocoder:
     GRASSHOPPER_PARSER_HOST: parser
     GRASSHOPPER_PARSER_PORT: 5000
 
+
 lines:
   build: census
   links: 
@@ -28,6 +29,7 @@ lines:
     # Also, ES Java client uses port 9300, not REST API port 9200.
     ELASTICSEARCH_PORT: 9300
 
+
 points:
   build: addresspoints
   links: 
@@ -35,6 +37,7 @@ points:
   ports:
     - "8081:8081"
   environment: *ES_JAVA_ENV
+
 
 parser:
   build: ../grasshopper-parser
@@ -51,6 +54,7 @@ loader:
 elasticsearch:
   image: elasticsearch
 
+
 ui:
   build: ../grasshopper-ui
   ports:
@@ -61,6 +65,16 @@ ui:
     - points
     - parser
 
+
+influxdb:
+  image: tutum/influxdb
+  ports:
+    - 8083:8083 # Admin Site
+    - 8086:8086 # API
+  environment:
+    PRE_CREATE_DB: cadvisor
+  
+
 cadvisor:
   image: google/cadvisor
   ports:
@@ -70,4 +84,19 @@ cadvisor:
     - /var/run:/var/run:rw
     - /sys:/sys:ro
     - /var/lib/docker/:/var/lib/docker:ro
+  links:
+    - influxdb
+  command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxdb:8086
+
+
+grafana:
+  image: grafana/grafana
+  ports:
+    - 3000:3000
+  links:
+    - influxdb
+  environment:
+    INFLUXDB_HOST: influxdb
+    INFLUXDB_PORT: 8086
+    INFLUXDB_NAME: cadvisor
 
