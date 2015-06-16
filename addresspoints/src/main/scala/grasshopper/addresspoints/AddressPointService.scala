@@ -6,6 +6,7 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
+import grasshopper.addresspoints.metrics.JvmMetrics
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 
@@ -28,4 +29,14 @@ object AddressPointService extends App with Service {
     config.getString("grasshopper.addresspoints.http.interface"),
     config.getInt("grasshopper.addresspoints.http.port")
   )
+
+  lazy val isMonitored = Properties.envOrElse("IS_MONITORED", config.getString("grasshopper.addresspoints.isMonitored")).toBoolean
+
+  if (isMonitored) {
+    val jvmMetrics = JvmMetrics
+  }
+
+  sys.addShutdownHook {
+    system.shutdown()
+  }
 }

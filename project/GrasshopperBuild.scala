@@ -43,7 +43,9 @@ object GrasshopperBuild extends Build {
 
   val scaleDeps = Seq(scaleGeoJson)
 
-  val geocodeDeps = akkaHttpDeps ++ esDeps ++ scaleDeps
+  val metricsDeps = Seq(metrics, metricsJvm, influxDbReporter)
+
+  val geocodeDeps = akkaHttpDeps ++ esDeps ++ scaleDeps ++ metricsDeps
 
   val asyncDeps = Seq(async)
 
