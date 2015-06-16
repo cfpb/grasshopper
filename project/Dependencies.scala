@@ -10,9 +10,9 @@ object Dependencies {
   val akkaActor        = "com.typesafe.akka"          %% "akka-actor"                           % Version.akka
   val akkaStreams      = "com.typesafe.akka"          %% "akka-stream-experimental"             % Version.akkaStreams
   val akkaHttpCore     = "com.typesafe.akka"          %% "akka-http-core-experimental"          % Version.akkaStreams
-  val akkaHttp         = "com.typesafe.akka"          %% "akka-http-scala-experimental"         % Version.akkaStreams
+  val akkaHttp         = "com.typesafe.akka"          %% "akka-http-experimental"               % Version.akkaStreams
   val akkaHttpJson     = "com.typesafe.akka"          %% "akka-http-spray-json-experimental"    % Version.akkaStreams
-  val akkaHttpTestkit  = "com.typesafe.akka"          %% "akka-http-testkit-scala-experimental" % Version.akkaStreams % "test"
+  val akkaHttpTestkit  = "com.typesafe.akka"          %% "akka-http-testkit-experimental"       % Version.akkaStreams % "test"
 
   val logback          = "ch.qos.logback"              % "logback-classic"                      % Version.logback
   val scalaLogging     = "com.typesafe.scala-logging" %% "scala-logging"                        % Version.scalaLogging
