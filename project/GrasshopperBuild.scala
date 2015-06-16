@@ -113,7 +113,7 @@ object GrasshopperBuild extends Build {
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
         },
-        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps,
+        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps ++ metricsDeps,
         resolvers ++= repos
       )
     ).dependsOn(client)

@@ -1,4 +1,4 @@
-package grasshopper.addresspoints.metrics
+package grasshopper.census.metrics
 
 import java.net.InetAddress
 import java.util.concurrent.TimeUnit
@@ -12,16 +12,16 @@ import scala.util.Properties
 
 object JvmMetrics extends Instrumented {
 
-  val appName = "addresspoints"
+  val appName = "census"
   val hostName = InetAddress.getLocalHost.getHostName
 
   val config = ConfigFactory.load()
 
-  lazy val influxHost = Properties.envOrElse("INFLUXDB_HOST", config.getString("grasshopper.addresspoints.monitoring.influxdb.host"))
-  lazy val influxPort = Properties.envOrElse("INFLUXDB_PORT", config.getString("grasshopper.addresspoints.monitoring.influxdb.port")).toInt
-  lazy val influxdbUser = Properties.envOrElse("INFLUXDB_USER", config.getString("grasshopper.addresspoints.monitoring.influxdb.user"))
-  lazy val influxdbPassword = Properties.envOrElse("INFLUXDB_PASSWORD", config.getString("grasshopper.addresspoints.monitoring.influxdb.password"))
-  lazy val monitoringFrequency = Properties.envOrElse("MONITORING_FREQUENCY", config.getString("grasshopper.addresspoints.monitoring.frequency")).toInt
+  lazy val influxHost = Properties.envOrElse("INFLUXDB_HOST", config.getString("grasshopper.census.monitoring.influxdb.host"))
+  lazy val influxPort = Properties.envOrElse("INFLUXDB_PORT", config.getString("grasshopper.census.monitoring.influxdb.port")).toInt
+  lazy val influxdbUser = Properties.envOrElse("INFLUXDB_USER", config.getString("grasshopper.census.monitoring.influxdb.user"))
+  lazy val influxdbPassword = Properties.envOrElse("INFLUXDB_PASSWORD", config.getString("grasshopper.census.monitoring.influxdb.password"))
+  lazy val monitoringFrequency = Properties.envOrElse("MONITORING_FREQUENCY", config.getString("grasshopper.census.monitoring.frequency")).toInt
 
   val influxdb = new InfluxdbHttp(influxHost, influxPort, "metrics", influxdbUser, influxdbPassword)
 
