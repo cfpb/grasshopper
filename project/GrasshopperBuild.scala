@@ -31,7 +31,7 @@ object GrasshopperBuild extends Build {
   import Dependencies._
   import BuildSettings._
 
-  val commonDeps = Seq(logback, scalaLogging, logstashLogback, scalaTest, scalaCheck)
+  val commonDeps = Seq(logback, scalaLogging, scalaTest, scalaCheck)
 
   val akkaDeps = commonDeps ++ Seq(akkaActor, akkaStreams)
 
