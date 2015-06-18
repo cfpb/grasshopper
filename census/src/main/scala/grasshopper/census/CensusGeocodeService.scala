@@ -5,6 +5,7 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.ConfigFactory
+import grasshopper.census.metrics.JvmMetrics
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import grasshopper.census.api.Service
@@ -29,5 +30,15 @@ object CensusGeocodeService extends App with Service {
     config.getString("grasshopper.census.http.interface"),
     config.getInt("grasshopper.census.http.port")
   )
+
+  lazy val isMonitored = Properties.envOrElse("IS_MONITORED", config.getString("grasshopper.census.monitoring.isMonitored")).toBoolean
+
+  if (isMonitored) {
+    val jvmMetrics = JvmMetrics
+  }
+
+  sys.addShutdownHook {
+    system.shutdown()
+  }
 
 }
