@@ -19,8 +19,8 @@ object JvmMetrics extends Instrumented {
 
   lazy val influxHost = Properties.envOrElse("INFLUXDB_HOST", config.getString("grasshopper.census.monitoring.influxdb.host"))
   lazy val influxPort = Properties.envOrElse("INFLUXDB_PORT", config.getString("grasshopper.census.monitoring.influxdb.port")).toInt
-  lazy val influxdbUser = Properties.envOrElse("INFLUXDB_USER", config.getString("grasshopper.census.monitoring.influxdb.user"))
-  lazy val influxdbPassword = Properties.envOrElse("INFLUXDB_PASSWORD", config.getString("grasshopper.census.monitoring.influxdb.password"))
+  lazy val influxdbUser = Properties.envOrElse("INFLUXDB_USER", "")
+  lazy val influxdbPassword = Properties.envOrElse("INFLUXDB_PASSWORD", "")
   lazy val monitoringFrequency = Properties.envOrElse("MONITORING_FREQUENCY", config.getString("grasshopper.census.monitoring.frequency")).toInt
 
   val influxdb = new InfluxdbHttp(influxHost, influxPort, "metrics", influxdbUser, influxdbPassword)
