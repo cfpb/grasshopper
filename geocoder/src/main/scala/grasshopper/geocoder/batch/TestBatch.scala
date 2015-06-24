@@ -15,9 +15,8 @@ import scala.concurrent.ExecutionContext
 
 case class ParsedOutputAddress(input: String, parsed: ParsedInputAddress)
 case class BatchInputParsedAddress(input: String, parsedInputAddress: ParsedInputAddress)
-case class BatchGeocodeResult(service: String, input: String, latitude: Double, longitude: Double) {
-  //override def toString = s"${input},${latitude},${longitude}"
-}
+case class CensusBatchGeocodeResult(input: String, latitude: Double, longitude: Double)
+case class AddressPointsBatchGeocodeResult(input: String, latitude: Double, longitude: Double)
 
 object TestBatch extends App {
 
@@ -46,7 +45,7 @@ object TestBatch extends App {
 
   val parseFlow: Flow[String, ParsedAddress, Unit] = {
     Flow[String]
-      .mapAsyncUnordered(4)(a => AddressParserClient.standardize(a))
+      .mapAsync(4)(a => AddressParserClient.standardize(a))
       .map { x =>
         if (x.isRight) {
           x.right.getOrElse(ParsedAddress.empty)
@@ -70,9 +69,9 @@ object TestBatch extends App {
         ))
   }
 
-  val censusFlow: Flow[ParsedOutputAddress, BatchGeocodeResult, Unit] = {
+  val censusFlow: Flow[ParsedOutputAddress, CensusBatchGeocodeResult, Unit] = {
     Flow[ParsedOutputAddress]
-      .mapAsyncUnordered(4) { p =>
+      .mapAsync(4) { p =>
         CensusClient.geocode(p.parsed).map { x =>
           if (x.isRight) {
             val result = x.right.getOrElse(CensusResult.empty)
@@ -86,18 +85,18 @@ object TestBatch extends App {
             } else {
               0
             }
-            BatchGeocodeResult("census", p.input, latitude, longitude)
+            CensusBatchGeocodeResult(p.input, latitude, longitude)
           } else {
             val result = CensusResult.error
-            BatchGeocodeResult("census", p.input, 0.0, 0.0)
+            CensusBatchGeocodeResult(p.input, 0.0, 0.0)
           }
         }
       }
   }
 
-  val addressPointsFlow: Flow[String, BatchGeocodeResult, Unit] = {
+  val addressPointsFlow: Flow[String, AddressPointsBatchGeocodeResult, Unit] = {
     Flow[String]
-      .mapAsyncUnordered(4) { a =>
+      .mapAsync(4) { a =>
         AddressPointsClient.geocode(a).map { x =>
           if (x.isRight) {
             val result = x.right.getOrElse(AddressPointsResult.empty)
@@ -111,9 +110,9 @@ object TestBatch extends App {
             } else {
               0
             }
-            BatchGeocodeResult("addresspoints", a, latitude, longitude)
+            AddressPointsBatchGeocodeResult(a, latitude, longitude)
           } else {
-            BatchGeocodeResult("addresspoints", a, 0.0, 0.0)
+            AddressPointsBatchGeocodeResult(a, 0.0, 0.0)
           }
         }
       }
@@ -131,10 +130,19 @@ object TestBatch extends App {
     import FlowGraph.Implicits._
 
     val broadcast = builder.add(Broadcast[String](2))
-    val merge = builder.add(Merge[BatchGeocodeResult](2))
+    val zip = builder.add(Zip[CensusBatchGeocodeResult, AddressPointsBatchGeocodeResult]())
 
-    source ~> broadcast ~> parseFlow ~> parsedInputAddressFlow ~> censusFlow ~> merge ~> sink
-    broadcast ~> addressPointsFlow ~> merge
+    source ~> broadcast ~> parseFlow ~> parsedInputAddressFlow ~> censusFlow ~> zip.in0
+    broadcast ~> addressPointsFlow ~> zip.in1
+    zip.out ~> Flow[(CensusBatchGeocodeResult, AddressPointsBatchGeocodeResult)].map {
+      case (b1, b2) =>
+        if (b2.latitude != 0 && b2.longitude != 0) {
+          b2
+        } else {
+          b1
+        }
+      //(b1, b2)
+    } ~> sink
 
   }
 
