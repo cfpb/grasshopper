@@ -5,27 +5,24 @@ import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorFlowMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import feature.Feature
-import grasshopper.client.protocol.ClientJsonProtocol
-import io.geojson.FeatureJsonProtocol._
 import grasshopper.client.addresspoints.AddressPointsClient
 import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
 import grasshopper.client.census.CensusClient
 import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInputAddress }
-import grasshopper.client.model.ResponseError
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
+import grasshopper.client.protocol.ClientJsonProtocol
 import grasshopper.geocoder.model.{ GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
-import io.geojson.FeatureJsonProtocol._
 import org.slf4j.LoggerFactory
+
 import scala.async.Async.{ async, await }
 import scala.concurrent.{ ExecutionContextExecutor, Future }
-import spray.json._
 
 trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   implicit val system: ActorSystem
@@ -56,8 +53,16 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
         }
       }
     } ~
+      path("geocode") {
+        post {
+          entity(as[FormData]) { formData =>
+            complete {
+              "OK BATCH"
+            }
+          }
+        }
+      } ~
       path("geocode" / Segment) { address =>
-
         val fParsed: Future[(ParsedAddress, ParsedInputAddress)] = async {
           val addr = await(AddressParserClient.standardize(address))
           if (addr.isLeft) {
