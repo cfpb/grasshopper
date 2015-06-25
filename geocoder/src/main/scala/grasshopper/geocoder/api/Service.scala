@@ -8,6 +8,7 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.Source
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import grasshopper.client.addresspoints.AddressPointsClient
@@ -55,11 +56,38 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
     } ~
       path("geocode") {
         post {
+          //          extractRequest { request =>
+          //            request.entity.dataBytes
+          //              .via(
+          //                Framing.delimiter(ByteString("\r\n"), maximumFrameLength = 1000, allowTruncation = true)
+          //              ).map(_.utf8String)
+          //              .to(Sink.foreach(println)).run()
+          //            complete("uploaded")
+          //          }
           entity(as[FormData]) { formData =>
-            complete {
-              "OK BATCH"
+            val list = formData.parts.map { bodyPart =>
+              bodyPart.entity.dataBytes.map { byteString =>
+                Source(List(byteString)).map { e =>
+                  e.utf8String
+                  //Files.write(tempFile, e.toArray, StandardOpenOption.APPEND)
+                }
+              }
             }
+            complete { "OK" }
           }
+          //          entity(as[FormData]) { formData =>
+          //            val parts = formData.parts
+          //            parts.runForeach { bodyPart =>
+          //              bodyPart.entity.dataBytes.runForeach { byteString =>
+          //                Source(List(byteString)).runForeach { e =>
+          //                  println(e.toArray)
+          //                }
+          //              }
+          //            }
+          //            complete {
+          //              "OK BATCH"
+          //            }
+          //          }
         }
       } ~
       path("geocode" / Segment) { address =>
