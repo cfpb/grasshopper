@@ -7,7 +7,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import grasshopper.client.addresspoints.AddressPointsClient
@@ -28,7 +28,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
-  implicit val materializer: ActorFlowMaterializer
+  implicit val materializer: ActorMaterializer
 
   def config: Config
 

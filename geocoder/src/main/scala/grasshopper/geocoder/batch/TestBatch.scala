@@ -3,7 +3,7 @@ package grasshopper.geocoder.batch
 import akka.actor.ActorSystem
 import akka.stream.Supervision.Decider
 import akka.stream.scaladsl._
-import akka.stream.{ ActorFlowMaterializer, ActorFlowMaterializerSettings, Supervision }
+import akka.stream.{ ActorMaterializer, ActorMaterializerSettings, Supervision }
 import grasshopper.geocoder.api.GeocodeFlows
 
 import scala.concurrent.ExecutionContext
@@ -17,8 +17,8 @@ object TestBatch extends App {
   }
 
   implicit val system = ActorSystem("sys")
-  implicit val mat = ActorFlowMaterializer(
-    ActorFlowMaterializerSettings(system)
+  implicit val mat = ActorMaterializer(
+    ActorMaterializerSettings(system)
       .withSupervisionStrategy(decider)
   )
   implicit val ec: ExecutionContext = system.dispatcher
@@ -36,5 +36,4 @@ object TestBatch extends App {
   source2
     .via(GeocodeFlows.geocode)
     .to(Sink.foreach(println)).run()
-
 }
