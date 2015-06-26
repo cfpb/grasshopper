@@ -21,9 +21,13 @@ import grasshopper.client.protocol.ClientJsonProtocol
 import grasshopper.geocoder.model.{ GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import org.slf4j.LoggerFactory
-
 import scala.async.Async.{ async, await }
 import scala.concurrent.{ ExecutionContextExecutor, Future }
+import akka.stream.io.Framing
+import akka.util.ByteString
+import akka.stream.scaladsl.FlattenStrategy
+import akka.stream.scaladsl.Sink
+import grasshopper.geocoder.model.CensusGeocodeBatchResult
 
 trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   implicit val system: ActorSystem
@@ -56,38 +60,30 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
     } ~
       path("geocode") {
         post {
-          //          extractRequest { request =>
-          //            request.entity.dataBytes
-          //              .via(
-          //                Framing.delimiter(ByteString("\r\n"), maximumFrameLength = 1000, allowTruncation = true)
-          //              ).map(_.utf8String)
-          //              .to(Sink.foreach(println)).run()
-          //            complete("uploaded")
-          //          }
           entity(as[FormData]) { formData =>
-            val list = formData.parts.map { bodyPart =>
-              bodyPart.entity.dataBytes.map { byteString =>
-                Source(List(byteString)).map { e =>
-                  e.utf8String
-                  //Files.write(tempFile, e.toArray, StandardOpenOption.APPEND)
+            complete {
+              val source = formData.parts
+                .log("", p => p.filename)
+                .mapAsync(4) { bodyPart =>
+                  bodyPart.entity.dataBytes.runFold(ByteString.empty)(_ ++ _).map { contents =>
+                    contents
+                  }
                 }
-              }
+
+              val linesStream = source.via(
+                Framing.delimiter(
+                  ByteString("\n"),
+                  maximumFrameLength = 100,
+                  allowTruncation = true))
+                .map(_.utf8String)
+
+              linesStream
+                .via(GeocodeFlows.geocode)
+                .to(Sink.foreach(println)).run()
+
+              "OK"
             }
-            complete { "OK" }
           }
-          //          entity(as[FormData]) { formData =>
-          //            val parts = formData.parts
-          //            parts.runForeach { bodyPart =>
-          //              bodyPart.entity.dataBytes.runForeach { byteString =>
-          //                Source(List(byteString)).runForeach { e =>
-          //                  println(e.toArray)
-          //                }
-          //              }
-          //            }
-          //            complete {
-          //              "OK BATCH"
-          //            }
-          //          }
         }
       } ~
       path("geocode" / Segment) { address =>

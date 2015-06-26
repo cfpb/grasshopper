@@ -9,4 +9,6 @@ import grasshopper.geocoder.model._
 trait GrasshopperJsonProtocol extends ClientJsonProtocol with AddressPointsJsonProtocol with CensusJsonProtocol with ParserJsonProtocol {
   implicit val geocodeResultFormat = jsonFormat4(GeocodeResult.apply)
   implicit val geocodeStatusFormat = jsonFormat3(GeocodeStatus.apply)
+  implicit val addressPointsGeocodeBatchResultFormat = jsonFormat3(AddressPointsGeocodeBatchResult.apply)
+  implicit val censusGeocodeBatchResultFormat = jsonFormat3(CensusGeocodeBatchResult.apply)
 }

@@ -5,8 +5,9 @@ import akka.stream.Supervision.Decider
 import akka.stream.scaladsl._
 import akka.stream.{ ActorMaterializer, ActorMaterializerSettings, Supervision }
 import grasshopper.geocoder.api.GeocodeFlows
-
 import scala.concurrent.ExecutionContext
+import akka.util.ByteString
+import akka.stream.io.Framing
 
 object TestBatch extends App {
 
@@ -31,9 +32,29 @@ object TestBatch extends App {
       "1 Main St City ST 00001"
     ).toIterator
 
-  val source2 = Source(() => addresses)
+  val addresses2 = List(
+    ByteString("1311 30th St NW Washington DC 20007\r\n"),
+    ByteString("3146 M St NW Washington DC 20007\r\n")).toIterator
 
-  source2
+  val source = Source(() => addresses2)
+
+  val linesStream = source.via(
+    Framing.delimiter(
+      ByteString("\r\n"),
+      maximumFrameLength = 100,
+      allowTruncation = true))
+    .map(_.utf8String)
+
+  //linesStream.to(Sink.foreach { x => println(x) }).run()
+
+  linesStream
+    .map { x => println(x.toString()); x }
     .via(GeocodeFlows.geocode)
     .to(Sink.foreach(println)).run()
+
+  //  val source2 = Source(() => addresses)
+  //
+  //  source2
+  //    .via(GeocodeFlows.geocode)
+  //    .to(Sink.foreach(println)).run()
 }
