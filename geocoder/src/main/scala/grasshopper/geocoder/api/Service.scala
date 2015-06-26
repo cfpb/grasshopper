@@ -63,7 +63,6 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
           entity(as[FormData]) { formData =>
             complete {
               val source = formData.parts
-                .log("", p => p.filename)
                 .mapAsync(4) { bodyPart =>
                   bodyPart.entity.dataBytes.runFold(ByteString.empty)(_ ++ _).map { contents =>
                     contents
