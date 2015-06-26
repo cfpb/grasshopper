@@ -5,10 +5,13 @@ import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.MediaTypes.`text/csv`
 import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Source
+import akka.stream.io.Framing
+import akka.util.ByteString
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import grasshopper.client.addresspoints.AddressPointsClient
@@ -18,16 +21,12 @@ import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInput
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
 import grasshopper.client.protocol.ClientJsonProtocol
-import grasshopper.geocoder.model.{ GeocodeResult, GeocodeStatus }
+import grasshopper.geocoder.model.{ AddressPointsGeocodeBatchResult, CensusGeocodeBatchResult, GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import org.slf4j.LoggerFactory
+
 import scala.async.Async.{ async, await }
 import scala.concurrent.{ ExecutionContextExecutor, Future }
-import akka.stream.io.Framing
-import akka.util.ByteString
-import akka.stream.scaladsl.FlattenStrategy
-import akka.stream.scaladsl.Sink
-import grasshopper.geocoder.model.CensusGeocodeBatchResult
 
 trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   implicit val system: ActorSystem
@@ -73,14 +72,24 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
                 Framing.delimiter(
                   ByteString("\n"),
                   maximumFrameLength = 100,
-                  allowTruncation = true))
-                .map(_.utf8String)
+                  allowTruncation = true
+                )
+              ).map(_.utf8String)
 
               linesStream
                 .via(GeocodeFlows.geocode)
-                .to(Sink.foreach(println)).run()
 
-              "OK"
+              val geocodeFlow = linesStream
+                .via(GeocodeFlows.geocode)
+                .map {
+                  case a: AddressPointsGeocodeBatchResult =>
+                    a.toCsv
+                  case c: CensusGeocodeBatchResult =>
+                    c.toCsv
+                }
+
+              val geocodeByteStream = geocodeFlow.map(s => ByteString(s))
+              HttpEntity.Chunked.fromData(`text/csv`, geocodeByteStream)
             }
           }
         }

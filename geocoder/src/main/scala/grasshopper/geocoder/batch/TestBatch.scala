@@ -34,7 +34,8 @@ object TestBatch extends App {
 
   val addresses2 = List(
     ByteString("1311 30th St NW Washington DC 20007\r\n"),
-    ByteString("3146 M St NW Washington DC 20007\r\n")).toIterator
+    ByteString("3146 M St NW Washington DC 20007\r\n")
+  ).toIterator
 
   val source = Source(() => addresses2)
 
@@ -42,7 +43,9 @@ object TestBatch extends App {
     Framing.delimiter(
       ByteString("\r\n"),
       maximumFrameLength = 100,
-      allowTruncation = true))
+      allowTruncation = true
+    )
+  )
     .map(_.utf8String)
 
   //linesStream.to(Sink.foreach { x => println(x) }).run()
