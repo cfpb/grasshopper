@@ -1,3 +1,5 @@
+# production compose
+# extend from docker-compose-common.yml
 geocoder:
   extends:
     file: docker-compose-common.yml
@@ -48,6 +50,7 @@ ui:
     - points
     - parser
 
+# services that are not extended
 cadvisor:
   image: google/cadvisor
   ports:
