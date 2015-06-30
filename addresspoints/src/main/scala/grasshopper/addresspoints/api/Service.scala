@@ -2,10 +2,7 @@ package grasshopper.addresspoints.api
 
 import java.net.InetAddress
 import java.time.Instant
-import feature.Feature
-import grasshopper.addresspoints.model.{ AddressPointsResult, AddressInput, Status }
-import grasshopper.addresspoints.protocol.AddressPointJsonProtocol
-import grasshopper.addresspoints.search.Geocode
+
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
@@ -14,13 +11,17 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.StandardRoute
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import io.geojson.FeatureJsonProtocol._
+import feature.Feature
+import grasshopper.addresspoints.model.{ AddressInput, AddressPointsResult, Status }
+import grasshopper.addresspoints.protocol.AddressPointJsonProtocol
+import grasshopper.addresspoints.search.Geocode
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import spray.json._
+
 import scala.concurrent.ExecutionContextExecutor
 
 trait Service extends AddressPointJsonProtocol with Geocode {
@@ -28,7 +29,7 @@ trait Service extends AddressPointJsonProtocol with Geocode {
 
   implicit def executor: ExecutionContextExecutor
 
-  implicit val materializer: ActorFlowMaterializer
+  implicit val materializer: ActorMaterializer
   implicit val client: Client
 
   def config: Config

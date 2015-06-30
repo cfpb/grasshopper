@@ -8,9 +8,9 @@ import grasshopper.client.ServiceClient
 import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInputAddress }
 import grasshopper.client.census.protocol.CensusJsonProtocol
 import grasshopper.client.model.ResponseError
-
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
+import java.net.URLEncoder
 
 object CensusClient extends ServiceClient with CensusJsonProtocol {
   override val config: Config = ConfigFactory.load()
@@ -30,7 +30,8 @@ object CensusClient extends ServiceClient with CensusJsonProtocol {
 
   def geocode(address: ParsedInputAddress): Future[Either[ResponseError, CensusResult]] = {
     implicit val ec: ExecutionContext = system.dispatcher
-    val url = s"/census/addrfeat?number=${address.number}&streetName=${address.streetName}&zipCode=${address.zipCode}&state=${address.state}"
+    val streetName = URLEncoder.encode(address.streetName, "UTF-8")
+    val url = s"/census/addrfeat?number=${address.number}&streetName=${streetName}&zipCode=${address.zipCode}&state=${address.state}"
     sendGetRequest(url).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[CensusResult].map(Right(_))

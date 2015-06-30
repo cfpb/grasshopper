@@ -10,6 +10,7 @@ import grasshopper.client.parser.model.{ ParserStatus, ParsedAddress }
 import grasshopper.client.parser.protocol.ParserJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
+import java.net.URLEncoder
 
 object AddressParserClient extends ServiceClient with ParserJsonProtocol {
   override val config = ConfigFactory.load()
@@ -29,7 +30,8 @@ object AddressParserClient extends ServiceClient with ParserJsonProtocol {
 
   def standardize(address: String): Future[Either[ResponseError, ParsedAddress]] = {
     implicit val ec: ExecutionContext = system.dispatcher
-    sendGetRequest(s"/standardize?address=${address}").flatMap { response =>
+    val url = s"/standardize?address=${URLEncoder.encode(address, "UTF-8")}"
+    sendGetRequest(url).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[ParsedAddress].map(Right(_))
         case _ => sendResponseError(response)
