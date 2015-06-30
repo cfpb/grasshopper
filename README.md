@@ -122,6 +122,10 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
 
         $ docker-compose -f docker-compose-dev.yml up -d
 
+    Then run `cd` into the grasshopper-ui directory and run
+
+        $ grunt docker
+
     This gives you everything you need to start development plus:
 
     - the ability to make UI changes and refresh the browser to view them.
