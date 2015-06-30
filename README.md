@@ -114,6 +114,29 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
     **Note:** The `-d` option is necessary since `grasshopper-loader` is
     not intended to run as a service, and exits immediately.
 
+    **Note:** If using `boot2docker`, the following with get you the  `docker-provided-ip` referenced below:
+
+        $ boot2docker ip
+
+1. To start a development version using only grasshopper, loader, and ui run
+
+        $ docker-compose -f docker-compose-dev.yml up -d
+
+    This gives you everything you need to start development plus:
+
+    - the ability to make UI changes and refresh the browser to view them.
+    - an open port to view Elasticsearch data (9200)
+        - http://{{docker-provided-ip}}:9200/census/_search?pretty=true
+        - http://{{docker-provided-ip}}:9200/address/_search?pretty=true
+
+1. To load data use within the docker-compose setup
+
+        $ docker-compose run loader
+
+    And then follow the command-line instructions [from the loader repo](https://github.com/cfpb/grasshopper-loader). You can load the data found in `test/data` for a quick setup. In order to load more data you must include the data files in the `grasshopper-loader` directory and build/re-build the container.
+
+        $ docker-compose build loader
+
 1. Browse to: http://{{docker-provided-ip}}:8080/status
 
     If all goes as expected, you should see a message similar to the following:
@@ -141,9 +164,10 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
     }
     ```
 
-    **Note:** If using `boot2docker`, the following with get you the  `docker-provided-ip`:
+    Other URLs:
 
-        $ boot2docker ip
+    - UI = http://{{docker-provided-ip}}
+    - Geocoder = http://{{docker-provided-ip}}/geocode/{{address}}
 
 For more details on running via Docker, see [Docker Compose](https://docs.docker.com/compose/).
 
