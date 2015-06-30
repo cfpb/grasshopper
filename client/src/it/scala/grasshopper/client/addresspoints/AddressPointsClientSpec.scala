@@ -19,7 +19,7 @@ class AddressPointsClientSpec extends FlatSpec with MustMatchers {
 
 
   "A request to /geocode" must "geocode an address string" in {
-    val maybeAddress = Await.result(AddressPointsClient.geocode("108+S+Main+St+Bentonville+AR+72712"), 1.seconds)
+    val maybeAddress = Await.result(AddressPointsClient.geocode("108 S Main St Bentonville AR 72712"), 1.seconds)
     maybeAddress match {
       case Right(result) =>
         result.status mustBe "OK"

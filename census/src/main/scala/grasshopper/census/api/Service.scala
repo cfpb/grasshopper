@@ -2,34 +2,35 @@ package grasshopper.census.api
 
 import java.net.InetAddress
 import java.time.Instant
+
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
-import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.StandardRoute
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import feature.Feature
-import org.elasticsearch.client.Client
-import org.slf4j.LoggerFactory
 import grasshopper.census.model.{ CensusResult, ParsedInputAddress, Status }
 import grasshopper.census.protocol.CensusJsonProtocol
-import spray.json._
-import io.geojson.FeatureJsonProtocol._
 import grasshopper.census.search.CensusGeocode
+import org.elasticsearch.client.Client
+import org.slf4j.LoggerFactory
+import spray.json._
+
 import scala.concurrent.ExecutionContextExecutor
-import scala.util.{ Success, Failure, Try }
+import scala.util.{ Failure, Success, Try }
 
 trait Service extends CensusJsonProtocol with CensusGeocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
 
-  implicit val materializer: ActorFlowMaterializer
+  implicit val materializer: ActorMaterializer
   implicit val client: Client
 
   def config: Config

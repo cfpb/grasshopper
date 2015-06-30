@@ -5,33 +5,34 @@ import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.MediaTypes.`text/csv`
+import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
+import akka.stream.io.Framing
+import akka.util.ByteString
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import feature.Feature
-import grasshopper.client.protocol.ClientJsonProtocol
-import io.geojson.FeatureJsonProtocol._
 import grasshopper.client.addresspoints.AddressPointsClient
 import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
 import grasshopper.client.census.CensusClient
 import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInputAddress }
-import grasshopper.client.model.ResponseError
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
-import grasshopper.geocoder.model.{ GeocodeResult, GeocodeStatus }
+import grasshopper.client.protocol.ClientJsonProtocol
+import grasshopper.geocoder.model.{ AddressPointsGeocodeBatchResult, CensusGeocodeBatchResult, GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
-import io.geojson.FeatureJsonProtocol._
 import org.slf4j.LoggerFactory
+
 import scala.async.Async.{ async, await }
 import scala.concurrent.{ ExecutionContextExecutor, Future }
-import spray.json._
 
 trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
-  implicit val materializer: ActorFlowMaterializer
+  implicit val materializer: ActorMaterializer
 
   def config: Config
 
@@ -56,8 +57,44 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
         }
       }
     } ~
-      path("geocode" / Segment) { address =>
+      path("geocode") {
+        post {
+          entity(as[FormData]) { formData =>
+            complete {
+              val source = formData.parts
+                .mapAsync(4) { bodyPart =>
+                  bodyPart.entity.dataBytes.runFold(ByteString.empty)(_ ++ _).map { contents =>
+                    contents
+                  }
+                }
 
+              val linesStream = source.via(
+                Framing.delimiter(
+                  ByteString("\n"),
+                  maximumFrameLength = 100,
+                  allowTruncation = true
+                )
+              ).map(_.utf8String)
+
+              linesStream
+                .via(GeocodeFlows.geocode)
+
+              val geocodeFlow = linesStream
+                .via(GeocodeFlows.geocode)
+                .map {
+                  case a: AddressPointsGeocodeBatchResult =>
+                    a.toCsv
+                  case c: CensusGeocodeBatchResult =>
+                    c.toCsv
+                }
+
+              val geocodeByteStream = geocodeFlow.map(s => ByteString(s))
+              HttpEntity.Chunked.fromData(`text/csv`, geocodeByteStream)
+            }
+          }
+        }
+      } ~
+      path("geocode" / Segment) { address =>
         val fParsed: Future[(ParsedAddress, ParsedInputAddress)] = async {
           val addr = await(AddressParserClient.standardize(address))
           if (addr.isLeft) {

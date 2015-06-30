@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model._
 import akka.stream.scaladsl.{ Sink, Source }
-import akka.stream.{ ActorFlowMaterializer, StreamTcpException }
+import akka.stream.{ ActorMaterializer, StreamTcpException }
 import akka.util.Timeout
 import com.typesafe.config.Config
 import grasshopper.client.model.ResponseError
@@ -17,7 +17,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 trait ServiceClient extends ClientJsonProtocol {
   implicit val askTimeout: Timeout = 1000.millis
   implicit val system: ActorSystem = ActorSystem("grasshopper-client")
-  implicit val materializer: ActorFlowMaterializer = ActorFlowMaterializer()
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   def host: String
   def port: String

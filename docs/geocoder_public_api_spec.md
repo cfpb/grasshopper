@@ -111,3 +111,14 @@ Each service has a status code that provides metadata about the geocode request 
 
 
 **3. Batch Geocode**
+
+`POST /geocode`
+
+The request must send a file with one address string per line as `multipart/form-data`.
+This endpoint will geocode the addresses in parallel and choose the best option from the available geocoders.
+The response is a chunked response, and starts sending data to download as soon as the geocoding process begins.
+
+Eventually a file is saved to disk, with the following format:
+
+`input_address,latitude,longitude`
+

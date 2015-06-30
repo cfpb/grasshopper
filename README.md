@@ -107,12 +107,38 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
         $ cd grasshopper
         $ sbt assembly
 
-1. Start **all** Build Docker images for all projects
+1. To start a **development** version using only grasshopper, loader, and ui run
 
         $ docker-compose up -d
 
-    **Note:** The `-d` option is necessary since `grasshopper-loader` is
-    not intended to run as a service, and exits immediately.
+    **Note:** The `-d` option is necessary since `grasshopper-loader` is not intended to run as a service, and exits immediately.
+
+    Then run `cd` into the grasshopper-ui directory and run
+
+        $ grunt docker
+
+    This gives you everything you need to start development plus:
+
+    - the ability to make UI changes and refresh the browser to view them.
+    - an open port to view Elasticsearch data (9200)
+        - http://{{docker-provided-ip}}:9200/census/_search?pretty=true
+        - http://{{docker-provided-ip}}:9200/address/_search?pretty=true
+
+    To start **all** Build Docker images for all projects
+
+        $ docker-compose -f docker-compose-full.yml up -d
+
+    **Note:** If using `boot2docker`, the following with get you the  `docker-provided-ip` referenced below:
+
+        $ boot2docker ip
+
+1. The dev setup has the /test/data volume so you can place any necessary data in that directory and then load it without having to rebuild the container.
+
+        $ docker-compose run loader
+
+    And then follow the command-line instructions [from the loader repo](https://github.com/cfpb/grasshopper-loader). For example:
+
+        $ node grasshopper-loader.js -d test/data/{{path/to/your/data}}
 
 1. Browse to: http://{{docker-provided-ip}}:8080/status
 
@@ -141,9 +167,10 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
     }
     ```
 
-    **Note:** If using `boot2docker`, the following with get you the  `docker-provided-ip`:
+    Other URLs:
 
-        $ boot2docker ip
+    - UI = http://{{docker-provided-ip}}
+    - Geocoder = http://{{docker-provided-ip}}:8080/geocode/{{address}}
 
 For more details on running via Docker, see [Docker Compose](https://docs.docker.com/compose/).
 
@@ -161,7 +188,18 @@ $ sbt
 > test
 ```
 
-This will run unit and integration tests. The integration tests will stand up a temporary Elasticsearch node, no additional dependencies are needed.  
+This will run unit and integration tests. The integration tests will stand up a temporary Elasticsearch node, no additional dependencies are needed.
+
+In addition to regular testing, some projects (i.e. client, geocoder) also have integration tests that can be run against a live system.
+To run these, first make sure that the underlying dependencies have been deployed and are running (addresspoints, parser and census services).
+The underlying services need to have the necessary data to pass the tests.
+
+```
+$ sbt
+> project geocoder
+> it:test
+```
+
 
 ## Known issues
 

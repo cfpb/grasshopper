@@ -1,160 +1,60 @@
+# dev compose
+# extend from docker-compose-common.yml
 geocoder:
-  build: geocoder
+  extends:
+    file: docker-compose-common.yml
+    service: geocoder
   links:
     - lines
     - points
     - parser
-    - influxdb
-  ports:
-    - "8080:8080"
-  environment:
-    GRASSHOPPER_ADDRESSPOINTS_HOST: points
-    GRASSHOPPER_ADDRESSPOINTS_PORT: 8081
-    GRASSHOPPER_CENSUS_HOST: lines
-    GRASSHOPPER_CENSUS_PORT: 8082
-    GRASSHOPPER_PARSER_HOST: parser
-    GRASSHOPPER_PARSER_PORT: 5000
-    IS_MONITORED: true
-    INFLUXDB_HOST: &INFLUXDB_HOST influxdb
-    INFLUXDB_PORT: &INFLUXDB_PORT 8086
-    INFLUXDB_USER: &INFLUXDB_USER root
-    INFLUXDB_PASSWORD: &INFLUXDB_PASSWORD root
-
 
 lines:
-  build: census
-  links:
+  extends:
+    file: docker-compose-common.yml
+    service: lines
+  links: 
     - elasticsearch
-    - influxdb
-  ports:
-    - "8082:8082"
-  environment: &ES_JAVA_ENV
-    ELASTICSEARCH_HOST: elasticsearch
-    # Must override this PORT as Docker Compose autogenerates an envvar by the
-    # same name, but of the format: tcp://172.17.1.146:9200.
-    # Also, ES Java client uses port 9300, not REST API port 9200.
-    ELASTICSEARCH_PORT: 9300
-    IS_MONITORED: true
-    INFLUXDB_HOST: *INFLUXDB_HOST
-    INFLUXDB_PORT: *INFLUXDB_PORT
-    INFLUXDB_USER: *INFLUXDB_USER
-    INFLUXDB_PASSWORD: *INFLUXDB_PASSWORD
-   
 
 points:
-  build: addresspoints
-  links:
+  extends:
+    file: docker-compose-common.yml
+    service: points
+  links: 
     - elasticsearch
-    - influxdb
-  ports:
-    - "8081:8081"
-  environment: *ES_JAVA_ENV
-
 
 parser:
-  build: ../grasshopper-parser
-  ports:
-    - "5000:5000"
+  extends:
+    file: docker-compose-common.yml
+    service: parser
 
+# volumes allows for data to be loaded without being part of the container
 loader:
-  build: ../grasshopper-loader
+  extends:
+    file: docker-compose-common.yml
+    service: loader
   links:
     - elasticsearch
-    - influxdb
-  #command: ./grasshopper-loader.js -d test/data/new_york.json
+  volumes:
+    - ../grasshopper-loader/test/data:/usr/src/app/test/data/
 
-# Must be named "elasticsearch" to create expected ELASTICSEARCH_* envvars
+# add port to make it viewable
 elasticsearch:
-  image: elasticsearch
-
-
-ui:
-  build: ../grasshopper-ui
+  extends:
+    file: docker-compose-common.yml
+    service: elasticsearch
   ports:
-    - "80:80"
+    - "9200:9200"
+
+# volume allows for refesh (easy front-end development)
+ui:
+  extends:
+    file: docker-compose-common.yml
+    service: ui
   links:
     - geocoder
     - lines
     - points
     - parser
-
-
-influxdb:
-  image: tutum/influxdb
-  ports:
-    - 8083:8083 # Admin Site
-    - 8086:8086 # API
-  environment:
-    # Extra auto-create magic provided by this image
-    PRE_CREATE_DB: "cadvisor;metrics"
-  
-
-cadvisor:
-  image: google/cadvisor
-  ports:
-    - "9090:8080"
   volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:rw
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
-  links:
-    - influxdb
-  command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxdb:8086
-
-
-grafana:
-  build: docker/grafana
-  ports:
-    - 3000:3000
-  links:
-    - influxdb
-
-# Logspout setup taken from:
-#   https://github.com/gliderlabs/logspout#route-all-container-output-to-remote-syslog
-logspout:
-  image: gliderlabs/logspout:master 
-  ports:
-    - "8000:8000"
-  volumes: 
-    - /var/run/docker.sock:/tmp/docker.sock
-  links:
-    - logstash
-  environment:
-    LOGSPOUT: ignore
-    SYSLOG_FORMAT: rfc3164
-  command: syslog://logstash:5514
-
-logstash:
-  image: logstash
-  expose:
-    - 5514
-  links:
-    - elasticsearch
-  environment:
-    LOGSPOUT: ignore
-  command: >
-    logstash -e '
-    input { syslog{ port => 5514 } }
-    filter {
-        grok {
-          match => { "message" => [
-            "%{IP:http_client_ip} - - \[%{HTTPDATE:http_req_time}\] (.)%{WORD:http_req_method} %{URIPATH:uri_path}(?:%{URIPARAM:uri_params})? HTTP\/%{NUMBER:http_ver}(.) %{NUMBER:http_resp_code} %{NUMBER:http_resp_size} (.)-(.) (.)%{GREEDYDATA:http_client}(.)",
-            "\[%{TIMESTAMP_ISO8601:log_time}\]\[%{LOGLEVEL:log_level}%{SPACE}\]\[%{DATA:log_source}%{SPACE}\]%{SPACE}\[%{DATA:es_node}\]%{SPACE}\[%{DATA:es_index}\]%{SPACE}%{GREEDYDATA:message}",
-            "\[%{TIMESTAMP_ISO8601:log_time}\]\[%{LOGLEVEL:log_level}%{SPACE}\]\[%{DATA:thread_name}\]%{SPACE}%{GREEDYDATA:message}"
-          ] }
-          overwrite => ["message"]
-        }
-        kv { source => "uri_params" prefix => "uri_param_" field_split => "&?" }
-    }
-    output { elasticsearch { host => "elasticsearch" } }'
-
-kibana:
-  image: marcbachmann/kibana4
-  environment:
-    LOGSPOUT: ignore
-  links:
-    - elasticsearch
-  ports:
-    - "5601:5601"
-
+    - ../grasshopper-ui/dist:/opt/grasshopper-ui/

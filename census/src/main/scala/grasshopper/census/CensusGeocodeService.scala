@@ -3,7 +3,7 @@ package grasshopper.census
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import grasshopper.census.metrics.JvmMetrics
 import org.elasticsearch.client.transport.TransportClient
@@ -16,7 +16,7 @@ object CensusGeocodeService extends App with Service {
   override implicit val system: ActorSystem = ActorSystem("grasshopper-census")
 
   override implicit val executor = system.dispatcher
-  override implicit val materializer = ActorFlowMaterializer()
+  override implicit val materializer = ActorMaterializer()
 
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)

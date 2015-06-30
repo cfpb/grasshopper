@@ -8,9 +8,9 @@ import grasshopper.client.ServiceClient
 import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
 import grasshopper.client.addresspoints.protocol.AddressPointsJsonProtocol
 import grasshopper.client.model.ResponseError
-
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
+import java.net.URLEncoder
 
 object AddressPointsClient extends ServiceClient with AddressPointsJsonProtocol {
   override val config = ConfigFactory.load()
@@ -30,7 +30,9 @@ object AddressPointsClient extends ServiceClient with AddressPointsJsonProtocol 
 
   def geocode(address: String): Future[Either[ResponseError, AddressPointsResult]] = {
     implicit val ec: ExecutionContext = system.dispatcher
-    sendGetRequest(s"/addresses/points/${address}").flatMap { response =>
+    val addr = if (address.contains("?suggest=")) address else URLEncoder.encode(address, "UTF-8")
+    val url = s"/addresses/points/${addr}"
+    sendGetRequest(url).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[AddressPointsResult].map(Right(_))
         case _ => sendResponseError(response)

@@ -33,7 +33,7 @@ object GrasshopperBuild extends Build {
 
   val commonDeps = Seq(logback, scalaLogging, scalaTest, scalaCheck)
 
-  val akkaDeps = commonDeps ++ Seq(akkaActor, akkaStreams)
+  val akkaDeps = commonDeps ++ Seq(akkaActor, akkaStreams, akkaTestKit, akkaStreamsTestkit)
 
   val jsonDeps = commonDeps ++ Seq(akkaHttpJson)
 
