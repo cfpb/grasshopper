@@ -171,7 +171,7 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
     Other URLs:
 
     - UI = http://{{docker-provided-ip}}
-    - Geocoder = http://{{docker-provided-ip}}/geocode/{{address}}
+    - Geocoder = http://{{docker-provided-ip}}:8080/geocode/{{address}}
 
 For more details on running via Docker, see [Docker Compose](https://docs.docker.com/compose/).
 
