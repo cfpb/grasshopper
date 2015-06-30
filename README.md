@@ -118,7 +118,7 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
 
         $ boot2docker ip
 
-1. To start a development version using only grasshopper, loader, and ui run
+    To start a **development** version using only grasshopper, loader, and ui run
 
         $ docker-compose -f docker-compose-dev.yml up -d
 
