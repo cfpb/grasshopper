@@ -28,12 +28,15 @@ parser:
     file: docker-compose-common.yml
     service: parser
 
+# volumes allows for data to be loaded without being part of the container
 loader:
   extends:
     file: docker-compose-common.yml
     service: loader
   links:
     - elasticsearch
+  volumes:
+    - ../grasshopper-loader/test/data:/usr/src/app/test/data/
 
 # add port to make it viewable
 elasticsearch:
@@ -43,6 +46,7 @@ elasticsearch:
   ports:
     - "9200:9200"
 
+# volume allows for refesh (easy front-end development)
 ui:
   extends:
     file: docker-compose-common.yml

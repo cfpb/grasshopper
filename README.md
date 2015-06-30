@@ -107,20 +107,11 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
         $ cd grasshopper
         $ sbt assembly
 
-1. Start **all** Build Docker images for all projects
+1. To start a **development** version using only grasshopper, loader, and ui run
 
         $ docker-compose up -d
 
-    **Note:** The `-d` option is necessary since `grasshopper-loader` is
-    not intended to run as a service, and exits immediately.
-
-    **Note:** If using `boot2docker`, the following with get you the  `docker-provided-ip` referenced below:
-
-        $ boot2docker ip
-
-    To start a **development** version using only grasshopper, loader, and ui run
-
-        $ docker-compose -f docker-compose-dev.yml up -d
+    **Note:** The `-d` option is necessary since `grasshopper-loader` is not intended to run as a service, and exits immediately.
 
     Then run `cd` into the grasshopper-ui directory and run
 
@@ -133,13 +124,21 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
         - http://{{docker-provided-ip}}:9200/census/_search?pretty=true
         - http://{{docker-provided-ip}}:9200/address/_search?pretty=true
 
-1. To load data use within the docker-compose setup
+    To start **all** Build Docker images for all projects
+
+        $ docker-compose -f docker-compose-full.yml up -d
+
+    **Note:** If using `boot2docker`, the following with get you the  `docker-provided-ip` referenced below:
+
+        $ boot2docker ip
+
+1. The dev setup has the /test/data volume so you can place any necessary data in that directory and then load it without having to rebuild the container.
 
         $ docker-compose run loader
 
-    And then follow the command-line instructions [from the loader repo](https://github.com/cfpb/grasshopper-loader). You can load the data found in `test/data` for a quick setup. In order to load more data you must include the data files in the `grasshopper-loader` directory and build/re-build the container.
+    And then follow the command-line instructions [from the loader repo](https://github.com/cfpb/grasshopper-loader). For example:
 
-        $ docker-compose build loader
+        $ node grasshopper-loader.js -d test/data/{{path/to/your/data}}
 
 1. Browse to: http://{{docker-provided-ip}}:8080/status
 
