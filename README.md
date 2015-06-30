@@ -161,7 +161,18 @@ $ sbt
 > test
 ```
 
-This will run unit and integration tests. The integration tests will stand up a temporary Elasticsearch node, no additional dependencies are needed.  
+This will run unit and integration tests. The integration tests will stand up a temporary Elasticsearch node, no additional dependencies are needed.
+
+In addition to regular testing, some projects (i.e. client, geocoder) also have integration tests that can be run against a live system.
+To run these, first make sure that the underlying dependencies have been deployed and are running (addresspoints, parser and census services).
+The underlying services need to have the necessary data to pass the tests.
+
+```
+$ sbt
+> project geocoder
+> it:test
+```
+
 
 ## Known issues
 
