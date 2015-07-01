@@ -8,20 +8,30 @@ geocoder:
     - lines
     - points
     - parser
+    - influxdb
+  environment: &MONITORED_JVM_ENV
+    IS_MONITORED: true
+    INFLUXDB_HOST: &INFLUXDB_HOST influxdb
+    INFLUXDB_PORT: &INFLUXDB_PORT 8086
+    INFLUXDB_USER: &INFLUXDB_USER root
+    INFLUXDB_PASSWORD: &INFLUXDB_PASSWORD root
 
 lines:
   extends:
     file: docker-compose-common.yml
     service: lines
-  links: 
+  links:
     - elasticsearch
+    - influxdb
+  environment: *MONITORED_JVM_ENV
 
 points:
   extends:
     file: docker-compose-common.yml
     service: points
-  links: 
+  links:
     - elasticsearch
+  environment: *MONITORED_JVM_ENV
 
 parser:
   extends:
@@ -60,6 +70,16 @@ cadvisor:
     - /var/run:/var/run:rw
     - /sys:/sys:ro
     - /var/lib/docker/:/var/lib/docker:ro
+  links:
+    - influxdb
+  command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxdb:8086
+
+grafana:
+  build: docker/grafana
+  ports:
+    - 3000:3000
+  links:
+    - influxdb
 
 # Logspout setup taken from:
 #   https://github.com/gliderlabs/logspout#route-all-container-output-to-remote-syslog
@@ -73,6 +93,7 @@ logspout:
     - logstash
   environment:
     LOGSPOUT: ignore
+    # Logstash only supports the older RFC 3164 syslog protocol
     SYSLOG_FORMAT: rfc3164
   command: syslog://logstash:5514
 
@@ -87,8 +108,8 @@ logstash:
   command: >
     logstash -e '
     input { syslog{ port => 5514 } }
-    filter { 
-        grok { 
+    filter {
+        grok {
           match => { "message" => [
             "%{IP:http_client_ip} - - \[%{HTTPDATE:http_req_time}\] (.)%{WORD:http_req_method} %{URIPATH:uri_path}(?:%{URIPARAM:uri_params})? HTTP\/%{NUMBER:http_ver}(.) %{NUMBER:http_resp_code} %{NUMBER:http_resp_size} (.)-(.) (.)%{GREEDYDATA:http_client}(.)",
             "\[%{TIMESTAMP_ISO8601:log_time}\]\[%{LOGLEVEL:log_level}%{SPACE}\]\[%{DATA:log_source}%{SPACE}\]%{SPACE}\[%{DATA:es_node}\]%{SPACE}\[%{DATA:es_index}\]%{SPACE}%{GREEDYDATA:message}",
