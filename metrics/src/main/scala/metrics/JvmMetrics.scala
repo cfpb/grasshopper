@@ -1,4 +1,4 @@
-package grasshopper.addresspoints.metrics
+package grasshopper.metrics
 
 import java.net.InetAddress
 import java.util.concurrent.TimeUnit
@@ -12,16 +12,16 @@ import scala.util.Properties
 
 object JvmMetrics extends Instrumented {
 
-  val appName = "addresspoints"
+  val appName = "geocoder"
   val hostName = InetAddress.getLocalHost.getHostName
 
   val config = ConfigFactory.load()
 
-  lazy val influxHost = Properties.envOrElse("INFLUXDB_HOST", config.getString("grasshopper.addresspoints.monitoring.influxdb.host"))
-  lazy val influxPort = Properties.envOrElse("INFLUXDB_PORT", config.getString("grasshopper.addresspoints.monitoring.influxdb.port")).toInt
+  lazy val influxHost = Properties.envOrElse("INFLUXDB_HOST", config.getString("grasshopper.geocoder.monitoring.influxdb.host"))
+  lazy val influxPort = Properties.envOrElse("INFLUXDB_PORT", config.getString("grasshopper.geocoder.monitoring.influxdb.port")).toInt
   lazy val influxdbUser = Properties.envOrElse("INFLUXDB_USER", "")
   lazy val influxdbPassword = Properties.envOrElse("INFLUXDB_PASSWORD", "")
-  lazy val monitoringFrequency = Properties.envOrElse("MONITORING_FREQUENCY", config.getString("grasshopper.addresspoints.monitoring.frequency")).toInt
+  lazy val monitoringFrequency = Properties.envOrElse("MONITORING_FREQUENCY", config.getString("grasshopper.geocoder.monitoring.frequency")).toInt
 
   val influxdb = new InfluxdbHttp(influxHost, influxPort, "metrics", influxdbUser, influxdbPassword)
 

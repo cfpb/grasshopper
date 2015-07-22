@@ -1,4 +1,4 @@
-package grasshopper.addresspoints.metrics
+package grasshopper.metrics
 
 import com.codahale.metrics.MetricRegistry
 
