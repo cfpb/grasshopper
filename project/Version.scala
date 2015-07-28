@@ -8,7 +8,7 @@ object Version {
   val scalaCheck       = "1.12.1"
   val elasticsearch    = "1.4.2"
   val jts              = "1.13"
-  val scale            = "0.0.1"
+  val scale            = "0.0.2"
   val async            = "0.9.2"
   val metrics          = "3.1.2"
   val influxdbReporter = "0.7.0"
