@@ -60,8 +60,7 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
                    "type": "Point",
                      "coordinates": [
                        -92.48266322840489,
-                        33.77129525636826,
-                         0
+                        33.77129525636826
                      ]
                  },
                  "properties": {
@@ -98,7 +97,7 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
               "type": "Feature",
               "geometry": {
                 "type": "Point",
-                "coordinates": [-91.19978780015629, 33.608091616155995, 0.0]
+                "coordinates": [-91.19978780015629, 33.608091616155995]
               },
               "properties": {
                 "address": "200 President St Arkansas City AR 71630",
@@ -113,7 +112,7 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
               "type": "Feature",
               "geometry": {
                 "type": "Point",
-                "coordinates": [-91.19960153268617, 33.60763673811005, 0.0]
+                "coordinates": [-91.19960153268617, 33.60763673811005]
               },
               "properties": {
                 "RFROMHN": "100",
