@@ -5,7 +5,7 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import grasshopper.geocoder.metrics.JvmMetrics
+import grasshopper.metrics.JvmMetrics
 import grasshopper.geocoder.api.Service
 
 import scala.util.Properties

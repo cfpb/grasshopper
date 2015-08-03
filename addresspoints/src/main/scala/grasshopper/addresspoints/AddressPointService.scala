@@ -6,7 +6,7 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import grasshopper.addresspoints.metrics.JvmMetrics
+import grasshopper.metrics.JvmMetrics
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 

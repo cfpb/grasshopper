@@ -2,6 +2,7 @@ object Version {
 
   val logback          = "1.1.2"
   val scalaLogging     = "3.1.0"
+  val config           = "1.0.2"
   val akka             = "2.3.11"
   val akkaStreams      = "1.0"
   val scalaTest        = "2.2.1"

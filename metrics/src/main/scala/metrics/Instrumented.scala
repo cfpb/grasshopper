@@ -1,4 +1,4 @@
-package grasshopper.geocoder.metrics
+package grasshopper.metrics
 
 import nl.grons.metrics.scala.InstrumentedBuilder
 

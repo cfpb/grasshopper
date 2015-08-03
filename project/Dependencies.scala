@@ -17,6 +17,7 @@ object Dependencies {
   val akkaHttpTestkit    = "com.typesafe.akka"          %% "akka-http-testkit-experimental"       % Version.akkaStreams % "test"
   val logback            = "ch.qos.logback"              % "logback-classic"                      % Version.logback
   val scalaLogging       = "com.typesafe.scala-logging" %% "scala-logging"                        % Version.scalaLogging
+  val config             = "com.typesafe"                % "config"                               % Version.config
 
   val scalaTest          = "org.scalatest"              %% "scalatest"                            % Version.scalaTest   % "it, test"
   val scalaCheck         = "org.scalacheck"             %% "scalacheck"                           % Version.scalaCheck  % "it, test"
@@ -29,5 +30,5 @@ object Dependencies {
 
   val metricsJvm         = "io.dropwizard.metrics"       % "metrics-jvm"                          % Version.metrics
   val influxDbReporter   = "net.alchim31"                % "metrics-influxdb"                     % Version.influxdbReporter
-  val metrics            = "nl.grons"                   %% "metrics-scala"                        % Version.metricsScala excludeAll(ExclusionRule(organization = "com.typesafe.akka"))
+  val metricsScala       = "nl.grons"                   %% "metrics-scala"                        % Version.metricsScala excludeAll(ExclusionRule(organization = "com.typesafe.akka"))
 }

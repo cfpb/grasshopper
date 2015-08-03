@@ -43,7 +43,7 @@ object GrasshopperBuild extends Build {
 
   val scaleDeps = Seq(scaleGeoJson)
 
-  val metricsDeps = Seq(metrics, metricsJvm, influxDbReporter)
+  val metricsDeps = Seq(config, metricsScala, metricsJvm, influxDbReporter)
 
   val geocodeDeps = akkaHttpDeps ++ esDeps ++ scaleDeps ++ metricsDeps
 
@@ -65,6 +65,18 @@ object GrasshopperBuild extends Build {
       )
     )
 
+  lazy val metrics = (project in file("metrics"))
+    .configs(IntegrationTest)
+    .settings(buildSettings: _*)
+    .settings(
+      Revolver.settings ++
+      Seq(
+        assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        libraryDependencies ++= metricsDeps,
+        resolvers ++= repos
+      )
+    )
+
   lazy val addresspoints = (project in file("addresspoints"))
     .configs( IntegrationTest )
     .settings(buildSettings: _*)
@@ -72,10 +84,16 @@ object GrasshopperBuild extends Build {
       Revolver.settings ++
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        assemblyMergeStrategy in assembly := {
+          case "application.conf" => MergeStrategy.concat
+          case x =>
+            val oldStrategy = (assemblyMergeStrategy in assembly).value
+            oldStrategy(x)
+        },
         libraryDependencies ++= geocodeDeps,
         resolvers ++= repos
       )
-    ).dependsOn(elasticsearch)
+    ).dependsOn(elasticsearch, metrics)
 
   lazy val census = (project in file("census"))
     .configs( IntegrationTest )
@@ -84,10 +102,16 @@ object GrasshopperBuild extends Build {
       Revolver.settings ++ 
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        assemblyMergeStrategy in assembly := {
+          case "application.conf" => MergeStrategy.concat
+          case x =>
+            val oldStrategy = (assemblyMergeStrategy in assembly).value
+            oldStrategy(x)
+        },
         libraryDependencies ++= geocodeDeps,
         resolvers ++= repos
       )
-    ).dependsOn(elasticsearch)
+    ).dependsOn(elasticsearch, metrics)
 
   lazy val client = (project in file("client"))
     .configs( IntegrationTest )
@@ -116,9 +140,7 @@ object GrasshopperBuild extends Build {
         libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps ++ metricsDeps,
         resolvers ++= repos
       )
-    ).dependsOn(client)
-
-
+    ).dependsOn(client, metrics)
 
 
 }
