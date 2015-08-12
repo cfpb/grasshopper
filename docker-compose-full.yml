@@ -76,15 +76,13 @@ cadvisor:
   command: -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxdb:8086
 
 influxdb:
-  image: tutum/influxdb
+  image: tutum/influxdb:0.8.8
   ports:
     - 8083:8083 # Admin Site
     - 8086:8086 # API
   environment:
     # Extra auto-create magic provided by this image
     PRE_CREATE_DB: "cadvisor;metrics"
-  
-
 
 grafana:
   build: docker/grafana
