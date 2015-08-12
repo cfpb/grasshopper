@@ -25,7 +25,8 @@ object GrasshopperGeocoder extends App with Service {
     config.getInt("grasshopper.geocoder.http.port")
   )
 
-  lazy val isMonitored = Properties.envOrElse("IS_MONITORED", config.getString("grasshopper.geocoder.monitoring.isMonitored")).toBoolean
+  // Default "isMonitored" value set in "metrics" project
+  lazy val isMonitored = Properties.envOrElse("IS_MONITORED", config.getString("grasshopper.monitoring.isMonitored")).toBoolean
 
   if (isMonitored) {
     val jvmMetrics = JvmMetrics
