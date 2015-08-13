@@ -12,22 +12,22 @@ import scala.util.Properties
 
 object JvmMetrics extends Instrumented {
 
-  val appName = "geocoder"
   val hostName = InetAddress.getLocalHost.getHostName
 
   val config = ConfigFactory.load()
 
-  lazy val influxHost = Properties.envOrElse("INFLUXDB_HOST", config.getString("grasshopper.geocoder.monitoring.influxdb.host"))
-  lazy val influxPort = Properties.envOrElse("INFLUXDB_PORT", config.getString("grasshopper.geocoder.monitoring.influxdb.port")).toInt
+  lazy val influxdbHost = Properties.envOrElse("INFLUXDB_HOST", config.getString("grasshopper.monitoring.influxdb.host"))
+  lazy val influxdbPort = Properties.envOrElse("INFLUXDB_PORT", config.getString("grasshopper.monitoring.influxdb.port")).toInt
   lazy val influxdbUser = Properties.envOrElse("INFLUXDB_USER", "")
   lazy val influxdbPassword = Properties.envOrElse("INFLUXDB_PASSWORD", "")
-  lazy val monitoringFrequency = Properties.envOrElse("MONITORING_FREQUENCY", config.getString("grasshopper.geocoder.monitoring.frequency")).toInt
+  lazy val monitoringFrequency = Properties.envOrElse("MONITORING_FREQUENCY", config.getString("grasshopper.monitoring.frequency")).toInt
+  lazy val metricPrefix = Properties.envOrElse("METRIC_PREFIX", config.getString("grasshopper.monitoring.metricPrefix"))
 
-  val influxdb = new InfluxdbHttp(influxHost, influxPort, "metrics", influxdbUser, influxdbPassword)
+  val influxdb = new InfluxdbHttp(influxdbHost, influxdbPort, "metrics", influxdbUser, influxdbPassword)
 
   val reporter = InfluxdbReporter
     .forRegistry(metricRegistry)
-    .prefixedWith(appName + "." + hostName)
+    .prefixedWith(metricPrefix + "." + hostName)
     .convertRatesTo(TimeUnit.SECONDS)
     .convertDurationsTo(TimeUnit.MILLISECONDS)
     .filter(MetricFilter.ALL)
