@@ -34,7 +34,7 @@ trait CensusGeocode {
 
   private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress) = {
 
-    log.info(s"Searching on ${addressInput}")
+    log.debug(s"Searching on ${addressInput}")
 
     val number = addressInput.number
     val street = addressInput.streetName
