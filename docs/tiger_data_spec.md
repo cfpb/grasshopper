@@ -142,15 +142,7 @@ A typical search will return records in the following format when using ElasticS
 The census geocoder uses Elasticsearch synonyms to resolve abbreviations (i.e. St for Street, or MD for Maryland).
 The synonyms.txt file with the synonyms definition must be installed in every node in the cluster, in the same directory as the elasticsearch.yml configuration file.
 
-* Apply settings and mapping to /census index
-
-First close the index if it already exists
-
-```
-curl -XPOST 'http://127.0.0.1:9200/census/_close'
-```
-
-Apply settings
+* First, create the index, with the synonyms analyzer settings, and apply that analyzer to the corresponding fields:
 
 ```
 curl -XPUT 'http://127.0.0.1:9200/census/_settings' -d '
@@ -180,10 +172,8 @@ curl -XPUT 'http://127.0.0.1:9200/census/_settings' -d '
 '
 ```
 
-And update field mappings
-
 ```
-curl -XPUT 'http://127.0.0.1:9200/census/_mapping/addrfeat?ignore_conflicts=true  -d '
+curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
 {
    "mappings" : {
       "census" : {
@@ -195,6 +185,27 @@ curl -XPUT 'http://127.0.0.1:9200/census/_mapping/addrfeat?ignore_conflicts=true
             "properties.STATE": {
                "type": "string",
                "analyzer" : "synonyms"
+            }
+         }
+      }
+   },
+   "settings" : {
+      "analysis" : {
+         "filter" : {
+            "syns_filter" : {
+               "type" : "synonym",
+               "synonyms_path" : "synonyms.txt"
+            }
+         },
+         "analyzer" : {
+            "synonyms" : {
+               "filter" : [
+                  "standard",
+                  "lowercase",
+                  "syns_filter"
+               ],
+               "type" : "custom",
+               "tokenizer" : "standard"
             }
          }
       }
@@ -223,10 +234,6 @@ curl -XPUT 'http://127.0.0.1:9200/census/_mapping/addrfeat?ignore_conflicts=true
   }
 }
 ```
-
-Finally open the index
-
-`curl -XPOST http://localhost:9200/census/_open`
 
 * Use the analyze API to test the synonyms analizer:
 
