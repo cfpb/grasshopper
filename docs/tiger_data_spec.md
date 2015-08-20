@@ -1,6 +1,9 @@
 # ElasticSearch Address TIGER Data Schema
 
-Data is stored in Elasticsearch, by convention in an index called `census` with type `addrfeat`. Data format is GeoJSON objects with the following structure:
+## Description
+
+Data is stored in Elasticsearch, by convention in an index called `census` with type `addrfeat`.
+Data format is GeoJSON objects with the following structure:
 
 * type: "Feature"
 * geometry: GeoJSON geometry representation
@@ -132,4 +135,110 @@ A typical search will return records in the following format when using ElasticS
   }
 
 }
+```
+
+## Data creation
+
+The census geocoder uses Elasticsearch synonyms to resolve abbreviations (i.e. St = Street).
+The synonyms.txt file with the synonyms definition must be installed in every node in the cluster, in the same directory as the elasticsearch.yml configuration file.
+
+* First, create the index, with the synonyms analyzer settings, and apply that analyzer to the corresponding fields:
+
+```
+curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
+{
+   "mappings" : {
+      "census" : {
+         "properties" : {
+            "properties.FULLNAME" : {
+               "type" : "string",
+               "analyzer" : "synonyms"
+            }
+         }
+      }
+   },
+   "settings" : {
+      "analysis" : {
+         "filter" : {
+            "syns_filter" : {
+               "type" : "synonym",
+               "synonyms_path" : "synonyms.txt"
+            }
+         },
+         "analyzer" : {
+            "synonyms" : {
+               "filter" : [
+                  "standard",
+                  "lowercase",
+                  "syns_filter"
+               ],
+               "type" : "custom",
+               "tokenizer" : "standard"
+            }
+         }
+      }
+   }
+}
+'
+```
+
+* Check that the mapping is correct:
+
+`curl -XGET 'http://127.0.0.1:9200/census/_mapping?pretty=1'`
+
+```json
+{
+  "census" : {
+    "mappings" : {
+      "census" : {
+        "properties" : {
+          "properties.FULLNAME" : {
+            "type" : "string",
+            "analyzer" : "synonyms"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+* Use the analyze API to test the synonyms analizer:
+
+curl -XGET 'http://127.0.0.1:9200/census/_analyze?pretty=1&text=court&analyzer=synonyms'
+
+```json
+{
+  "tokens" : [ {
+    "token" : "court",
+    "start_offset" : 0,
+    "end_offset" : 5,
+    "type" : "SYNONYM",
+    "position" : 1
+  }, {
+    "token" : "ct",
+    "start_offset" : 0,
+    "end_offset" : 5,
+    "type" : "SYNONYM",
+    "position" : 1
+  } ]
+}
+```
+
+At this point, TIGER data can be loaded using the [loader](https://github.com/cfpb/grasshopper-loader)
+
+* Test query (assumes "Main St" is in the census index):
+
+```
+curl -XGET 'http://127.0.0.1:9200/census/_search?pretty=1'  -d '
+{
+    "query": {
+        "match_phrase": {
+           "properties.FULLNAME": {
+               "query": "Main Street"
+           }
+        }
+    }
+}
+'
 ```
