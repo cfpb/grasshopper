@@ -209,7 +209,7 @@ curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
 
 * Use the analyze API to test the synonyms analizer:
 
-curl -XGET 'http://127.0.0.1:9200/census/_analyze?pretty=1&text=court&analyzer=synonyms'
+`curl -XGET 'http://127.0.0.1:9200/census/_analyze?pretty=1&text=court&analyzer=synonyms'`
 
 ```json
 {
