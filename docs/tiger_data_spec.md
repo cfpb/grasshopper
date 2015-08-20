@@ -139,7 +139,7 @@ A typical search will return records in the following format when using ElasticS
 
 ## Data creation
 
-The census geocoder uses Elasticsearch synonyms to resolve abbreviations (i.e. St = Street).
+The census geocoder uses Elasticsearch synonyms to resolve abbreviations (i.e. St for Street, or MD for Maryland).
 The synonyms.txt file with the synonyms definition must be installed in every node in the cluster, in the same directory as the elasticsearch.yml configuration file.
 
 * First, create the index, with the synonyms analyzer settings, and apply that analyzer to the corresponding fields:
@@ -152,6 +152,10 @@ curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
          "properties" : {
             "properties.FULLNAME" : {
                "type" : "string",
+               "analyzer" : "synonyms"
+            },
+            "properties.STATE": {
+               "type": "string",
                "analyzer" : "synonyms"
             }
          }
