@@ -142,25 +142,19 @@ A typical search will return records in the following format when using ElasticS
 The census geocoder uses Elasticsearch synonyms to resolve abbreviations (i.e. St for Street, or MD for Maryland).
 The synonyms.txt file with the synonyms definition must be installed in every node in the cluster, in the same directory as the elasticsearch.yml configuration file.
 
-* First, create the index, with the synonyms analyzer settings, and apply that analyzer to the corresponding fields:
+* Apply settings and mapping to /census index
+
+First close the index if it already exists
 
 ```
-curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
+curl -XPOST 'http://127.0.0.1:9200/census/_close'
+```
+
+Apply settings
+
+```
+curl -XPUT 'http://127.0.0.1:9200/census/_settings' -d '
 {
-   "mappings" : {
-      "census" : {
-         "properties" : {
-            "properties.FULLNAME" : {
-               "type" : "string",
-               "analyzer" : "synonyms"
-            },
-            "properties.STATE": {
-               "type": "string",
-               "analyzer" : "synonyms"
-            }
-         }
-      }
-   },
    "settings" : {
       "analysis" : {
          "filter" : {
@@ -178,6 +172,29 @@ curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
                ],
                "type" : "custom",
                "tokenizer" : "standard"
+            }
+         }
+      }
+   }
+}
+'
+```
+
+And update field mappings
+
+```
+curl -XPUT 'http://127.0.0.1:9200/census/_mapping/addrfeat?ignore_conflicts=true  -d '
+{
+   "mappings" : {
+      "census" : {
+         "properties" : {
+            "properties.FULLNAME" : {
+               "type" : "string",
+               "analyzer" : "synonyms"
+            },
+            "properties.STATE": {
+               "type": "string",
+               "analyzer" : "synonyms"
             }
          }
       }
@@ -206,6 +223,10 @@ curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
   }
 }
 ```
+
+Finally open the index
+
+`curl -XPOST http://localhost:9200/census/_open`
 
 * Use the analyze API to test the synonyms analizer:
 
