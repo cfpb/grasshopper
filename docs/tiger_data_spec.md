@@ -145,34 +145,6 @@ The synonyms.txt file with the synonyms definition must be installed in every no
 * First, create the index, with the synonyms analyzer settings, and apply that analyzer to the corresponding fields:
 
 ```
-curl -XPUT 'http://127.0.0.1:9200/census/_settings' -d '
-{
-   "settings" : {
-      "analysis" : {
-         "filter" : {
-            "syns_filter" : {
-               "type" : "synonym",
-               "synonyms_path" : "synonyms.txt"
-            }
-         },
-         "analyzer" : {
-            "synonyms" : {
-               "filter" : [
-                  "standard",
-                  "lowercase",
-                  "syns_filter"
-               ],
-               "type" : "custom",
-               "tokenizer" : "standard"
-            }
-         }
-      }
-   }
-}
-'
-```
-
-```
 curl -XPUT 'http://127.0.0.1:9200/census/?pretty=1'  -d '
 {
    "mappings" : {
