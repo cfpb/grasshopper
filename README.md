@@ -85,7 +85,7 @@ each project representing a specific task and usually a [Microservice](http://en
 ### Docker
 
 All grasshopper services and apps can be built as [Docker](https://docs.docker.com/) images.
-[Docker Compose](https://docs.docker.com/compose/) is also used simplify local development.
+[Docker Compose](https://docs.docker.com/compose/) is also used to simplify local development.
 
 **Note:** Docker is a Linux-only tool.  If you are running on Mac or Windows, you will need
 [boot2docker](http://boot2docker.io/) or a similar Docker VM setup.
