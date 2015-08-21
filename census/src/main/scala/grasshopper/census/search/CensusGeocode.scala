@@ -34,6 +34,8 @@ trait CensusGeocode {
   }
 
   private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress) = {
+    log.debug(s"Searching on ${addressInput}")
+
     val number = addressInput.number
     val street = addressInput.streetName
     val zipCode = addressInput.zipCode
@@ -71,7 +73,6 @@ trait CensusGeocode {
     log.debug(query.toString)
 
     val response = client.prepareSearch(index)
-      .setTypes(indexType)
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
       .setQuery(query)
       .execute
