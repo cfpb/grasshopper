@@ -2,13 +2,12 @@ package grasshopper.census.search
 
 import com.typesafe.scalalogging.Logger
 import feature.Feature
-import org.elasticsearch.action.search.SearchType
-import org.elasticsearch.client.Client
-import org.elasticsearch.index.query.{ QueryBuilders, FilterBuilders }
-import org.elasticsearch.search.SearchHit
-import org.slf4j.LoggerFactory
 import grasshopper.census.model.ParsedInputAddress
 import io.geojson.FeatureJsonProtocol._
+import org.elasticsearch.action.search.SearchType
+import org.elasticsearch.client.Client
+import org.elasticsearch.index.query.{ FilterBuilders, QueryBuilders }
+import org.slf4j.LoggerFactory
 import spray.json._
 
 import scala.util.Try
