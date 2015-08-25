@@ -79,7 +79,7 @@ object AddressInterpolator {
       "L"
     else
       log.warn(s"Could not determine if range is even in feature: ${f.toString}")
-      "R"
+    "R"
   }
 
   private def rangeIsEven(f: Feature, isLeft: Boolean): Boolean = {
