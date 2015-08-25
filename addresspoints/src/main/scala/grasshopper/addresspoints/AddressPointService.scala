@@ -7,9 +7,10 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import grasshopper.metrics.JvmMetrics
+import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.node.NodeBuilder._
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-
 import scala.util.Properties
 
 object AddressPointService extends App with Service {
@@ -22,7 +23,17 @@ object AddressPointService extends App with Service {
 
   lazy val host = Properties.envOrElse("ELASTICSEARCH_HOST", config.getString("grasshopper.addresspoints.elasticsearch.host"))
   lazy val port = Properties.envOrElse("ELASTICSEARCH_PORT", config.getString("grasshopper.addresspoints.elasticsearch.port"))
-  lazy val client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
+  lazy val cluster = Properties.envOrElse("ELASTICSEARCH_CLUSTER", config.getString("grasshopper.addresspoints.elasticsearch.cluster"))
+
+  lazy val settings = ImmutableSettings.settingsBuilder()
+    .put("http.enabled", false)
+    .put("node.data", false)
+    .put("node.master", false)
+    .put("cluster.name", cluster)
+    .put("client.transport.sniff", true)
+
+  lazy val client = new TransportClient(settings)
+    .addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
 
   val http = Http(system).bindAndHandle(
     routes,
@@ -38,6 +49,7 @@ object AddressPointService extends App with Service {
   }
 
   sys.addShutdownHook {
+    client.close()
     system.shutdown()
   }
 }

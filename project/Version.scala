@@ -7,7 +7,7 @@ object Version {
   val akkaStreams      = "1.0"
   val scalaTest        = "2.2.1"
   val scalaCheck       = "1.12.1"
-  val elasticsearch    = "1.4.2"
+  val elasticsearch    = "1.7.1"
   val jts              = "1.13"
   val scale            = "0.0.2"
   val async            = "0.9.2"
