@@ -19,6 +19,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     server.loadFeature("census", "addrfeat", getTigerLine1)
     server.loadFeature("census", "addrfeat", getTigerLine2)
     server.loadFeature("census", "addrfeat", getTigerLine3)
+    server.loadFeature("census", "addrfeat", getTigerLine4)
     client.admin().indices().refresh(new RefreshRequest("census")).actionGet()
   }
 
@@ -87,4 +88,45 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     features(0).values.getOrElse("STATE", "") mustBe expectedFeature.values.getOrElse("STATE", "")
 
   }
+
+  "Census Geocode" must "interpolate an address location from a line segment with non-numeric address range" in {
+    val addressInput = ParsedInputAddress(
+      "G41",
+      "Motel Rd",
+      80915,
+      "CO"
+    )
+
+    val expectedPoint = Point(-104.711, 38.837)
+    val expectedValues = Map(
+      "geometry" -> expectedPoint,
+      "FULLNAME" -> "Motel Rd",
+      "ZIPL" -> "",
+      "ZIPR" -> "80915",
+      "LFROMHN" -> "",
+      "LTOHN" -> "",
+      "RFROMHN" -> "G1",
+      "RTOHN" -> "G99",
+      "STATE" -> "CO"
+
+    )
+    val expectedSchema = Schema(
+      List(
+        Field("geometry", GeometryType()),
+        Field("FULLNAME", StringType()),
+        Field("ZIPL", StringType()),
+        Field("ZIPR", StringType()),
+        Field("LFROMHN", StringType()),
+        Field("LTOHN", StringType()),
+        Field("RFROMHN", StringType()),
+        Field("RTOHN", StringType()),
+        Field("STATE", StringType())
+      )
+    )
+
+    val expectedFeature = Feature(expectedSchema, expectedValues)
+    val features = geocodeLine(client, "census", "addrfeat", addressInput, 1) getOrElse emptyFeatures
+    features(0).geometry.asInstanceOf[Point].roundCoordinates(3) mustBe expectedFeature.geometry
+  }
+
 }

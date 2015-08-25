@@ -5,6 +5,7 @@ import feature._
 import geometry._
 import grasshopper.census.model.AddressRange
 import org.slf4j.LoggerFactory
+import SearchUtils._
 
 object AddressInterpolator {
 
@@ -18,11 +19,11 @@ object AddressInterpolator {
 
     val start = s match {
       case "" => 0
-      case _ => s.toString.toInt
+      case _ => toInt(s.toString).getOrElse(0)
     }
     val end = e match {
       case "" => 0
-      case _ => e.toString.toInt
+      case _ => toInt(e.toString).getOrElse(0)
     }
 
     AddressRange(start, end)
@@ -88,14 +89,14 @@ object AddressInterpolator {
     val fromEven = f.values.getOrElse(s"${prefix}FROMHN", 0)
     val fromRange = fromEven match {
       case "" => 0
-      case _ => fromEven.toString.toInt
+      case _ => toInt(fromEven.toString).getOrElse(0)
     }
     val fromIsEven = fromEven != "" && fromRange % 2 == 0
 
     val toEven = f.values.getOrElse(s"${prefix}TOHN", 0)
     val toRange = fromEven match {
       case "" => 0
-      case _ => toEven.toString.toInt
+      case _ => toInt(toEven.toString).getOrElse(0)
     }
     val toIsEven = toEven != "" && toRange % 2 == 0
     fromIsEven || toIsEven
