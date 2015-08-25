@@ -30,7 +30,6 @@ object AddressInterpolator {
 
   def interpolate(feature: Feature, range: AddressRange, addressNumber: Int): Feature = {
     val pre = prefix(feature, addressNumber)
-    println(pre)
     val sign = if (pre == "R") -1 else 1
     val line = feature.geometry.asInstanceOf[Line]
     val l = line.length

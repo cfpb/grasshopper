@@ -3,6 +3,7 @@ package grasshopper.geocoder.api
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Sink, Source}
+import geometry.Point
 import grasshopper.client.census.model.ParsedInputAddress
 import grasshopper.client.parser.model.{AddressPart, ParsedAddress}
 import grasshopper.geocoder.model.ParsedOutputBatchAddress
@@ -81,8 +82,8 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers {
     val result = Await.result(future, 2.seconds)
     result.size mustBe 4
     result.head.input mustBe "1311 30th St NW Washington DC 20007"
-    result.head.latitude mustBe 38.907211343944184
-    result.head.longitude mustBe -77.05928851011977
+    val point = Point(result.head.longitude, result.head.latitude).roundCoordinates(3)
+    point mustBe Point(-77.059, 38.907)
   }
 
   it must "geocode addresses into points" in {
@@ -97,7 +98,6 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers {
     val source = Source(() => addresses)
     val future = source.via(GeocodeFlows.addressPointsFlow).grouped(4).runWith(Sink.head)
     val result = Await.result(future, 2.seconds)
-    println(result)
     result.size mustBe 4
     result.tail.tail.head.input mustBe "198 President St Arkansas City AR 71630"
     result.tail.tail.head.latitude mustBe 33.60824683723317
