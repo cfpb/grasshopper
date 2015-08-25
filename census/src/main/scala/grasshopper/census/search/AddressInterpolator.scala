@@ -1,10 +1,14 @@
 package grasshopper.census.search
 
+import com.typesafe.scalalogging.Logger
 import feature._
 import geometry._
 import grasshopper.census.model.AddressRange
+import org.slf4j.LoggerFactory
 
 object AddressInterpolator {
+
+  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-census-addressinterpolator"))
 
   def calculateAddressRange(feature: Feature, addressNumber: Int): AddressRange = {
     val pre: String = prefix(feature, addressNumber)
@@ -74,6 +78,7 @@ object AddressInterpolator {
     else if (!addressIsEven && !leftRangeIsEven)
       "L"
     else
+      log.warn(s"Could not determine if range is even in feature: ${f.toString}")
       "R"
   }
 
