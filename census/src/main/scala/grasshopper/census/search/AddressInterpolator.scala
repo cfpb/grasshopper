@@ -6,11 +6,11 @@ import grasshopper.census.model.AddressRange
 
 object AddressInterpolator {
 
-  def calculateAddressRange(f: Feature, a: Int): AddressRange = {
-    val pre: String = prefix(f, a)
+  def calculateAddressRange(feature: Feature, addressNumber: Int): AddressRange = {
+    val pre: String = prefix(feature, addressNumber)
 
-    val s = f.values.getOrElse(s"${pre}FROMHN", "0")
-    val e = f.values.getOrElse(s"${pre}TOHN", "0")
+    val s = feature.values.getOrElse(s"${pre}FROMHN", "0")
+    val e = feature.values.getOrElse(s"${pre}TOHN", "0")
 
     val start = s match {
       case "" => 0
@@ -24,13 +24,13 @@ object AddressInterpolator {
     AddressRange(start, end)
   }
 
-  def interpolate(feature: Feature, range: AddressRange, a: Int): Feature = {
-    val pre = prefix(feature, a)
+  def interpolate(feature: Feature, range: AddressRange, addressNumber: Int): Feature = {
+    val pre = prefix(feature, addressNumber)
     val sign = if (pre == "R") -1 else 1
     val line = feature.geometry.asInstanceOf[Line]
     val l = line.length
     val d = calculateDistance(range)
-    val x = a - range.start
+    val x = addressNumber - range.start
     val dist = x * l / d
     val geometry = line.pointAtDistWithOffset(dist, sign * 0.0001)
     val addressField = Field("address", StringType())
