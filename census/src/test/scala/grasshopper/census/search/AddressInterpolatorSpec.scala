@@ -29,7 +29,7 @@ class AddressInterpolatorSpec extends FlatSpec with MustMatchers {
   }
 
   it must "choose the correct address range" in {
-    val feature = fjson.parseJson.convertTo[Feature]
+    val feature = getTigerLine1
     val an = 3126
     val range = AddressInterpolator.calculateAddressRange(feature, an)
     range.start % 2 mustBe 0
@@ -39,14 +39,13 @@ class AddressInterpolatorSpec extends FlatSpec with MustMatchers {
   }
 
   it must "choose correct address range and interpolate" in {
-    val pjson = """{"type":"Feature","properties":{"TLID":25901822,"TFIDL":201632875,"TFIDR":201632723,"ARIDL":"","ARIDR":"40086023938","LINEARID":"11092269911","FULLNAME":"President St","LFROMHN":"","LTOHN":"","RFROMHN":"100","RTOHN":"498","ZIPL":"","ZIPR":"71630","EDGE_MTFCC":"S1400","ROAD_MTFCC":"S1400","PARITYL":"","PARITYR":"E","PLUS4L":"","PLUS4R":"","LFROMTYP":"","LTOTYP":"","RFROMTYP":"","RTOTYP":"I","OFFSETL":"N","OFFSETR":"N","load_date":1431448963039,"STATE":"AR"},"geometry":{"type":"LineString","coordinates":[[-91.19945,33.60725],[-91.19951,33.60734],[-91.20001,33.60803],[-91.20041,33.60853]]}}"""
-    val feature = pjson.parseJson.convertTo[Feature]
+    val feature = getTigerLine3
     val an = 198
     val range = AddressInterpolator.calculateAddressRange(feature, an)
     range.start % 2 mustBe 0
     range.end % 2 mustBe 0
     range.start mustBe 100
-    range.end mustBe 498
+    range.end mustBe 198
   }
 
   it must "interpolate in other side of the street" in {

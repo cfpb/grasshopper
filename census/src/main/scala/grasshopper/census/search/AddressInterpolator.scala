@@ -30,6 +30,7 @@ object AddressInterpolator {
 
   def interpolate(feature: Feature, range: AddressRange, addressNumber: Int): Feature = {
     val pre = prefix(feature, addressNumber)
+    println(pre)
     val sign = if (pre == "R") -1 else 1
     val line = feature.geometry.asInstanceOf[Line]
     val l = line.length
@@ -69,17 +70,18 @@ object AddressInterpolator {
 
     val leftRangeIsEven: Boolean = rangeIsEven(f, true)
 
-    if (addressIsEven && rightRangeIsEven)
+    if (addressIsEven && rightRangeIsEven) {
       "R"
-    else if (addressIsEven && leftRangeIsEven)
+    } else if (addressIsEven && leftRangeIsEven) {
       "L"
-    else if (!addressIsEven && !rightRangeIsEven)
+    } else if (!addressIsEven && !rightRangeIsEven) {
       "R"
-    else if (!addressIsEven && !leftRangeIsEven)
+    } else if (!addressIsEven && !leftRangeIsEven) {
       "L"
-    else
+    } else {
       log.warn(s"Could not determine if range is even in feature: ${f.toString}")
-    "R"
+      "R"
+    }
   }
 
   private def rangeIsEven(f: Feature, isLeft: Boolean): Boolean = {
