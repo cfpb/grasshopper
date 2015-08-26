@@ -20,6 +20,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     server.loadFeature("census", "addrfeat", getTigerLine2)
     server.loadFeature("census", "addrfeat", getTigerLine3)
     server.loadFeature("census", "addrfeat", getTigerLine4)
+    server.loadFeature("census", "addrfeat", getTigerLine5)
     client.admin().indices().refresh(new RefreshRequest("census")).actionGet()
   }
 
@@ -89,7 +90,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
 
   }
 
-  "Census Geocode" must "interpolate an address location from a line segment with non-numeric address range" in {
+  "Census Geocode" must "interpolate address locations from line segments with non-numeric address range" in {
     val addressInput = ParsedInputAddress(
       "G41",
       "Motel Rd",
@@ -97,7 +98,16 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
       "CO"
     )
 
+    val addressInput2 = ParsedInputAddress(
+      "125-2",
+      "S Reynolds St",
+      22304,
+      "VA"
+    )
+
     val expectedPoint = Point(-104.711, 38.837)
+    val expectedPoint2 = Point(-77.128, 38.811)
+
     val expectedValues = Map(
       "geometry" -> expectedPoint,
       "FULLNAME" -> "Motel Rd",
@@ -108,8 +118,19 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
       "RFROMHN" -> "G1",
       "RTOHN" -> "G99",
       "STATE" -> "CO"
-
     )
+    val expectedValues2 = Map(
+      "geometry" -> expectedPoint2,
+      "FULLNAME" -> "S Reynolds St",
+      "ZIPL" -> "",
+      "ZIPR" -> "22304",
+      "LFROMHN" -> "",
+      "LTOHN" -> "",
+      "RFROMHN" -> "125-0",
+      "RTOHN" -> "125-6",
+      "STATE" -> "VA"
+    )
+
     val expectedSchema = Schema(
       List(
         Field("geometry", GeometryType()),
@@ -125,8 +146,11 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     )
 
     val expectedFeature = Feature(expectedSchema, expectedValues)
+    val expectedFeature2 = Feature(expectedSchema, expectedValues2)
     val features = geocodeLine(client, "census", "addrfeat", addressInput, 1) getOrElse emptyFeatures
+    val features2 = geocodeLine(client, "census", "addrfeat", addressInput2, 1) getOrElse emptyFeatures
     features(0).geometry.asInstanceOf[Point].roundCoordinates(3) mustBe expectedFeature.geometry
+    features2(0).geometry.asInstanceOf[Point].roundCoordinates(3) mustBe expectedFeature2.geometry
   }
 
 }

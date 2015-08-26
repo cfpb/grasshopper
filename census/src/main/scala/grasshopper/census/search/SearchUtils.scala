@@ -12,7 +12,11 @@ object SearchUtils {
       if (isNumeric(s)) {
         Some(s.toInt)
       } else {
-        Some(s.replaceAll("[^\\d.]", "").toInt)
+        if (s.contains("-")) {
+          Some(s.substring(0, s.indexOf("-")).toInt)
+        } else {
+          Some(s.replaceAll("[^\\d]", "").toInt)
+        }
       }
     } catch {
       case e: Exception =>
