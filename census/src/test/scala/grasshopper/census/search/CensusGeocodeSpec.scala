@@ -28,7 +28,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
 
   "Census Geocode" must "find address" in {
     val addressInput = ParsedInputAddress(
-      3146,
+      "3146",
       "M St NW",
       20007,
       "DC"
@@ -41,7 +41,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
 
   "Census Geocode" must "interpolate an address location from a line segment" in {
     val addressInput = ParsedInputAddress(
-      3146,
+      "3146",
       "M St NW",
       20007,
       "DC"

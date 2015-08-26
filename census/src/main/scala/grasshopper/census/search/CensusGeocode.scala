@@ -20,22 +20,30 @@ trait CensusGeocode {
     log.debug(s"Search Address: ${addressInput.toString()}")
     Try {
       val hits = searchAddress(client, index, indexType, addressInput)
-      val addressNumber = addressInput.number
+      val addressNumber = addressInput.addressNumber
       hits
         .map(hit => hit.getSourceAsString)
         .take(count)
         .map { s =>
           val line = s.parseJson.convertTo[Feature]
-          val addressRange = AddressInterpolator.calculateAddressRange(line, addressNumber)
-          AddressInterpolator.interpolate(line, addressRange, addressNumber)
+          val addressRange = AddressInterpolator.calculateAddressRange(line, toInt(addressNumber).getOrElse(0))
+          AddressInterpolator.interpolate(line, addressRange, toInt(addressNumber).getOrElse(0))
         }
+    }
+  }
+
+  private def toInt(s: String): Option[Int] = {
+    try {
+      Some(s.toInt)
+    } catch {
+      case e: Exception => None
     }
   }
 
   private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress) = {
     log.debug(s"Searching on ${addressInput}")
 
-    val number = addressInput.number
+    val number = addressInput.addressNumber
     val street = addressInput.streetName
     val zipCode = addressInput.zipCode
     val state = addressInput.state
