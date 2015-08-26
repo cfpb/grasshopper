@@ -8,6 +8,10 @@ trait Generators {
     override def toString = s.toString
   }
 
+  case class HyphenStr(s: String) {
+    override def toString = s.toString
+  }
+
   val unicodeChar = Gen.choose(Char.MinValue, Char.MaxValue).filter(c => !Character.isDigit(c))
 
   val alphanumericGen: Gen[Alphanumeric] = {
@@ -18,5 +22,15 @@ trait Generators {
   }
 
   implicit def arbAlphanumeric: Arbitrary[Alphanumeric] = Arbitrary(alphanumericGen)
+
+  val hyphenStrGen: Gen[HyphenStr] = {
+    for {
+      x <- Gen.choose(Int.MinValue, Int.MaxValue)
+      y <- Gen.const("-")
+      z <- Gen.choose(Int.MinValue, Int.MaxValue)
+    } yield HyphenStr(List(x, y, z).mkString)
+  }
+
+  implicit def arbHyphenStr: Arbitrary[HyphenStr] = Arbitrary(hyphenStrGen)
 
 }
