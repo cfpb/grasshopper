@@ -25,7 +25,7 @@ object SearchUtils {
     }
   }
 
-  private def isNumeric(str: String): Boolean = {
+  def isNumeric(str: String): Boolean = {
     str.matches("-?\\d+(\\.\\d+)?")
   }
 }
