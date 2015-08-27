@@ -17,7 +17,7 @@ trait Generators {
   val alphanumericGen: Gen[Alphanumeric] = {
     for {
       x <- Gen.oneOf("A", "B", "C")
-      y <- Gen.choose(Int.MinValue, Int.MaxValue)
+      y <- Gen.choose(0, Int.MaxValue)
     } yield Alphanumeric(List(x, y).mkString)
   }
 
@@ -25,9 +25,9 @@ trait Generators {
 
   val hyphenStrGen: Gen[HyphenStr] = {
     for {
-      x <- Gen.choose(Int.MinValue, Int.MaxValue)
+      x <- Gen.choose(0, Int.MaxValue)
       y <- Gen.const("-")
-      z <- Gen.choose(Int.MinValue, Int.MaxValue)
+      z <- Gen.choose(0, Int.MaxValue)
     } yield HyphenStr(List(x, y, z).mkString)
   }
 
