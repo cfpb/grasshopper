@@ -1,20 +1,19 @@
 package grasshopper.census.api
 
 import java.time.{ Duration, Instant }
+
 import akka.event.NoLogging
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.MediaTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ ContentTypes, HttpEntity }
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import feature.Feature
+import grasshopper.census.model.{ CensusResult, ParsedInputAddress }
+import grasshopper.census.util.TestData._
 import grasshopper.elasticsearch.ElasticsearchServer
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
-import grasshopper.census.model.{ CensusResult, Status, ParsedInputAddress }
-import grasshopper.census.util.TestData._
 import spray.json._
-import io.geojson.FeatureJsonProtocol._
 
 class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
@@ -51,7 +50,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
 
   it should "geocode an interpolated address point" in {
     val addressInput = ParsedInputAddress(
-      3146,
+      "3146",
       "M St NW",
       20007,
       "DC"
@@ -77,7 +76,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
 
   it should "return empty features array when searching for address that doesn't exist" in {
     val addressInput = ParsedInputAddress(
-      5000,
+      "5000",
       "M St NW",
       20007,
       "DC"

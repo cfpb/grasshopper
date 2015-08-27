@@ -9,8 +9,8 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.{ FilterBuilders, QueryBuilders }
 import org.slf4j.LoggerFactory
 import spray.json._
-
 import scala.util.Try
+import SearchUtils._
 
 trait CensusGeocode {
 
@@ -20,12 +20,13 @@ trait CensusGeocode {
     log.debug(s"Search Address: ${addressInput.toString()}")
     Try {
       val hits = searchAddress(client, index, indexType, addressInput)
-      val addressNumber = addressInput.number
+      val addressNumber = toInt(addressInput.addressNumber).getOrElse(0)
       hits
         .map(hit => hit.getSourceAsString)
         .take(count)
         .map { s =>
           val line = s.parseJson.convertTo[Feature]
+          log.debug(line.toJson.toString)
           val addressRange = AddressInterpolator.calculateAddressRange(line, addressNumber)
           AddressInterpolator.interpolate(line, addressRange, addressNumber)
         }
@@ -35,7 +36,7 @@ trait CensusGeocode {
   private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress) = {
     log.debug(s"Searching on ${addressInput}")
 
-    val number = addressInput.number
+    val number = addressInput.addressNumber.toLowerCase
     val street = addressInput.streetName
     val zipCode = addressInput.zipCode
     val state = addressInput.state

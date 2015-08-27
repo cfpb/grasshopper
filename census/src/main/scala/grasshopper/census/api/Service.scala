@@ -57,7 +57,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
         path("addrfeat") {
           get {
             parameters(
-              'number.as[Int] ? 0,
+              'number.as[String] ? "",
               'streetName.as[String] ? "",
               'zipCode.as[Int] ? 0,
               'state.as[String] ? ""
