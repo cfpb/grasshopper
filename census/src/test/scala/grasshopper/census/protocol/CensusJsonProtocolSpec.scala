@@ -16,7 +16,7 @@ class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonP
   }
 
   "ParsedAddressInput" should "convert to and from JSON" in {
-    val addressInput = ParsedInputAddress("1311", "30th St NW", 20007, "DC")
+    val addressInput = ParsedInputAddress("1311", "30th St NW", "20007", "DC")
     addressInput.toJson.convertTo[ParsedInputAddress] mustBe addressInput
   }
 }
