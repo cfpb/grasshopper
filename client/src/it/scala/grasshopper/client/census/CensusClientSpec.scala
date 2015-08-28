@@ -1,7 +1,8 @@
 package grasshopper.client.census
 
-import grasshopper.client.census.model.{ParsedInputAddress, CensusStatus}
-import org.scalatest.{MustMatchers, FlatSpec}
+import grasshopper.client.census.model.ParsedInputAddress
+import org.scalatest.{FlatSpec, MustMatchers}
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -19,7 +20,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
 
 
   "A request to /geocode" must "geocode an address string" in {
-    val parsedAddress = ParsedInputAddress(3146, "M St NW", 20007, "DC")
+    val parsedAddress = ParsedInputAddress(3146, "M St NW", "20007", "DC")
     val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), 10.seconds)
     maybeAddress match {
       case Right(result) =>
