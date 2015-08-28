@@ -33,7 +33,7 @@ object GeocodeFlows {
           ParsedInputAddress(
             a.parts.addressNumber.toInt,
             a.parts.streetName,
-            a.parts.zip.toInt,
+            a.parts.zip,
             a.parts.state
           )
         ))

@@ -105,7 +105,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
             val parsedInputAddress = ParsedInputAddress(
               parsedAddress.parts.addressNumber.toInt,
               parsedAddress.parts.streetName.replaceAll(" ", "+"),
-              parsedAddress.parts.zip.toInt,
+              parsedAddress.parts.zip,
               parsedAddress.parts.state
             )
             (parsedAddress, parsedInputAddress)
