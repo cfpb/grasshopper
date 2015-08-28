@@ -52,7 +52,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
     val addressInput = ParsedInputAddress(
       "3146",
       "M St NW",
-      20007,
+      "20007",
       "DC"
     )
     val json = addressInput.toJson.toString
@@ -78,7 +78,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
     val addressInput = ParsedInputAddress(
       "5000",
       "M St NW",
-      20007,
+      "20007",
       "DC"
     )
     val json = addressInput.toJson.toString

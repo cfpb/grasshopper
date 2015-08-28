@@ -59,7 +59,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
             parameters(
               'number.as[String] ? "",
               'streetName.as[String] ? "",
-              'zipCode.as[Int] ? 0,
+              'zipCode.as[String] ? "",
               'state.as[String] ? ""
             ) { (number, streetName, zipCode, state) =>
                 val addressInput = ParsedInputAddress(number, streetName, zipCode, state)
