@@ -26,6 +26,8 @@ trait Geocode {
         .map { s =>
           log.debug(s)
           s.parseJson.convertTo[Feature]
+        }.map { f =>
+          f.addOrUpdate("match", SearchUtils.percentMatch(address, f.get("address").getOrElse("").toString))
         }
     }
   }
