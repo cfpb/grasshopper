@@ -31,7 +31,7 @@ trait Geocode {
   }
 
   private def searchAddress(client: Client, index: String, indexType: String, address: String): Array[SearchHit] = {
-    val qb = QueryBuilders.matchPhraseQuery("address", address)
+    val qb = QueryBuilders.matchQuery("address", address)
     val response = client.prepareSearch(index)
       .setTypes(indexType)
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
