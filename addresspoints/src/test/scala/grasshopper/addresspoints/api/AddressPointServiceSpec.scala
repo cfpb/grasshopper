@@ -1,17 +1,17 @@
 package grasshopper.addresspoints.api
 
-import java.time.{Duration, Instant}
+import java.time.{ Duration, Instant }
 
 import akka.event.NoLogging
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.MediaTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import akka.http.scaladsl.model.{ ContentTypes, HttpEntity }
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import feature._
 import geometry._
 import grasshopper.addresspoints.model
-import grasshopper.addresspoints.model.{AddressInput, AddressPointsResult}
+import grasshopper.addresspoints.model.{ AddressInput, AddressPointsResult }
 import grasshopper.elasticsearch._
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest._
