@@ -87,12 +87,12 @@ trait Service extends AddressPointJsonProtocol with Geocode {
     val points = geocode(client, "address", "point", address, count) getOrElse (Nil.toArray)
     if (points.length > 0) {
       complete {
-        ToResponseMarshallable(AddressPointsResult("OK", points))
+        ToResponseMarshallable(AddressPointsResult("OK", address, points))
       }
     } else {
       val pts: Array[Feature] = Nil.toArray
       complete {
-        ToResponseMarshallable(AddressPointsResult("ADDRESS_NOT_FOUND", pts))
+        ToResponseMarshallable(AddressPointsResult("ADDRESS_NOT_FOUND", address, pts))
       }
     }
 
