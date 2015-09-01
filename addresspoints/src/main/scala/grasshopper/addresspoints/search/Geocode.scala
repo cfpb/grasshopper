@@ -24,7 +24,7 @@ trait Geocode {
         .map(hit => hit.getSourceAsString)
         .take(count)
         .map { s =>
-          log.info(s)
+          log.debug(s)
           s.parseJson.convertTo[Feature]
         }
     }
