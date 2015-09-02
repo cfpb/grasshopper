@@ -92,14 +92,16 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[AddressPointsResult]
-      resp.features(0) mustBe getPointFeature
+      resp.features(0).geometry mustBe getPointFeature.geometry
+      resp.features(0).get("address").getOrElse("") mustBe address.address
     }
     val a = "1311+30th+St+NW+Washington+DC+20007"
     Get("/addresses/points/" + a) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[AddressPointsResult]
-      resp.features(0) mustBe getPointFeature
+      resp.features(0).geometry mustBe getPointFeature.geometry
+      resp.features(0).get("address").getOrElse("") mustBe address.address
     }
   }
 
