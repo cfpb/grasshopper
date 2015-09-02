@@ -2,6 +2,7 @@ package grasshopper.addresspoints.search
 
 object SearchUtils {
 
+  // Calculates Levenshtein distance. See https://en.wikipedia.org/wiki/Levenshtein_distance
   def levenshtein(str1: String, str2: String): Int = {
     val lenStr1 = str1.length
     val lenStr2 = str2.length
