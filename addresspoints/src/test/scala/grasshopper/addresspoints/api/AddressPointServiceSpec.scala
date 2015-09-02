@@ -28,8 +28,8 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
 
   private def getPointFeature() = {
     val p = Point(-77.0590232, 38.9072597)
-    val props = Map("geometry" -> p, "address" -> "1311 30th St NW Washington DC 20007")
-    val schema = Schema(List(Field("geometry", GeometryType()), Field("address", StringType())))
+    val props = Map("geometry" -> p, "address" -> "1311 30th St NW Washington DC 20007", "match" -> 1)
+    val schema = Schema(List(Field("geometry", GeometryType()), Field("address", StringType()), Field("match", DoubleType())))
     Feature(schema, props)
   }
 
@@ -92,16 +92,14 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[AddressPointsResult]
-      resp.features(0).geometry mustBe getPointFeature.geometry
-      resp.features(0).get("address").getOrElse("") mustBe address.address
+      resp.features(0) mustBe getPointFeature()
     }
     val a = "1311+30th+St+NW+Washington+DC+20007"
     Get("/addresses/points/" + a) ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[AddressPointsResult]
-      resp.features(0).geometry mustBe getPointFeature.geometry
-      resp.features(0).get("address").getOrElse("") mustBe address.address
+      resp.features(0) mustBe getPointFeature
     }
   }
 
