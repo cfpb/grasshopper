@@ -1,8 +1,7 @@
 package grasshopper.addresspoints.api
 
 import java.time.{ Duration, Instant }
-import grasshopper.addresspoints.model
-import grasshopper.addresspoints.model.{ AddressPointsResult, AddressInput }
+
 import akka.event.NoLogging
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.MediaTypes._
@@ -11,8 +10,9 @@ import akka.http.scaladsl.model.{ ContentTypes, HttpEntity }
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import feature._
 import geometry._
+import grasshopper.addresspoints.model
+import grasshopper.addresspoints.model.{ AddressInput, AddressPointsResult }
 import grasshopper.elasticsearch._
-import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest._
 import spray.json._
@@ -28,8 +28,8 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
 
   private def getPointFeature() = {
     val p = Point(-77.0590232, 38.9072597)
-    val props = Map("geometry" -> p, "address" -> "1311 30th St NW Washington DC 20007")
-    val schema = Schema(List(Field("geometry", GeometryType()), Field("address", StringType())))
+    val props = Map("geometry" -> p, "address" -> "1311 30th St NW Washington DC 20007", "match" -> 1)
+    val schema = Schema(List(Field("geometry", GeometryType()), Field("address", StringType()), Field("match", DoubleType())))
     Feature(schema, props)
   }
 
@@ -68,7 +68,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
   }
 
   it should "return empty features array when searching for address that doesn't exist" in {
-    val address = AddressInput("1311 31th St NW Washington DC 20007")
+    val address = AddressInput("228 Park Ave S New York NY 10003")
     val json = address.toJson.toString
     Post("/addresses/points", HttpEntity(ContentTypes.`application/json`, json)) ~> routes ~> check {
       status mustBe OK
@@ -92,7 +92,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[AddressPointsResult]
-      resp.features(0) mustBe getPointFeature
+      resp.features(0) mustBe getPointFeature()
     }
     val a = "1311+30th+St+NW+Washington+DC+20007"
     Get("/addresses/points/" + a) ~> routes ~> check {
