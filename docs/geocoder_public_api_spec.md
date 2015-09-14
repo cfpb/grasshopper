@@ -35,7 +35,7 @@ Returns a message with current status and date
 
 `GET /geocode/<address>?parseAddress=<parseAddress>` where:
 
- - `<address>` is the input address to be found
+ - `<address>` is the non-URL encoded input address to be found
  - `parseAddress` is true by default and triggers a validation (parsing) of the input string.
 
 If `parseAddress` is `false`, a search will be performed on the input string as is.
@@ -48,7 +48,7 @@ and the `data` field containing the location in GeoJSON format.
 
 **Example:**
 
-`GET /geocode/200+President+St+Arkansas+City+AR+71630`
+`GET /geocode/200 President St Arkansas City AR 71630`
 
 ```json
 {
