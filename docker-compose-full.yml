@@ -115,6 +115,7 @@ logstash:
     - elasticsearch
   environment:
     LOGSPOUT: ignore
+  command: logstash -f /opt/grasshopper.conf -e 'input{ syslog{ port => 5514 } } output{ elasticsearch{ protocol => "http" host => "elasticsearch" } }'
 
 kibana:
   build: docker/kibana
