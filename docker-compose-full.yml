@@ -105,7 +105,8 @@ logspout:
     LOGSPOUT: ignore
     # Logstash only supports the older RFC 3164 syslog protocol
     SYSLOG_FORMAT: rfc3164
-  command: syslog+tcp://logstash:5514
+  # Use syslog+tcp:// if UDP is not supported
+  command: syslog://logstash:5514
 
 logstash:
   build: docker/logstash
