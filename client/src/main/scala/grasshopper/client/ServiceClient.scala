@@ -24,7 +24,7 @@ trait ServiceClient extends ClientJsonProtocol {
 
   val config: Config
 
-  def sendGetRequest(path: String): Future[HttpResponse] = {
+  def sendGetRequest(path: Uri): Future[HttpResponse] = {
     implicit val ec: ExecutionContext = system.dispatcher
     val connectionFlow = Http().outgoingConnection(host, port.toInt)
     val request = HttpRequest(GET, path)

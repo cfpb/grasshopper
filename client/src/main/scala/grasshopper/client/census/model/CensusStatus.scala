@@ -7,7 +7,7 @@ import grasshopper.client.model.ClientStatus
 object CensusStatus extends ClientStatus {
   def empty = {
     val now = Instant.now.toString
-    CensusStatus("SERVICE_UNAVAILABLE", "grasshopper-addresspoints", now, "")
+    CensusStatus("SERVICE_UNAVAILABLE", "grasshopper-census", now, "")
   }
 }
 

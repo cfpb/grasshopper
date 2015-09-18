@@ -53,8 +53,5 @@ ui:
     service: ui
   links:
     - geocoder
-    - lines
-    - points
-    - parser
   volumes:
     - ../grasshopper-ui/dist:/opt/grasshopper-ui/

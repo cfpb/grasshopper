@@ -105,7 +105,7 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
 1. Build grasshopper Scala artifacts:
 
         $ cd grasshopper
-        $ sbt assembly
+        $ sbt clean assembly
 
 1. To start a **development** version using only grasshopper, loader, and ui run
 

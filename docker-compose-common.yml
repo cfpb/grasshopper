@@ -1,7 +1,7 @@
 geocoder:
   build: geocoder
   ports:
-    - "8080:8080"
+    - "31010:31010"
   environment:
     GRASSHOPPER_ADDRESSPOINTS_HOST: points
     GRASSHOPPER_ADDRESSPOINTS_PORT: 8081
