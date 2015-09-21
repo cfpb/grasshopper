@@ -63,7 +63,7 @@ ui:
 
 # services that are not extended
 cadvisor:
-  image: google/cadvisor
+  image: google/cadvisor:0.16.0
   ports:
     - "9090:8080"
   volumes:
@@ -94,10 +94,10 @@ grafana:
 # Logspout setup taken from:
 #   https://github.com/gliderlabs/logspout#route-all-container-output-to-remote-syslog
 logspout:
-  image: gliderlabs/logspout:master 
+  image: gliderlabs/logspout:master
   ports:
-    - "8000:8000"
-  volumes: 
+    - "8000:80"
+  volumes:
     - /var/run/docker.sock:/tmp/docker.sock
   links:
     - logstash
@@ -105,34 +105,21 @@ logspout:
     LOGSPOUT: ignore
     # Logstash only supports the older RFC 3164 syslog protocol
     SYSLOG_FORMAT: rfc3164
+  # Use syslog+tcp:// if UDP is not supported
   command: syslog://logstash:5514
 
 logstash:
-  image: logstash
+  build: docker/logstash
   expose:
     - 5514
   links:
     - elasticsearch
   environment:
     LOGSPOUT: ignore
-  command: >
-    logstash -e '
-    input { syslog{ port => 5514 } }
-    filter {
-        grok {
-          match => { "message" => [
-            "%{IP:http_client_ip} - - \[%{HTTPDATE:http_req_time}\] (.)%{WORD:http_req_method} %{URIPATH:uri_path}(?:%{URIPARAM:uri_params})? HTTP\/%{NUMBER:http_ver}(.) %{NUMBER:http_resp_code} %{NUMBER:http_resp_size} (.)-(.) (.)%{GREEDYDATA:http_client}(.)",
-            "\[%{TIMESTAMP_ISO8601:log_time}\]\[%{LOGLEVEL:log_level}%{SPACE}\]\[%{DATA:log_source}%{SPACE}\]%{SPACE}\[%{DATA:es_node}\]%{SPACE}\[%{DATA:es_index}\]%{SPACE}%{GREEDYDATA:message}",
-            "\[%{TIMESTAMP_ISO8601:log_time}\]\[%{LOGLEVEL:log_level}%{SPACE}\]\[%{DATA:thread_name}\]%{SPACE}%{GREEDYDATA:message}"
-          ] }
-          overwrite => ["message"]
-        }
-        kv { source => "uri_params" prefix => "uri_param_" field_split => "&?" }
-    }
-    output { elasticsearch { host => "elasticsearch" } }'
+  command: logstash --verbose -f /opt/grasshopper.conf -e 'input{ syslog{ port => 5514 } } output{ elasticsearch{ protocol => "http" host => "elasticsearch" } }'
 
 kibana:
-  image: marcbachmann/kibana4
+  build: docker/kibana
   environment:
     LOGSPOUT: ignore
   links:
