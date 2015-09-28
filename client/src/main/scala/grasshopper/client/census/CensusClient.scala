@@ -33,7 +33,8 @@ object CensusClient extends ServiceClient with CensusJsonProtocol {
   def geocode(address: ParsedInputAddress): Future[Either[ResponseError, CensusResult]] = {
     implicit val ec: ExecutionContext = system.dispatcher
     val streetName = URLEncoder.encode(address.streetName, "UTF-8")
-    val url = s"/census/addrfeat?number=${address.number}&streetName=${streetName}&zipCode=${address.zipCode}&state=${address.state}"
+    val state = URLEncoder.encode(address.state, "UTF-8")
+    val url = s"/census/addrfeat?number=${address.number}&streetName=${streetName}&zipCode=${address.zipCode}&state=${state}"
     sendGetRequest(url).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[CensusResult].map(Right(_))
