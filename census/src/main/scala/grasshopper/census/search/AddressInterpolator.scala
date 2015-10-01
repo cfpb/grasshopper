@@ -30,38 +30,48 @@ object AddressInterpolator {
   }
 
   def interpolate(feature: Feature, range: AddressRange, addressNumber: Int): Feature = {
-    val pre = prefix(feature, addressNumber)
-    val sign = if (pre == "R") -1 else 1
-    val line = feature.geometry.asInstanceOf[Line]
-    val l = line.length
-    val d = calculateDistance(range)
-    val x = addressNumber - range.start
-    val dist = x * l / d
-    val geometry = line.pointAtDistWithOffset(dist, sign * 0.0001)
+    val numberIsEven = addressNumber % 2 == 0
+    val addressRangeIsEven = range.end % 2 == 0 && range.start % 2 == 0
     val addressField = Field("address", StringType())
     val geomField = Field("geometry", GeometryType())
     val numberField = Field("number", IntType())
     val schema = Schema(geomField, addressField, numberField)
-    val fullname = feature.values.getOrElse("FULLNAME", "")
-    val zipL = feature.values.getOrElse("ZIPL", "")
-    val zipR = feature.values.getOrElse("ZIPR", "")
-    val lfromhn = feature.values.getOrElse("LFROMHN", "")
-    val ltohn = feature.values.getOrElse("LTOHN", "")
-    val rfromhn = feature.values.getOrElse("RFROMHN", "")
-    val rtohn = feature.values.getOrElse("RTOHN", "")
-    val state = feature.values.getOrElse("STATE", "")
-    val values: Map[String, Any] = Map(
-      "geometry" -> geometry,
-      "FULLNAME" -> fullname,
-      "RFROMHN" -> rfromhn,
-      "RTOHN" -> rtohn,
-      "LFROMHN" -> lfromhn,
-      "LTOHN" -> ltohn,
-      "ZIPR" -> zipR,
-      "ZIPL" -> zipL,
-      "STATE" -> state
-    )
-    Feature(schema, values)
+
+    if ((addressRangeIsEven && numberIsEven) || (!addressRangeIsEven && !numberIsEven)) {
+      val pre = prefix(feature, addressNumber)
+      val sign = if (pre == "R") -1 else 1
+      val line = feature.geometry.asInstanceOf[Line]
+      val l = line.length
+      val d = calculateDistance(range)
+      val x = addressNumber - range.start
+      val dist = x * l / d
+      val geometry = line.pointAtDistWithOffset(dist, sign * 0.0001)
+
+      val fullname = feature.values.getOrElse("FULLNAME", "")
+      val zipL = feature.values.getOrElse("ZIPL", "")
+      val zipR = feature.values.getOrElse("ZIPR", "")
+      val lfromhn = feature.values.getOrElse("LFROMHN", "")
+      val ltohn = feature.values.getOrElse("LTOHN", "")
+      val rfromhn = feature.values.getOrElse("RFROMHN", "")
+      val rtohn = feature.values.getOrElse("RTOHN", "")
+      val state = feature.values.getOrElse("STATE", "")
+      val values: Map[String, Any] = Map(
+        "geometry" -> geometry,
+        "FULLNAME" -> fullname,
+        "RFROMHN" -> rfromhn,
+        "RTOHN" -> rtohn,
+        "LFROMHN" -> lfromhn,
+        "LTOHN" -> ltohn,
+        "ZIPR" -> zipR,
+        "ZIPL" -> zipL,
+        "STATE" -> state
+      )
+      Feature(schema, values)
+    } else {
+      val values: Map[String, Any] = Map.empty
+      Feature(schema, values)
+    }
+
   }
 
   private def prefix(f: Feature, a: Int): String = {

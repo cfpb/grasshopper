@@ -86,12 +86,22 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
   }
 
   private def geocodeLines(addressInput: ParsedInputAddress, count: Int): StandardRoute = {
+
+    def notFoundRoute(pts: Array[Feature]): StandardRoute = {
+      complete(ToResponseMarshallable(CensusResult("ADDRESS_NOT_FOUND", pts)))
+    }
+
     val points = geocodeLine(client, "census", "addrfeat", addressInput, count) getOrElse (Nil.toArray)
     if (points.length > 0) {
-      complete(ToResponseMarshallable(CensusResult("OK", points)))
+      val pts = points.filter(p => p.geometry.centroid.x != 0 && p.geometry.centroid.y != 0)
+      if (pts.length > 0) {
+        complete(ToResponseMarshallable(CensusResult("OK", points)))
+      } else {
+        notFoundRoute(pts)
+      }
     } else {
       val pts: Array[Feature] = Nil.toArray
-      complete(ToResponseMarshallable(CensusResult("ADDRESS_NOT_FOUND", pts)))
+      notFoundRoute(pts)
     }
 
   }
