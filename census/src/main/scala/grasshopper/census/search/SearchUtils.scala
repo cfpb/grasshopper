@@ -14,6 +14,8 @@ object SearchUtils {
       } else {
         if (s.contains("-")) {
           Some(s.substring(0, s.indexOf("-")).toInt)
+        } else if (s == "None") {
+          None
         } else {
           Some(s.replaceAll("[^\\d]", "").toInt)
         }
