@@ -7,7 +7,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class CensusClientSpec extends FlatSpec with MustMatchers {
-  "A request to /status" must "return a status object" in {
+  "A 'status' request" must "return an 'OK' response" in {
     val maybeStatus = Await.result(CensusClient.status, 1.seconds)
     maybeStatus match {
       case Right(s) =>
@@ -19,7 +19,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
   }
 
 
-  "A request to /geocode" must "geocode an address string" in {
+  "A 'geocode' request" must "geocode an address string" in {
     val parsedAddress = ParsedInputAddress(3146, "M St NW", "20007", "DC")
     val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), 10.seconds)
     maybeAddress match {

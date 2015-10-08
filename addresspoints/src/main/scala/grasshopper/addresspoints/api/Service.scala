@@ -39,7 +39,7 @@ trait Service extends AddressPointJsonProtocol with Geocode {
   override lazy val log = Logger(LoggerFactory.getLogger("grasshopper-address-points"))
 
   val routes = {
-    path("status") {
+    pathSingleSlash {
       get {
         encodeResponseWith(NoCoding, Gzip, Deflate) {
           complete {

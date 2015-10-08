@@ -20,7 +20,7 @@ object AddressParserClient extends ServiceClient with ParserJsonProtocol {
 
   def status: Future[Either[ResponseError, ParserStatus]] = {
     implicit val ec: ExecutionContext = system.dispatcher
-    sendGetRequest("/status").flatMap { response =>
+    sendGetRequest("/").flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[ParserStatus].map(Right(_))
         case _ => sendResponseError(response)

@@ -53,7 +53,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
   }
 
   "Address Point Service" should "respond to status" in {
-    Get("/status") ~> routes ~> check {
+    Get("/") ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[model.Status]

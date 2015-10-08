@@ -41,7 +41,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   lazy val log = Logger(LoggerFactory.getLogger("grashopper-geocoder"))
 
   val routes = {
-    path("status") {
+    pathSingleSlash {
       val fStatus: Future[GeocodeStatus] = async {
         val as = AddressPointsClient.status.map(s => s.right.getOrElse(AddressPointsStatus.empty))
         val cs = CensusClient.status.map(s => s.right.getOrElse(CensusStatus.empty))
