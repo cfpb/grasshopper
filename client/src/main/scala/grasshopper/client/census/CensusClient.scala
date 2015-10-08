@@ -22,7 +22,7 @@ object CensusClient extends ServiceClient with CensusJsonProtocol {
 
   def status: Future[Either[ResponseError, CensusStatus]] = {
     implicit val ec: ExecutionContext = system.dispatcher
-    sendGetRequest("/status").flatMap { response =>
+    sendGetRequest("/").flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[CensusStatus].map(Right(_))
         case _ => sendResponseError(response)

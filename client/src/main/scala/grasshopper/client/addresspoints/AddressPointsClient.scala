@@ -21,7 +21,7 @@ object AddressPointsClient extends ServiceClient with AddressPointsJsonProtocol 
 
   def status: Future[Either[ResponseError, AddressPointsStatus]] = {
     implicit val ec: ExecutionContext = system.dispatcher
-    sendGetRequest(Uri("/status")).flatMap { response =>
+    sendGetRequest(Uri("/")).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[AddressPointsStatus].map(Right(_))
         case _ => sendResponseError(response)

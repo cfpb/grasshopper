@@ -40,7 +40,7 @@ trait Service extends CensusJsonProtocol with CensusGeocode {
   override lazy val log = Logger(LoggerFactory.getLogger("grasshopper-census"))
 
   val routes = {
-    path("status") {
+    pathSingleSlash {
       get {
         encodeResponseWith(NoCoding, Gzip, Deflate) {
           complete {

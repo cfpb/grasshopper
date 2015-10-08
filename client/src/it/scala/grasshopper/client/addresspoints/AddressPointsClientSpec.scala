@@ -6,7 +6,7 @@ import scala.concurrent.duration._
 
 class AddressPointsClientSpec extends FlatSpec with MustMatchers {
 
-  "A request to /status" must "return a status object" in {
+  "A 'status' request" must "return an 'OK' response" in {
     val maybeStatus = Await.result(AddressPointsClient.status, 1.seconds)
     maybeStatus match {
       case Right(s) =>
@@ -18,7 +18,7 @@ class AddressPointsClientSpec extends FlatSpec with MustMatchers {
   }
 
 
-  "A request to /geocode" must "geocode an address string" in {
+  "A 'geocode' request" must "return a valid address point for a given address string" in {
     val maybeAddress = Await.result(AddressPointsClient.geocode("108 S Main St Bentonville AR 72712"), 1.seconds)
     maybeAddress match {
       case Right(result) =>
@@ -35,7 +35,7 @@ class AddressPointsClientSpec extends FlatSpec with MustMatchers {
   }
 
   it must "offer candidate address results with suggest parameter in request" in {
- val maybeAddress = Await.result(AddressPointsClient.geocode("president?suggest=5"), 1.seconds)
+    val maybeAddress = Await.result(AddressPointsClient.geocode("president?suggest=5"), 1.seconds)
     maybeAddress match {
       case Right(result) =>
         result.status mustBe "OK"
@@ -47,10 +47,9 @@ class AddressPointsClientSpec extends FlatSpec with MustMatchers {
       case Left(b) =>
         b.desc mustBe "503 Service Unavailable"
         fail("SERVICE_UNAVAILABLE")
-    } 
-  
-  }
+    }
 
+  }
 
 }
 

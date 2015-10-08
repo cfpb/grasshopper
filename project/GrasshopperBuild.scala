@@ -117,7 +117,6 @@ object GrasshopperBuild extends Build {
     .configs( IntegrationTest )
     .settings(buildSettings: _*)
     .settings(
-      Revolver.settings ++
         Seq(
           assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
           libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps

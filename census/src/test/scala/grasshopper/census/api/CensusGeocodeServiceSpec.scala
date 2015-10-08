@@ -36,7 +36,7 @@ class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with Scalatest
   }
 
   "Tiger Address Line Service" should "respond to status" in {
-    Get("/status") ~> routes ~> check {
+    Get("/") ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[grasshopper.census.model.Status]
