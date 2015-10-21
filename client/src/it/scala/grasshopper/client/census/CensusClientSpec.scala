@@ -7,8 +7,11 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class CensusClientSpec extends FlatSpec with MustMatchers {
+
+  val timeout = 5.seconds
+
   "A 'status' request" must "return an 'OK' response" in {
-    val maybeStatus = Await.result(CensusClient.status, 1.seconds)
+    val maybeStatus = Await.result(CensusClient.status, timeout)
     maybeStatus match {
       case Right(s) =>
         s.status mustBe "OK"
@@ -21,7 +24,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
 
   "A 'geocode' request" must "geocode an address string" in {
     val parsedAddress = ParsedInputAddress(3146, "M St NW", "20007", "DC")
-    val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), 10.seconds)
+    val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), timeout)
     maybeAddress match {
       case Right(result) =>
         result.status mustBe "OK"
@@ -38,7 +41,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
 
   it should "respond with address with synonym in State definition" in {
     val parsedAddress = ParsedInputAddress(456, "Central Ave", "11516", "New York")
-    val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), 10.seconds)
+    val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), timeout)
     maybeAddress match {
       case Right(result) =>
         result.status mustBe "OK"

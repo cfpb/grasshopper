@@ -6,8 +6,10 @@ import scala.concurrent.duration._
 
 class AddressParserClientSpec extends FlatSpec with MustMatchers {
 
+  val timeout = 5.seconds
+
   "A 'status' request" must "return an 'OK' response" in {
-    val maybeStatus = Await.result(AddressParserClient.status, 1.seconds)
+    val maybeStatus = Await.result(AddressParserClient.status, timeout)
     maybeStatus match {
       case Right(s) =>
         s.status mustBe "OK"
@@ -18,7 +20,7 @@ class AddressParserClientSpec extends FlatSpec with MustMatchers {
   }
 
   "A 'standardize' request" must "parse an address string into its component parts" in {
-    val maybeAddress = Await.result(AddressParserClient.standardize("1311 30th St NW washington dc 20007"), 2.seconds)
+    val maybeAddress = Await.result(AddressParserClient.standardize("1311 30th St NW washington dc 20007"), timeout)
     maybeAddress match {
       case Right(a) =>
         a.parts.addressNumber mustBe "1311"
