@@ -1,4 +1,4 @@
-package grasshopper.addresspoints.api
+package grasshopper.addresspoints.http
 
 import java.time.{ Duration, Instant }
 
@@ -17,7 +17,7 @@ import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest._
 import spray.json._
 
-class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
+class AddressPointHttpServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with HttpService with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
   override def config = testConfig
   override val logger = NoLogging

@@ -9,11 +9,12 @@ import grasshopper.metrics.JvmMetrics
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-import grasshopper.census.api.Service
-
+import grasshopper.census.http.HttpService
 import scala.util.Properties
 
-object CensusGeocodeService extends App with Service {
+
+object CensusGeocodeHttpService$ extends App with HttpService {
+
   override implicit val system: ActorSystem = ActorSystem("grasshopper-census")
 
   override implicit val executor = system.dispatcher

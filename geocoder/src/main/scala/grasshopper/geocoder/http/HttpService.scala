@@ -1,4 +1,4 @@
-package grasshopper.geocoder.api
+package grasshopper.geocoder.http
 
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
@@ -21,6 +21,7 @@ import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInput
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
 import grasshopper.client.protocol.ClientJsonProtocol
+import grasshopper.geocoder.api.GeocodeFlows
 import grasshopper.geocoder.model.{ AddressPointsGeocodeBatchResult, CensusGeocodeBatchResult, GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import org.slf4j.LoggerFactory
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory
 import scala.async.Async.{ async, await }
 import scala.concurrent.{ ExecutionContextExecutor, Future }
 
-trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
+trait HttpService extends GrasshopperJsonProtocol with ClientJsonProtocol {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor

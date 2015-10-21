@@ -5,12 +5,13 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
+import grasshopper.geocoder.http.HttpService
 import grasshopper.metrics.JvmMetrics
-import grasshopper.geocoder.api.Service
 
 import scala.util.Properties
 
-object GrasshopperGeocoder extends App with Service {
+object GrasshopperGeocoder extends App with HttpService {
+
   override implicit val system: ActorSystem = ActorSystem("grasshopper-geocoder")
 
   override implicit val executor = system.dispatcher
