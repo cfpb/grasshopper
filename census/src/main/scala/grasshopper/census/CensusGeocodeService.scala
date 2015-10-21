@@ -51,7 +51,7 @@ object CensusGeocodeService extends App with Service {
 
   sys.addShutdownHook {
     client.close()
-    system.shutdown()
+    system.terminate()
   }
 
 }

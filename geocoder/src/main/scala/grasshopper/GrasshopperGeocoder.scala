@@ -33,7 +33,7 @@ object GrasshopperGeocoder extends App with Service {
   }
 
   sys.addShutdownHook {
-    system.shutdown()
+    system.terminate()
   }
 
 }
