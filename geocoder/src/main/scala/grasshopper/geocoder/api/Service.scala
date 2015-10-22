@@ -17,13 +17,14 @@ import com.typesafe.scalalogging.Logger
 import grasshopper.model.Status
 import grasshopper.client.addresspoints.AddressPointsClient
 import grasshopper.client.census.CensusClient
-import grasshopper.client.census.model.{ CensusResult, ParsedInputAddress }
+import grasshopper.client.census.model.ParsedInputAddress
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
 import grasshopper.client.protocol.ClientJsonProtocol
 import grasshopper.geocoder.model.{ AddressPointsGeocodeBatchResult, CensusGeocodeBatchResult, GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import grasshopper.model.addresspoints.AddressPointsResult
+import grasshopper.model.census.CensusResult
 import org.slf4j.LoggerFactory
 
 import scala.async.Async.{ async, await }

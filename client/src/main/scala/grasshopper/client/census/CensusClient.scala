@@ -7,10 +7,11 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.typesafe.config.{ Config, ConfigFactory }
 import grasshopper.client.ServiceClient
-import grasshopper.client.census.model.{ CensusResult, ParsedInputAddress }
+import grasshopper.client.census.model.ParsedInputAddress
 import grasshopper.client.census.protocol.CensusJsonProtocol
 import grasshopper.client.model.ResponseError
 import grasshopper.model.Status
+import grasshopper.model.census.CensusResult
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
