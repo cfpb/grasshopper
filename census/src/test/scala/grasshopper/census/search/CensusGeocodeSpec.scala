@@ -1,11 +1,11 @@
 package grasshopper.census.search
 
+import grasshopper.model.census.ParsedInputAddress
 import org.scalatest.{ FlatSpec, MustMatchers, BeforeAndAfterAll }
 import geometry._
 import feature._
 import grasshopper.elasticsearch.ElasticsearchServer
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
-import grasshopper.census.model.ParsedInputAddress
 import grasshopper.census.util.TestData._
 
 class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAll with CensusGeocode {

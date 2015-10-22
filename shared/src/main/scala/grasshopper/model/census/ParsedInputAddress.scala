@@ -1,4 +1,4 @@
-package grasshopper.census.model
+package grasshopper.model.census
 
 case class ParsedInputAddress(addressNumber: String, streetName: String, zipCode: String, state: String) {
   override def toString(): String = {

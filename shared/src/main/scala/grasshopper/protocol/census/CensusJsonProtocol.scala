@@ -1,8 +1,8 @@
-package grasshopper.census.protocol
+package grasshopper.protocol.census
 
-import grasshopper.census.model._
-import spray.json.DefaultJsonProtocol
+import grasshopper.model.census.{ CensusResult, ParsedInputAddress, Status }
 import io.geojson.FeatureJsonProtocol._
+import spray.json.DefaultJsonProtocol
 
 trait CensusJsonProtocol extends DefaultJsonProtocol {
   implicit val statusFormat = jsonFormat4(Status.apply)

@@ -15,9 +15,9 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import feature.Feature
-import grasshopper.census.model.{ CensusResult, ParsedInputAddress, Status }
-import grasshopper.census.protocol.CensusJsonProtocol
 import grasshopper.census.search.CensusGeocode
+import grasshopper.model.census.{ Status, ParsedInputAddress, CensusResult }
+import grasshopper.protocol.census.CensusJsonProtocol
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import spray.json._

@@ -1,10 +1,10 @@
-package grasshopper.census.protocol
+package grasshopper.protocol.census
 
 import java.net.InetAddress
 import java.util.Calendar
-import org.scalatest.FlatSpec
-import org.scalatest.MustMatchers
-import grasshopper.census.model.{ ParsedInputAddress, Status }
+
+import grasshopper.model.census.{ ParsedInputAddress, Status }
+import org.scalatest.{ FlatSpec, MustMatchers }
 import spray.json._
 
 class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonProtocol {

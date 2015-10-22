@@ -111,7 +111,7 @@ object GrasshopperBuild extends Build {
         libraryDependencies ++= geocodeDeps,
         resolvers ++= repos
       )
-    ).dependsOn(elasticsearch, metrics)
+    ).dependsOn(shared, elasticsearch, metrics)
 
   lazy val client = (project in file("client"))
     .configs( IntegrationTest )
