@@ -2,7 +2,6 @@ package grasshopper.census.api
 
 import java.net.InetAddress
 import java.time.Instant
-
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
@@ -16,7 +15,8 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import feature.Feature
 import grasshopper.census.search.CensusGeocode
-import grasshopper.model.census.{ Status, ParsedInputAddress, CensusResult }
+import grasshopper.model.Status
+import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
 import grasshopper.protocol.census.CensusJsonProtocol
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory

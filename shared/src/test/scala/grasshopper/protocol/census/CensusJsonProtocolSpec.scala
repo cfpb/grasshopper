@@ -3,7 +3,8 @@ package grasshopper.protocol.census
 import java.net.InetAddress
 import java.util.Calendar
 
-import grasshopper.model.census.{ ParsedInputAddress, Status }
+import grasshopper.model.Status
+import grasshopper.model.census.ParsedInputAddress
 import org.scalatest.{ FlatSpec, MustMatchers }
 import spray.json._
 

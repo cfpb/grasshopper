@@ -10,7 +10,8 @@ import akka.http.scaladsl.model.{ ContentTypes, HttpEntity }
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import grasshopper.census.util.TestData._
 import grasshopper.elasticsearch.ElasticsearchServer
-import grasshopper.model.census.{ ParsedInputAddress, CensusResult, Status }
+import grasshopper.model.Status
+import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
 import spray.json._

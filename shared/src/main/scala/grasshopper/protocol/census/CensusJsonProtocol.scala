@@ -1,6 +1,7 @@
 package grasshopper.protocol.census
 
-import grasshopper.model.census.{ CensusResult, ParsedInputAddress, Status }
+import grasshopper.model.Status
+import grasshopper.model.census.{ CensusResult, ParsedInputAddress }
 import io.geojson.FeatureJsonProtocol._
 import spray.json.DefaultJsonProtocol
 
