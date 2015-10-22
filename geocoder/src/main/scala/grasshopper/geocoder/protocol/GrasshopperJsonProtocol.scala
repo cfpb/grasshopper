@@ -1,11 +1,11 @@
 package grasshopper.geocoder.protocol
 
-import grasshopper.client.census.protocol.CensusJsonProtocol
 import grasshopper.client.parser.protocol.ParserJsonProtocol
 import grasshopper.client.protocol.ClientJsonProtocol
 import grasshopper.geocoder.model._
 import grasshopper.protocol.StatusJsonProtocol
 import grasshopper.protocol.addresspoints.AddressPointsJsonProtocol
+import grasshopper.protocol.census.CensusJsonProtocol
 
 trait GrasshopperJsonProtocol
     extends ClientJsonProtocol

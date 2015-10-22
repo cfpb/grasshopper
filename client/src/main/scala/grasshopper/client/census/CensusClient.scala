@@ -8,14 +8,15 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.typesafe.config.{ Config, ConfigFactory }
 import grasshopper.client.ServiceClient
 import grasshopper.client.census.model.ParsedInputAddress
-import grasshopper.client.census.protocol.CensusJsonProtocol
 import grasshopper.client.model.ResponseError
 import grasshopper.model.Status
 import grasshopper.model.census.CensusResult
+import grasshopper.protocol.StatusJsonProtocol
+import grasshopper.protocol.census.CensusJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
-object CensusClient extends ServiceClient with CensusJsonProtocol {
+object CensusClient extends ServiceClient with StatusJsonProtocol with CensusJsonProtocol {
   override val config: Config = ConfigFactory.load()
 
   lazy val host = Properties.envOrElse("GRASSHOPPER_CENSUS_HOST", config.getString("grasshopper.client.census.host"))
