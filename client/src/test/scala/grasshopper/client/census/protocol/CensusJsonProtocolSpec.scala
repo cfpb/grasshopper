@@ -1,6 +1,6 @@
 package grasshopper.client.census.protocol
 
-import grasshopper.client.census.model._
+import grasshopper.model.Status
 import org.scalatest.{ MustMatchers, FlatSpec }
 import spray.json._
 
@@ -14,7 +14,7 @@ class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonP
       "service": "grasshopper-census"
     }
                     """
-    val addressStatus = statusStr.parseJson.convertTo[CensusStatus]
+    val addressStatus = statusStr.parseJson.convertTo[Status]
     addressStatus.host mustBe "yourhost.local"
     addressStatus.status mustBe "OK"
     addressStatus.time mustBe "2015-05-06T19:14:19.304850+00:00"
@@ -22,7 +22,7 @@ class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonP
   }
 
   it must "serialize to JSON" in {
-    val parserStatus = CensusStatus(
+    val parserStatus = Status(
       "OK",
       "grasshopper-census",
       "2015-05-06T19:14:19.304850+00:00",
@@ -31,7 +31,7 @@ class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonP
 
     val json = parserStatus.toJson.toString
     println(json)
-    json.parseJson.convertTo[CensusStatus] mustBe parserStatus
+    json.parseJson.convertTo[Status] mustBe parserStatus
 
   }
 }

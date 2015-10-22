@@ -121,7 +121,7 @@ object GrasshopperBuild extends Build {
           assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
           libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps
         )
-    )
+    ).dependsOn(shared)
 
   lazy val geocoder = (project in file("geocoder"))
     .configs( IntegrationTest )
