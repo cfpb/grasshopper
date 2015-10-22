@@ -1,6 +1,6 @@
 package grasshopper.geocoder.protocol
 
-import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
+import grasshopper.client.addresspoints.model.AddressPointsResult
 import grasshopper.client.parser.model.ParserStatus
 import grasshopper.geocoder.model.{ GeocodeStatus, GeocodeResult }
 import grasshopper.model.Status
@@ -41,7 +41,7 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
   }
 
   it must "serialize to JSON" in {
-    val addressPointStatus = AddressPointsStatus("OK", "grasshopper-addresspoints", "2015-05-21T14:24:22.477Z", "localhost")
+    val addressPointStatus = Status("OK", "grasshopper-addresspoints", "2015-05-21T14:24:22.477Z", "localhost")
     val censusStatus = Status("SERVICE_UNAVAILABLE", "grasshopper-addresspoints", "2015-05-21T14:24:22.102Z", "")
     val parserStatus = ParserStatus("OK", "2015-05-21T14:24:27.112803+00:00", "2015-05-08T20:16:32.264973+00:00", "cfa96f3d0de0")
     val geocodeStatus = GeocodeStatus(addressPointStatus, censusStatus, parserStatus)

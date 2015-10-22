@@ -4,7 +4,6 @@ import grasshopper.client.addresspoints.model._
 import spray.json.DefaultJsonProtocol
 import io.geojson.FeatureJsonProtocol._
 
-trait AddressPointsJsonProtocol extends DefaultJsonProtocol {
-  implicit val addressPointsStatusFormat = jsonFormat4(AddressPointsStatus.apply)
+trait AddressPointsClientJsonProtocol extends DefaultJsonProtocol {
   implicit val addressPointsResultFormat = jsonFormat2(AddressPointsResult.apply)
 }

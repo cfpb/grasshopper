@@ -16,7 +16,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import grasshopper.model.Status
 import grasshopper.client.addresspoints.AddressPointsClient
-import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
+import grasshopper.client.addresspoints.model.AddressPointsResult
 import grasshopper.client.census.CensusClient
 import grasshopper.client.census.model.{ CensusResult, ParsedInputAddress }
 import grasshopper.client.parser.AddressParserClient
@@ -44,7 +44,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
   val routes = {
     pathSingleSlash {
       val fStatus: Future[GeocodeStatus] = async {
-        val as = AddressPointsClient.status.map(s => s.right.getOrElse(AddressPointsStatus.empty))
+        val as = AddressPointsClient.status.map(s => s.right.getOrElse(Status.empty))
         val cs = CensusClient.status.map(s => s.right.getOrElse(Status.empty))
         val ps = AddressParserClient.status.map(s => s.right.getOrElse(ParserStatus.empty))
         GeocodeStatus(await(as), await(cs), await(ps))
