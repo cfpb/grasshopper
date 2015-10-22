@@ -7,15 +7,15 @@ import akka.http.scaladsl.model.Uri
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.typesafe.config.ConfigFactory
 import grasshopper.client.ServiceClient
-import grasshopper.client.addresspoints.model.AddressPointsResult
-import grasshopper.client.addresspoints.protocol.AddressPointsClientJsonProtocol
 import grasshopper.client.model.ResponseError
 import grasshopper.model.Status
+import grasshopper.model.addresspoints.AddressPointsResult
+import grasshopper.protocol.StatusJsonProtocol
 import grasshopper.protocol.addresspoints.AddressPointsJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
-object AddressPointsClient extends ServiceClient with AddressPointsJsonProtocol with AddressPointsClientJsonProtocol {
+object AddressPointsClient extends ServiceClient with StatusJsonProtocol with AddressPointsJsonProtocol {
   override val config = ConfigFactory.load()
 
   lazy val host = Properties.envOrElse("GRASSHOPPER_ADDRESSPOINTS_HOST", config.getString("grasshopper.client.addresspoints.host"))

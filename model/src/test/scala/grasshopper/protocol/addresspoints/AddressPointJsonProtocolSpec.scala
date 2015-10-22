@@ -2,12 +2,13 @@ package grasshopper.protocol.addresspoints
 
 import java.net.InetAddress
 import java.util.Calendar
+import grasshopper.protocol.StatusJsonProtocol
 import org.scalatest._
 import grasshopper.model.Status
 import grasshopper.model.addresspoints.AddressInput
 import spray.json._
 
-class AddressPointJsonProtocolSpec extends FlatSpec with MustMatchers with AddressPointsJsonProtocol {
+class AddressPointJsonProtocolSpec extends FlatSpec with MustMatchers with StatusJsonProtocol with AddressPointsJsonProtocol {
 
   "Status" should "convert to and from JSON" in {
     val date = Calendar.getInstance().getTime().toString

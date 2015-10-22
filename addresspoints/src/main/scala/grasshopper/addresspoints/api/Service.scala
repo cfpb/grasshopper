@@ -18,6 +18,7 @@ import feature.Feature
 import grasshopper.addresspoints.search.Geocode
 import grasshopper.model.Status
 import grasshopper.model.addresspoints.{ AddressPointsResult, AddressInput }
+import grasshopper.protocol.StatusJsonProtocol
 import grasshopper.protocol.addresspoints.AddressPointsJsonProtocol
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
@@ -25,7 +26,7 @@ import spray.json._
 
 import scala.concurrent.ExecutionContextExecutor
 
-trait Service extends AddressPointsJsonProtocol with Geocode {
+trait Service extends StatusJsonProtocol with AddressPointsJsonProtocol with Geocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor

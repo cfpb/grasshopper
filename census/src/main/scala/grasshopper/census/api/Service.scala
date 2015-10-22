@@ -17,6 +17,7 @@ import feature.Feature
 import grasshopper.census.search.CensusGeocode
 import grasshopper.model.Status
 import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
+import grasshopper.protocol.StatusJsonProtocol
 import grasshopper.protocol.census.CensusJsonProtocol
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
@@ -25,7 +26,7 @@ import spray.json._
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{ Failure, Success, Try }
 
-trait Service extends CensusJsonProtocol with CensusGeocode {
+trait Service extends StatusJsonProtocol with CensusJsonProtocol with CensusGeocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor

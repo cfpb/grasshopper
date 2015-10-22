@@ -16,7 +16,6 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import grasshopper.model.Status
 import grasshopper.client.addresspoints.AddressPointsClient
-import grasshopper.client.addresspoints.model.AddressPointsResult
 import grasshopper.client.census.CensusClient
 import grasshopper.client.census.model.{ CensusResult, ParsedInputAddress }
 import grasshopper.client.parser.AddressParserClient
@@ -24,6 +23,7 @@ import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
 import grasshopper.client.protocol.ClientJsonProtocol
 import grasshopper.geocoder.model.{ AddressPointsGeocodeBatchResult, CensusGeocodeBatchResult, GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
+import grasshopper.model.addresspoints.AddressPointsResult
 import org.slf4j.LoggerFactory
 
 import scala.async.Async.{ async, await }
@@ -139,7 +139,7 @@ trait Service extends GrasshopperJsonProtocol with ClientJsonProtocol {
                 cGeocode.right.getOrElse(CensusResult.empty)
               }
             }
-          GeocodeResult("OK", parsedAddress, addressPointGeocode, censusPointGeocode)
+          GeocodeResult("OK", address, parsedAddress, addressPointGeocode, censusPointGeocode)
         }
 
         encodeResponseWith(NoCoding, Gzip, Deflate) {

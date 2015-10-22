@@ -1,9 +1,9 @@
 package grasshopper.geocoder.protocol
 
-import grasshopper.client.addresspoints.model.AddressPointsResult
 import grasshopper.client.parser.model.ParserStatus
 import grasshopper.geocoder.model.{ GeocodeStatus, GeocodeResult }
 import grasshopper.model.Status
+import grasshopper.model.addresspoints.AddressPointsResult
 import org.scalatest.{ MustMatchers, FlatSpec }
 import spray.json._
 
@@ -53,6 +53,7 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
       """
            {
              "status": "OK",
+             "input": "1489 Chambersville Rd Thornton AR 71766",
              "features": [
                {
                  "type": "Feature",
@@ -81,6 +82,7 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
     val geocodeResultStr = """
         {
           "status": "OK",
+          "input": "200 President St Arkansas City AR 71630",
           "query": {
             "input": "200 President St Arkansas City AR 71630",
             "parts": {
@@ -93,6 +95,7 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
           },
           "addressPointsService": {
             "status": "OK",
+            "input": "200 President St Arkansas City AR 71630",
             "features": [{
               "type": "Feature",
               "geometry": {

@@ -1,8 +1,8 @@
 package grasshopper.client.protocol
 
-import grasshopper.client.addresspoints.model.AddressPointsResult
 import grasshopper.client.census.model.CensusResult
 import grasshopper.client.model.ResponseError
+import grasshopper.model.addresspoints.AddressPointsResult
 import spray.json.DefaultJsonProtocol
 import io.geojson.FeatureJsonProtocol._
 

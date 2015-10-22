@@ -5,10 +5,11 @@ import java.util.Calendar
 
 import grasshopper.model.Status
 import grasshopper.model.census.ParsedInputAddress
+import grasshopper.protocol.StatusJsonProtocol
 import org.scalatest.{ FlatSpec, MustMatchers }
 import spray.json._
 
-class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with CensusJsonProtocol {
+class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with StatusJsonProtocol with CensusJsonProtocol {
 
   "Status" should "convert to and from JSON" in {
     val date = Calendar.getInstance().getTime().toString
