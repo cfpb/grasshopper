@@ -1,4 +1,4 @@
-package grasshopper.addresspoints.model
+package grasshopper.model.addresspoints
 
 import feature.Feature
 

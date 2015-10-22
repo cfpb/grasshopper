@@ -10,9 +10,8 @@ import akka.http.scaladsl.model.{ ContentTypes, HttpEntity }
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import feature._
 import geometry._
-import grasshopper.addresspoints.model
-import grasshopper.addresspoints.model.{ AddressInput, AddressPointsResult }
 import grasshopper.elasticsearch._
+import grasshopper.model.addresspoints.{ AddressPointsResult, AddressInput }
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest._
 import spray.json._
@@ -56,7 +55,7 @@ class AddressPointServiceSpec extends FlatSpec with MustMatchers with ScalatestR
     Get("/") ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val resp = responseAs[model.Status]
+      val resp = responseAs[grasshopper.model.Status]
 
       resp.status mustBe "OK"
       resp.service mustBe "grasshopper-addresspoints"

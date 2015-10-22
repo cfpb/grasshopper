@@ -1,10 +1,10 @@
-package grasshopper.addresspoints.protocol
+package grasshopper.protocol.addresspoints
 
 import java.net.InetAddress
 import java.util.Calendar
-
-import grasshopper.addresspoints.model.{ AddressInput, Status }
 import org.scalatest._
+import grasshopper.model.Status
+import grasshopper.model.addresspoints.AddressInput
 import spray.json._
 
 class AddressPointJsonProtocolSpec extends FlatSpec with MustMatchers with AddressPointJsonProtocol {

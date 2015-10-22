@@ -1,6 +1,7 @@
-package grasshopper.addresspoints.protocol
+package grasshopper.protocol.addresspoints
 
-import grasshopper.addresspoints.model.{ AddressPointsResult, AddressInput, Status }
+import grasshopper.model.Status
+import grasshopper.model.addresspoints.{ AddressInput, AddressPointsResult }
 import spray.json.DefaultJsonProtocol
 import io.geojson.FeatureJsonProtocol._
 

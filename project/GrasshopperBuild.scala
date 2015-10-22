@@ -52,7 +52,7 @@ object GrasshopperBuild extends Build {
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
-    .aggregate(geocoder, addresspoints, census, client)
+    .aggregate(geocoder, shared, addresspoints, census, client)
 
 
   lazy val elasticsearch = (project in file("elasticsearch"))
@@ -93,7 +93,7 @@ object GrasshopperBuild extends Build {
         libraryDependencies ++= geocodeDeps,
         resolvers ++= repos
       )
-    ).dependsOn(elasticsearch, metrics)
+    ).dependsOn(shared, elasticsearch, metrics)
 
   lazy val census = (project in file("census"))
     .configs( IntegrationTest )
@@ -140,6 +140,23 @@ object GrasshopperBuild extends Build {
         resolvers ++= repos
       )
     ).dependsOn(client, metrics)
+
+
+  lazy val shared = (project in file("shared"))
+    .configs(IntegrationTest)
+    .settings(buildSettings: _*)
+    .settings(
+      Seq(
+         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+         assemblyMergeStrategy in assembly := {
+          case "application.conf" => MergeStrategy.concat
+          case x =>
+            val oldStrategy = (assemblyMergeStrategy in assembly).value
+            oldStrategy(x)
+        },
+        libraryDependencies ++= jsonDeps ++ scaleDeps
+      )
+    )
 
 
 }

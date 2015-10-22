@@ -15,9 +15,10 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import feature.Feature
-import grasshopper.addresspoints.model.{ AddressInput, AddressPointsResult, Status }
-import grasshopper.addresspoints.protocol.AddressPointJsonProtocol
 import grasshopper.addresspoints.search.Geocode
+import grasshopper.model.Status
+import grasshopper.model.addresspoints.{ AddressPointsResult, AddressInput }
+import grasshopper.protocol.addresspoints.AddressPointJsonProtocol
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import spray.json._
