@@ -52,7 +52,7 @@ object GrasshopperBuild extends Build {
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
-    .aggregate(geocoder, shared, addresspoints, census, client)
+    .aggregate(geocoder, model, addresspoints, census, client)
 
 
   lazy val elasticsearch = (project in file("elasticsearch"))
@@ -93,13 +93,13 @@ object GrasshopperBuild extends Build {
         libraryDependencies ++= geocodeDeps,
         resolvers ++= repos
       )
-    ).dependsOn(shared, elasticsearch, metrics)
+    ).dependsOn(model, elasticsearch, metrics)
 
   lazy val census = (project in file("census"))
     .configs( IntegrationTest )
     .settings(buildSettings: _*)
     .settings(
-      Revolver.settings ++ 
+      Revolver.settings ++
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
         assemblyMergeStrategy in assembly := {
@@ -111,7 +111,7 @@ object GrasshopperBuild extends Build {
         libraryDependencies ++= geocodeDeps,
         resolvers ++= repos
       )
-    ).dependsOn(shared, elasticsearch, metrics)
+    ).dependsOn(model, elasticsearch, metrics)
 
   lazy val client = (project in file("client"))
     .configs( IntegrationTest )
@@ -121,7 +121,7 @@ object GrasshopperBuild extends Build {
           assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
           libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ asyncDeps
         )
-    ).dependsOn(shared)
+    ).dependsOn(model)
 
   lazy val geocoder = (project in file("geocoder"))
     .configs( IntegrationTest )
@@ -142,7 +142,7 @@ object GrasshopperBuild extends Build {
     ).dependsOn(client, metrics)
 
 
-  lazy val shared = (project in file("shared"))
+  lazy val model = (project in file("model"))
     .configs(IntegrationTest)
     .settings(buildSettings: _*)
     .settings(
