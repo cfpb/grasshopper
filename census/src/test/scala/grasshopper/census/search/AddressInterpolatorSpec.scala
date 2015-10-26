@@ -3,7 +3,7 @@ package grasshopper.census.search
 import geometry.Point
 import grasshopper.census.model.AddressRange
 import grasshopper.census.util.TestData._
-import org.scalatest.{FlatSpec, MustMatchers}
+import org.scalatest.{ FlatSpec, MustMatchers }
 
 class AddressInterpolatorSpec extends FlatSpec with MustMatchers {
 
