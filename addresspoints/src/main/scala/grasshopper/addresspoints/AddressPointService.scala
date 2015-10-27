@@ -1,6 +1,6 @@
 package grasshopper.addresspoints
 
-import grasshopper.addresspoints.api.Service
+import grasshopper.addresspoints.http.HttpService
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
@@ -11,7 +11,7 @@ import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 
-object AddressPointService extends App with Service {
+object AddressPointService extends App with HttpService {
   override implicit val system = ActorSystem("grasshopper-addresspoints")
   override implicit val executor = system.dispatcher
   override implicit val materializer = ActorMaterializer()

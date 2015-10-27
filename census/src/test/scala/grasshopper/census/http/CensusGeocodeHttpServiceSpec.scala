@@ -1,4 +1,4 @@
-package grasshopper.census.api
+package grasshopper.census.http
 
 import java.time.{ Duration, Instant }
 
@@ -15,7 +15,7 @@ import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
 import spray.json._
 
-class CensusGeocodeServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with Service with BeforeAndAfter {
+class CensusGeocodeHttpServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest with HttpService with BeforeAndAfter {
   override def testConfigSource = "akka.loglevel = WARNING"
   override def config = testConfig
   override val logger = NoLogging

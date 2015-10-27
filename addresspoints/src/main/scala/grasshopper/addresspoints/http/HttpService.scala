@@ -1,4 +1,4 @@
-package grasshopper.addresspoints.api
+package grasshopper.addresspoints.http
 
 import java.net.InetAddress
 import java.time.Instant
@@ -24,7 +24,7 @@ import spray.json._
 
 import scala.concurrent.ExecutionContextExecutor
 
-trait Service extends AddressPointJsonProtocol with Geocode {
+trait HttpService extends AddressPointJsonProtocol with Geocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
