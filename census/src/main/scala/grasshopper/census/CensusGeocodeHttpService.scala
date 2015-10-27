@@ -10,10 +10,8 @@ import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import grasshopper.census.http.HttpService
-import scala.util.Properties
 
-
-object CensusGeocodeHttpService$ extends App with HttpService {
+object CensusGeocodeHttpService extends App with HttpService {
 
   override implicit val system: ActorSystem = ActorSystem("grasshopper-census")
 
@@ -23,9 +21,9 @@ object CensusGeocodeHttpService$ extends App with HttpService {
   override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
 
-  lazy val host = Properties.envOrElse("ELASTICSEARCH_HOST", config.getString("grasshopper.census.elasticsearch.host"))
-  lazy val port = Properties.envOrElse("ELASTICSEARCH_PORT", config.getString("grasshopper.census.elasticsearch.port"))
-  lazy val cluster = Properties.envOrElse("ELASTICSEARCH_CLUSTER", config.getString("grasshopper.census.elasticsearch.cluster"))
+  lazy val host = config.getString("grasshopper.census.elasticsearch.host")
+  lazy val port = config.getString("grasshopper.census.elasticsearch.port")
+  lazy val cluster = config.getString("grasshopper.census.elasticsearch.cluster")
 
   lazy val settings = ImmutableSettings.settingsBuilder()
     .put("http.enabled", false)
@@ -44,7 +42,7 @@ object CensusGeocodeHttpService$ extends App with HttpService {
   )
 
   // Default "isMonitored" value set in "metrics" project
-  lazy val isMonitored = Properties.envOrElse("IS_MONITORED", config.getString("grasshopper.monitoring.isMonitored")).toBoolean
+  lazy val isMonitored = config.getString("grasshopper.monitoring.isMonitored").toBoolean
 
   if (isMonitored) {
     val jvmMetrics = JvmMetrics
@@ -52,7 +50,7 @@ object CensusGeocodeHttpService$ extends App with HttpService {
 
   sys.addShutdownHook {
     client.close()
-    system.shutdown()
+    system.terminate()
   }
 
 }

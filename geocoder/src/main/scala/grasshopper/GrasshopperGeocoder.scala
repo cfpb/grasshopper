@@ -8,8 +8,6 @@ import com.typesafe.config.ConfigFactory
 import grasshopper.geocoder.http.HttpService
 import grasshopper.metrics.JvmMetrics
 
-import scala.util.Properties
-
 object GrasshopperGeocoder extends App with HttpService {
 
   override implicit val system: ActorSystem = ActorSystem("grasshopper-geocoder")
@@ -27,14 +25,14 @@ object GrasshopperGeocoder extends App with HttpService {
   )
 
   // Default "isMonitored" value set in "metrics" project
-  lazy val isMonitored = Properties.envOrElse("IS_MONITORED", config.getString("grasshopper.monitoring.isMonitored")).toBoolean
+  lazy val isMonitored = config.getString("grasshopper.monitoring.isMonitored").toBoolean
 
   if (isMonitored) {
     val jvmMetrics = JvmMetrics
   }
 
   sys.addShutdownHook {
-    system.shutdown()
+    system.terminate()
   }
 
 }

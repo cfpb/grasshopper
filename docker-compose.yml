@@ -54,4 +54,4 @@ ui:
   links:
     - geocoder
   volumes:
-    - ../grasshopper-ui/dist:/opt/grasshopper-ui/
+    - ../grasshopper-ui/dist:/usr/src/app/dist/
