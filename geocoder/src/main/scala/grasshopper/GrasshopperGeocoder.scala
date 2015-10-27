@@ -8,8 +8,6 @@ import com.typesafe.config.ConfigFactory
 import grasshopper.metrics.JvmMetrics
 import grasshopper.geocoder.api.Service
 
-import scala.util.Properties
-
 object GrasshopperGeocoder extends App with Service {
   override implicit val system: ActorSystem = ActorSystem("grasshopper-geocoder")
 
@@ -26,7 +24,7 @@ object GrasshopperGeocoder extends App with Service {
   )
 
   // Default "isMonitored" value set in "metrics" project
-  lazy val isMonitored = Properties.envOrElse("IS_MONITORED", config.getString("grasshopper.monitoring.isMonitored")).toBoolean
+  lazy val isMonitored = config.getString("grasshopper.monitoring.isMonitored").toBoolean
 
   if (isMonitored) {
     val jvmMetrics = JvmMetrics
