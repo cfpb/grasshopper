@@ -4,6 +4,7 @@ case class ParsedInputAddress(addressNumber: String, streetName: String, zipCode
   override def toString(): String = {
     s"${addressNumber} ${streetName} ${state} ${zipCode}"
   }
+  def isEmpty: Boolean = this.addressNumber == "" && this.streetName == "" && this.zipCode == "" && this.state == ""
 }
 
 object ParsedInputAddress {

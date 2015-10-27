@@ -7,10 +7,9 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.typesafe.config.{ Config, ConfigFactory }
 import grasshopper.client.ServiceClient
-import grasshopper.client.census.model.ParsedInputAddress
 import grasshopper.client.model.ResponseError
 import grasshopper.model.Status
-import grasshopper.model.census.CensusResult
+import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
 import grasshopper.protocol.StatusJsonProtocol
 import grasshopper.protocol.census.CensusJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
@@ -36,7 +35,7 @@ object CensusClient extends ServiceClient with StatusJsonProtocol with CensusJso
     implicit val ec: ExecutionContext = system.dispatcher
     val streetName = URLEncoder.encode(address.streetName, "UTF-8")
     val state = URLEncoder.encode(address.state, "UTF-8")
-    val url = s"/census/addrfeat?number=${address.number}&streetName=${streetName}&zipCode=${address.zipCode}&state=${state}"
+    val url = s"/census/addrfeat?number=${address.addressNumber}&streetName=${streetName}&zipCode=${address.zipCode}&state=${state}"
     sendGetRequest(url).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[CensusResult].map(Right(_))

@@ -1,5 +1,5 @@
 package grasshopper.geocoder.model
 
-import grasshopper.client.census.model.ParsedInputAddress
+import grasshopper.model.census.ParsedInputAddress
 
 case class ParsedOutputBatchAddress(input: String, parsed: ParsedInputAddress)
