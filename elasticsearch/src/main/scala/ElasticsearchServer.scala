@@ -34,6 +34,7 @@ class ElasticsearchServer {
   }
 
   def stop(): Unit = {
+    client.close()
     node.close()
 
     try {
