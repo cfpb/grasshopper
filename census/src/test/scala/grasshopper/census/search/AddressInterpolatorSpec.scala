@@ -1,8 +1,8 @@
 package grasshopper.census.search
 
 import geometry.Point
-import grasshopper.census.model.AddressRange
 import grasshopper.census.util.TestData._
+import grasshopper.model.census.AddressRange
 import org.scalatest.{ FlatSpec, MustMatchers }
 
 class AddressInterpolatorSpec extends FlatSpec with MustMatchers {

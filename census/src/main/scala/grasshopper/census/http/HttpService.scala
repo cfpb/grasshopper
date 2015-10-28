@@ -2,7 +2,6 @@ package grasshopper.census.http
 
 import java.net.InetAddress
 import java.time.Instant
-
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
@@ -15,9 +14,11 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import feature.Feature
-import grasshopper.census.model.{ CensusResult, ParsedInputAddress, Status }
-import grasshopper.census.protocol.CensusJsonProtocol
 import grasshopper.census.search.CensusGeocode
+import grasshopper.model.Status
+import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
+import grasshopper.protocol.StatusJsonProtocol
+import grasshopper.protocol.census.CensusJsonProtocol
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import spray.json._
@@ -25,7 +26,7 @@ import spray.json._
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{ Failure, Success, Try }
 
-trait HttpService extends CensusJsonProtocol with CensusGeocode {
+trait HttpService extends StatusJsonProtocol with CensusJsonProtocol with CensusGeocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor

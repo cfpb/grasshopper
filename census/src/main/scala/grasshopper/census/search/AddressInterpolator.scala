@@ -3,7 +3,7 @@ package grasshopper.census.search
 import com.typesafe.scalalogging.Logger
 import feature._
 import geometry._
-import grasshopper.census.model.AddressRange
+import grasshopper.model.census.AddressRange
 import org.slf4j.LoggerFactory
 import SearchUtils._
 

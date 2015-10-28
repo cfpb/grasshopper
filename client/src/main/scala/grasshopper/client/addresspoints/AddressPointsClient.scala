@@ -7,23 +7,25 @@ import akka.http.scaladsl.model.Uri
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.typesafe.config.ConfigFactory
 import grasshopper.client.ServiceClient
-import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
-import grasshopper.client.addresspoints.protocol.AddressPointsJsonProtocol
 import grasshopper.client.model.ResponseError
+import grasshopper.model.Status
+import grasshopper.model.addresspoints.AddressPointsResult
+import grasshopper.protocol.StatusJsonProtocol
+import grasshopper.protocol.addresspoints.AddressPointsJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
-object AddressPointsClient extends ServiceClient with AddressPointsJsonProtocol {
+object AddressPointsClient extends ServiceClient with StatusJsonProtocol with AddressPointsJsonProtocol {
   override val config = ConfigFactory.load()
 
   lazy val host = Properties.envOrElse("GRASSHOPPER_ADDRESSPOINTS_HOST", config.getString("grasshopper.client.addresspoints.host"))
   lazy val port = Properties.envOrElse("GRASSHOPPER_ADDRESSPOINTS_PORT", config.getString("grasshopper.client.addresspoints.port"))
 
-  def status: Future[Either[ResponseError, AddressPointsStatus]] = {
+  def status: Future[Either[ResponseError, Status]] = {
     implicit val ec: ExecutionContext = system.dispatcher
     sendGetRequest(Uri("/")).flatMap { response =>
       response.status match {
-        case OK => Unmarshal(response.entity).to[AddressPointsStatus].map(Right(_))
+        case OK => Unmarshal(response.entity).to[Status].map(Right(_))
         case _ => sendResponseError(response)
       }
     }

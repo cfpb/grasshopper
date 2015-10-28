@@ -1,16 +1,17 @@
-package grasshopper.client.census.protocol
+package grasshopper.client.addresspoints.protocol
 
 import grasshopper.model.Status
 import grasshopper.protocol.StatusJsonProtocol
-import org.scalatest.{ MustMatchers, FlatSpec }
+import grasshopper.protocol.addresspoints.AddressPointsJsonProtocol
+import org.scalatest._
 import spray.json._
 
-class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with StatusJsonProtocol {
+class AddressPointsClientJsonProtocolSpec extends FlatSpec with MustMatchers with StatusJsonProtocol with AddressPointsJsonProtocol {
 
   it must "serialize to JSON" in {
     val parserStatus = Status(
       "OK",
-      "grasshopper-census",
+      "grasshopper-addresspoints",
       "2015-05-06T19:14:19.304850+00:00",
       "localhost"
     )
@@ -20,4 +21,5 @@ class CensusJsonProtocolSpec extends FlatSpec with MustMatchers with StatusJsonP
     json.parseJson.convertTo[Status] mustBe parserStatus
 
   }
+
 }

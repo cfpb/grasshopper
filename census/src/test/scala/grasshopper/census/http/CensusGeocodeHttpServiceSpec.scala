@@ -8,9 +8,10 @@ import akka.http.scaladsl.model.MediaTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ ContentTypes, HttpEntity }
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import grasshopper.census.model.{ CensusResult, ParsedInputAddress }
 import grasshopper.census.util.TestData._
 import grasshopper.elasticsearch.ElasticsearchServer
+import grasshopper.model.Status
+import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{ BeforeAndAfter, FlatSpec, MustMatchers }
 import spray.json._
@@ -39,7 +40,7 @@ class CensusGeocodeHttpServiceSpec extends FlatSpec with MustMatchers with Scala
     Get("/") ~> routes ~> check {
       status mustBe OK
       contentType.mediaType mustBe `application/json`
-      val resp = responseAs[grasshopper.census.model.Status]
+      val resp = responseAs[Status]
       resp.status mustBe "OK"
       resp.service mustBe "grasshopper-census"
       val statusTime = Instant.parse(resp.time)

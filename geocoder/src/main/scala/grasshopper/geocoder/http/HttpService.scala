@@ -15,15 +15,16 @@ import akka.util.ByteString
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import grasshopper.client.addresspoints.AddressPointsClient
-import grasshopper.client.addresspoints.model.{ AddressPointsResult, AddressPointsStatus }
 import grasshopper.client.census.CensusClient
-import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInputAddress }
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.{ ParsedAddress, ParserStatus }
 import grasshopper.client.protocol.ClientJsonProtocol
 import grasshopper.geocoder.api.GeocodeFlows
 import grasshopper.geocoder.model.{ AddressPointsGeocodeBatchResult, CensusGeocodeBatchResult, GeocodeResult, GeocodeStatus }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
+import grasshopper.model.Status
+import grasshopper.model.addresspoints.AddressPointsResult
+import grasshopper.model.census.{ CensusResult, ParsedInputAddress }
 import org.slf4j.LoggerFactory
 
 import scala.async.Async.{ async, await }
@@ -44,8 +45,8 @@ trait HttpService extends GrasshopperJsonProtocol with ClientJsonProtocol {
   val routes = {
     pathSingleSlash {
       val fStatus: Future[GeocodeStatus] = async {
-        val as = AddressPointsClient.status.map(s => s.right.getOrElse(AddressPointsStatus.empty))
-        val cs = CensusClient.status.map(s => s.right.getOrElse(CensusStatus.empty))
+        val as = AddressPointsClient.status.map(s => s.right.getOrElse(Status.empty))
+        val cs = CensusClient.status.map(s => s.right.getOrElse(Status.empty))
         val ps = AddressParserClient.status.map(s => s.right.getOrElse(ParserStatus.empty))
         GeocodeStatus(await(as), await(cs), await(ps))
       }
@@ -104,7 +105,7 @@ trait HttpService extends GrasshopperJsonProtocol with ClientJsonProtocol {
           } else {
             val parsedAddress = addr.right.getOrElse(ParsedAddress.empty)
             val parsedInputAddress = ParsedInputAddress(
-              parsedAddress.parts.addressNumber.toInt,
+              parsedAddress.parts.addressNumber,
               parsedAddress.parts.streetName,
               parsedAddress.parts.zip,
               parsedAddress.parts.state
@@ -139,7 +140,7 @@ trait HttpService extends GrasshopperJsonProtocol with ClientJsonProtocol {
                 cGeocode.right.getOrElse(CensusResult.empty)
               }
             }
-          GeocodeResult("OK", parsedAddress, addressPointGeocode, censusPointGeocode)
+          GeocodeResult("OK", address, parsedAddress, addressPointGeocode, censusPointGeocode)
         }
 
         encodeResponseWith(NoCoding, Gzip, Deflate) {

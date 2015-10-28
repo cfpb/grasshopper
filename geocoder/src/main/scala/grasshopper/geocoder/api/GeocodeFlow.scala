@@ -2,12 +2,12 @@ package grasshopper.geocoder.api
 
 import akka.stream.scaladsl._
 import grasshopper.client.addresspoints.AddressPointsClient
-import grasshopper.client.addresspoints.model.AddressPointsResult
 import grasshopper.client.census.CensusClient
-import grasshopper.client.census.model.{ CensusResult, ParsedInputAddress }
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.ParsedAddress
 import grasshopper.geocoder.model.{ BatchGeocodeResult, AddressPointsGeocodeBatchResult, CensusGeocodeBatchResult, ParsedOutputBatchAddress }
+import grasshopper.model.addresspoints.AddressPointsResult
+import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
 
 import scala.concurrent.ExecutionContext
 
@@ -31,7 +31,7 @@ object GeocodeFlows {
         ParsedOutputBatchAddress(
           a.input,
           ParsedInputAddress(
-            a.parts.addressNumber.toInt,
+            a.parts.addressNumber,
             a.parts.streetName,
             a.parts.zip,
             a.parts.state

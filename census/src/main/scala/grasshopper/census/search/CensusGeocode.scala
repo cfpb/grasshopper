@@ -2,7 +2,7 @@ package grasshopper.census.search
 
 import com.typesafe.scalalogging.Logger
 import feature.Feature
-import grasshopper.census.model.ParsedInputAddress
+import grasshopper.model.census.ParsedInputAddress
 import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client

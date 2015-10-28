@@ -7,24 +7,25 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.typesafe.config.{ Config, ConfigFactory }
 import grasshopper.client.ServiceClient
-import grasshopper.client.census.model.{ CensusResult, CensusStatus, ParsedInputAddress }
-import grasshopper.client.census.protocol.CensusJsonProtocol
 import grasshopper.client.model.ResponseError
-
+import grasshopper.model.Status
+import grasshopper.model.census.{ ParsedInputAddress, CensusResult }
+import grasshopper.protocol.StatusJsonProtocol
+import grasshopper.protocol.census.CensusJsonProtocol
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Properties
 
-object CensusClient extends ServiceClient with CensusJsonProtocol {
+object CensusClient extends ServiceClient with StatusJsonProtocol with CensusJsonProtocol {
   override val config: Config = ConfigFactory.load()
 
   lazy val host = Properties.envOrElse("GRASSHOPPER_CENSUS_HOST", config.getString("grasshopper.client.census.host"))
   lazy val port = Properties.envOrElse("GRASSHOPPER_CENSUS_PORT", config.getString("grasshopper.client.census.port"))
 
-  def status: Future[Either[ResponseError, CensusStatus]] = {
+  def status: Future[Either[ResponseError, Status]] = {
     implicit val ec: ExecutionContext = system.dispatcher
     sendGetRequest("/").flatMap { response =>
       response.status match {
-        case OK => Unmarshal(response.entity).to[CensusStatus].map(Right(_))
+        case OK => Unmarshal(response.entity).to[Status].map(Right(_))
         case _ => sendResponseError(response)
       }
     }
@@ -34,7 +35,7 @@ object CensusClient extends ServiceClient with CensusJsonProtocol {
     implicit val ec: ExecutionContext = system.dispatcher
     val streetName = URLEncoder.encode(address.streetName, "UTF-8")
     val state = URLEncoder.encode(address.state, "UTF-8")
-    val url = s"/census/addrfeat?number=${address.number}&streetName=${streetName}&zipCode=${address.zipCode}&state=${state}"
+    val url = s"/census/addrfeat?number=${address.addressNumber}&streetName=${streetName}&zipCode=${address.zipCode}&state=${state}"
     sendGetRequest(url).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[CensusResult].map(Right(_))
