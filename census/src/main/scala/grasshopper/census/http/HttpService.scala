@@ -1,4 +1,4 @@
-package grasshopper.census.api
+package grasshopper.census.http
 
 import java.net.InetAddress
 import java.time.Instant
@@ -26,7 +26,7 @@ import spray.json._
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{ Failure, Success, Try }
 
-trait Service extends StatusJsonProtocol with CensusJsonProtocol with CensusGeocode {
+trait HttpService extends StatusJsonProtocol with CensusJsonProtocol with CensusGeocode {
   implicit val system: ActorSystem
 
   implicit def executor: ExecutionContextExecutor
