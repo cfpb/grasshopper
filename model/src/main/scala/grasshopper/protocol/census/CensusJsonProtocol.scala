@@ -5,6 +5,6 @@ import io.geojson.FeatureJsonProtocol._
 import spray.json.DefaultJsonProtocol
 
 trait CensusJsonProtocol extends DefaultJsonProtocol {
-  implicit val parsedAddressInputFormat = jsonFormat4(ParsedInputAddress.apply)
+  implicit val parsedAddressInputFormat = jsonFormat5(ParsedInputAddress.apply)
   implicit val censusResultFormat = jsonFormat2(CensusResult.apply)
 }

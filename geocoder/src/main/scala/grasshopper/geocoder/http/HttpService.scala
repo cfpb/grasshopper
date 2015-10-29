@@ -107,6 +107,7 @@ trait HttpService extends GrasshopperJsonProtocol with ClientJsonProtocol {
             val parsedInputAddress = ParsedInputAddress(
               parsedAddress.parts.addressNumber,
               parsedAddress.parts.streetName,
+              parsedAddress.parts.city,
               parsedAddress.parts.zip,
               parsedAddress.parts.state
             )

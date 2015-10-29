@@ -6,6 +6,7 @@ import grasshopper.geocoder.model._
 import grasshopper.protocol.StatusJsonProtocol
 import grasshopper.protocol.addresspoints.AddressPointsJsonProtocol
 import grasshopper.protocol.census.CensusJsonProtocol
+import io.geojson.FeatureJsonProtocol._
 
 trait GrasshopperJsonProtocol
     extends ClientJsonProtocol
@@ -14,6 +15,7 @@ trait GrasshopperJsonProtocol
     with ParserJsonProtocol
     with StatusJsonProtocol {
 
+  implicit val geocodeResponseFormat = jsonFormat3(GeocodeResponse.apply)
   implicit val geocodeResultFormat = jsonFormat5(GeocodeResult.apply)
   implicit val geocodeStatusFormat = jsonFormat3(GeocodeStatus.apply)
   implicit val addressPointsGeocodeBatchResultFormat = jsonFormat3(AddressPointsGeocodeBatchResult.apply)

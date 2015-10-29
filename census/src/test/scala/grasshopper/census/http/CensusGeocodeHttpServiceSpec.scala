@@ -53,6 +53,7 @@ class CensusGeocodeHttpServiceSpec extends FlatSpec with MustMatchers with Scala
     val addressInput = ParsedInputAddress(
       "3146",
       "M St NW",
+      "",
       "20007",
       "DC"
     )
@@ -79,6 +80,7 @@ class CensusGeocodeHttpServiceSpec extends FlatSpec with MustMatchers with Scala
     val addressInput = ParsedInputAddress(
       "5000",
       "M St NW",
+      "",
       "20007",
       "DC"
     )

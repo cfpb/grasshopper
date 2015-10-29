@@ -63,7 +63,7 @@ trait HttpService extends StatusJsonProtocol with CensusJsonProtocol with Census
               'zipCode.as[String] ? "",
               'state.as[String] ? ""
             ) { (number, streetName, zipCode, state) =>
-                val addressInput = ParsedInputAddress(number, streetName, zipCode, state)
+                val addressInput = ParsedInputAddress(number, streetName, "", zipCode, state)
                 encodeResponseWith(NoCoding, Gzip, Deflate) {
                   geocodeLines(addressInput, 1)
                 }

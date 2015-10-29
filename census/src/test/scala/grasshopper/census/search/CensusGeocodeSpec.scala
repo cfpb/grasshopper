@@ -32,6 +32,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     val addressInput = ParsedInputAddress(
       "3146",
       "M St NW",
+      "",
       "20007",
       "DC"
     )
@@ -45,6 +46,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     val addressInput = ParsedInputAddress(
       "3146",
       "M St NW",
+      "",
       "20007",
       "DC"
     )
@@ -94,6 +96,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     val addressInput = ParsedInputAddress(
       "G41",
       "Motel Rd",
+      "",
       "80915",
       "CO"
     )
@@ -101,6 +104,7 @@ class CensusGeocodeSpec extends FlatSpec with MustMatchers with BeforeAndAfterAl
     val addressInput2 = ParsedInputAddress(
       "125-2",
       "S Reynolds St",
+      "",
       "22304",
       "VA"
     )
