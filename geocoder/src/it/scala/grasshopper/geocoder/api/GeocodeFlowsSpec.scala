@@ -59,23 +59,23 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers {
     val result = Await.result(future, 2.seconds)
     result.size mustBe 4
     result.head.input mustBe "1311 30th St NW Washington DC 20007"
-    result.head.parsed mustBe ParsedInputAddress("1311", "30th St NW", "20007", "DC")
+    result.head.parsed mustBe ParsedInputAddress("1311", "30th St NW", "Washington", "20007", "DC")
 
     result.tail.head.input mustBe "3146 M St NW Washington DC 20007"
-    result.tail.head.parsed mustBe ParsedInputAddress("3146", "M St NW", "20007", "DC")
+    result.tail.head.parsed mustBe ParsedInputAddress("3146", "M St NW", "Washington", "20007", "DC")
   }
 
   it must "geocode batch parsed addresses into TIGER line results" in {
     val parsedBatchList =
       List(
         ParsedOutputBatchAddress("1311 30th St NW Washington DC 20007",
-          ParsedInputAddress("1311", "30th St NW", "20007", "DC")),
+          ParsedInputAddress("1311", "30th St NW", "Washington", "20007", "DC")),
         ParsedOutputBatchAddress("3146 M St NW Washington DC 20007",
-          ParsedInputAddress("3146", "M St NW","20007", "DC")),
+          ParsedInputAddress("3146", "M St NW", "Washington", "20007", "DC")),
         ParsedOutputBatchAddress("198 President St Arkansas City AR 71630",
-          ParsedInputAddress("198", "President St", "71630", "AR")),
+          ParsedInputAddress("198", "President St", "Washington", "71630", "AR")),
         ParsedOutputBatchAddress("1 Main St City ST 00001",
-          ParsedInputAddress("1", "Main ST", "1","ST")))
+          ParsedInputAddress("1", "Main ST", "City", "1","ST")))
 
     val source = Source(() => parsedBatchList.toIterator)
     val future = source.via(GeocodeFlows.censusFlow).grouped(4).runWith(Sink.head)

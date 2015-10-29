@@ -78,9 +78,6 @@ trait HttpService extends GrasshopperJsonProtocol with ClientJsonProtocol {
                 )
               ).map(_.utf8String)
 
-              linesStream
-                .via(GeocodeFlows.geocode)
-
               val geocodeFlow = linesStream
                 .via(GeocodeFlows.geocode)
                 .map {

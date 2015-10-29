@@ -23,7 +23,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
 
 
   "A 'geocode' request" must "geocode an address string" in {
-    val parsedAddress = ParsedInputAddress("3146", "M St NW", "20007", "DC")
+    val parsedAddress = ParsedInputAddress("3146", "M St NW", "", "20007", "DC")
     val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), timeout)
     maybeAddress match {
       case Right(result) =>
@@ -40,7 +40,7 @@ class CensusClientSpec extends FlatSpec with MustMatchers {
   }
 
   it should "respond with address with synonym in State definition" in {
-    val parsedAddress = ParsedInputAddress("456", "Central Ave", "11516", "New York")
+    val parsedAddress = ParsedInputAddress("456", "Central Ave", "", "11516", "New York")
     val maybeAddress = Await.result(CensusClient.geocode(parsedAddress), timeout)
     maybeAddress match {
       case Right(result) =>
