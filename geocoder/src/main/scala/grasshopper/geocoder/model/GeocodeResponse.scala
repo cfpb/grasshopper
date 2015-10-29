@@ -4,6 +4,6 @@ import feature.Feature
 import grasshopper.client.parser.model.ParsedAddress
 
 object GeocodeResponse {
-  def empty = GeocodeResponse("", ParsedAddress.empty, Nil.toArray)
+  def empty = GeocodeResponse(ParsedAddress.empty, Nil)
 }
-case class GeocodeResponse(status: String, query: ParsedAddress, features: Array[Feature])
+case class GeocodeResponse(query: ParsedAddress, features: List[Feature])

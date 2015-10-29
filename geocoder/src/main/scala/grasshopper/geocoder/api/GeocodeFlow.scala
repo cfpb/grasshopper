@@ -153,7 +153,12 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
       .map(p => geocodeLine1(client, "census", "addrfeat", p, 1).head)
   }
 
-  def geocodeSingle(implicit ec: ExecutionContext): Flow[String, (Feature, Feature), Unit] = {
+  def tupleToArrayFlow[T]: Flow[(T, T), List[T], Unit] = {
+    Flow[(T, T)]
+      .map(t => List(t._1, t._2))
+  }
+
+  def geocodeSingle(implicit ec: ExecutionContext): Flow[String, List[Feature], Unit] = {
     Flow() { implicit b =>
       import FlowGraph.Implicits._
 
@@ -163,12 +168,14 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
       val point = b.add(geocodePointFlow)
       val line = b.add(geocodeLineFlow)
       val zip = b.add(Zip[Feature, Feature])
+      val features = b.add(tupleToArrayFlow[Feature])
       //val resp = b.add(Flow[GeocodeResponse])
 
       input ~> broadcast ~> parse ~> line ~> zip.in0
       broadcast ~> point ~> zip.in1
+      zip.out ~> features
 
-      (input.inlet, zip.out)
+      (input.inlet, features.outlet)
 
     }
   }
