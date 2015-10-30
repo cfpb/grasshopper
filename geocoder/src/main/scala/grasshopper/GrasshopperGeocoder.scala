@@ -5,13 +5,13 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import grasshopper.geocoder.http.HttpService1
+import grasshopper.geocoder.http.HttpService
 import grasshopper.metrics.JvmMetrics
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 
-object GrasshopperGeocoder extends App with HttpService1 {
+object GrasshopperGeocoder extends App with HttpService {
 
   override implicit val system: ActorSystem = ActorSystem("grasshopper-geocoder")
 
