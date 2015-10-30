@@ -7,8 +7,11 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.HttpEntity
 import akka.http.scaladsl.model.MediaTypes.`application/json`
+import akka.http.scaladsl.model.MediaTypes.`text/csv`
+import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import akka.stream.io.Framing
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import com.typesafe.config.Config
@@ -56,18 +59,43 @@ trait HttpService1 extends GrasshopperJsonProtocol1 with GeocodeFlow {
     } ~
       path("geocode") {
         post {
-          complete {
-            "geocode"
+          entity(as[FormData]) { formData =>
+            complete {
+              val source = formData.parts
+                .mapAsync(4) { bodyPart =>
+                  bodyPart
+                    .entity
+                    .dataBytes
+                    .runFold(ByteString.empty)(_ ++ _)
+                    .map(contents => contents)
+                }
+
+              val lineStream = source.via(
+                Framing.delimiter(
+                  ByteString("\n"),
+                  maximumFrameLength = 100,
+                  allowTruncation = true
+                )
+              ).map(_.utf8String)
+
+              val gFlow = lineStream
+                .via(geocodeFlow)
+                .via(filterPointResultFlow)
+                .via(featureToCsv)
+
+              val geocodeByteStream = gFlow.map(s => ByteString(s))
+              HttpEntity.Chunked.fromData(`text/csv`, geocodeByteStream)
+            }
           }
         }
       } ~
       path("geocode" / Segment) { address =>
         complete {
           val source = Source.single(address)
-          val geocodeFlow = source
-            .via(geocodeSingleFlow)
+          val gFlow = source
+            .via(geocodeFlow)
 
-          val geocodeFlowByteStream = geocodeFlow.map(s => ByteString(s.toJson.toString))
+          val geocodeFlowByteStream = gFlow.map(s => ByteString(s.toJson.toString))
           HttpEntity.Chunked.fromData(`application/json`, geocodeFlowByteStream)
         }
       }

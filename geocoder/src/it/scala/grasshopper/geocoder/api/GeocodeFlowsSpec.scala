@@ -5,18 +5,41 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Sink, Source}
 import geometry.Point
 import grasshopper.client.parser.model.{AddressPart, ParsedAddress}
-import grasshopper.geocoder.model.ParsedOutputBatchAddress
+import grasshopper.elasticsearch.ElasticsearchServer
 import grasshopper.model.census.ParsedInputAddress
-import org.scalatest.{FlatSpec, MustMatchers}
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
+import org.scalatest.{BeforeAndAfterAll, FlatSpec, MustMatchers}
+import grasshopper.geocoder.util.TestData._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class GeocodeFlowsSpec extends FlatSpec with MustMatchers {
+class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with BeforeAndAfterAll {
 
   implicit val system = ActorSystem("sys")
   implicit val mat = ActorMaterializer()
   implicit val ec = system.dispatcher
+
+  val server = new ElasticsearchServer
+
+  val client = server.client
+
+  val timeout = 5.seconds
+
+  override def beforeAll = {
+    server.start()
+    server.createAndWaitForIndex("address")
+    server.createAndWaitForIndex("census")
+    server.loadFeature("address", "point", getPointFeature1)
+    server.loadFeature("census", "addrfeat", getTigerLine1)
+    client.admin().indices().refresh(new RefreshRequest("address")).actionGet()
+    client.admin().indices().refresh(new RefreshRequest("census")).actionGet()
+  }
+
+  override def afterAll = {
+    client.close()
+    server.stop()
+  }
 
   "GeocodeFlows" must "parse a list of addresses" in {
     val addresses =
@@ -28,8 +51,9 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers {
       ).toIterator
 
     val source = Source(() => addresses)
-    val future = source.via(GeocodeFlows.parseFlow).grouped(4).runWith(Sink.head)
-    val result = Await.result(future, 2.seconds)
+
+    val future = source.via(parseFlow).grouped(4).runWith(Sink.head)
+    val result = Await.result(future, timeout)
     result.size mustBe 4
     result.head.input mustBe "1311 30th St NW Washington DC 20007"
     result.head.parts.addressNumber mustBe "1311"
@@ -44,7 +68,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers {
     result.tail.head.parts.zip mustBe "20007"
   }
 
-  it must "transform parsed addresses into batch parsed addresses" in {
+  it must "transform parsed addresses into parsed input addresses" in {
     val inputParsedList = List(
       ParsedAddress("1311 30th St NW Washington DC 20007",
         AddressPart("1311","Washington","DC","30th St NW","20007")),
@@ -55,53 +79,78 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers {
       ParsedAddress("1 Main St City ST 00001",AddressPart("1","St City","ST","Main","00001")))
 
     val source = Source(() => inputParsedList.toIterator)
-    val future = source.via(GeocodeFlows.parsedInputAddressFlow).grouped(4).runWith(Sink.head)
-    val result = Await.result(future, 2.seconds)
+    val future = source.via(parsedInputAddressFlow).grouped(4).runWith(Sink.head)
+    val result = Await.result(future, timeout)
     result.size mustBe 4
-    result.head.input mustBe "1311 30th St NW Washington DC 20007"
-    result.head.parsed mustBe ParsedInputAddress("1311", "30th St NW", "Washington", "20007", "DC")
+    result.head.toString() mustBe "1311 30th St NW Washington DC 20007"
+    result.head mustBe ParsedInputAddress("1311", "30th St NW", "Washington", "20007", "DC")
 
-    result.tail.head.input mustBe "3146 M St NW Washington DC 20007"
-    result.tail.head.parsed mustBe ParsedInputAddress("3146", "M St NW", "Washington", "20007", "DC")
+    result.tail.head.toString() mustBe "3146 M St NW Washington DC 20007"
+    result.tail.head mustBe ParsedInputAddress("3146", "M St NW", "Washington", "20007", "DC")
+
   }
 
-  it must "geocode batch parsed addresses into TIGER line results" in {
-    val parsedBatchList =
-      List(
-        ParsedOutputBatchAddress("1311 30th St NW Washington DC 20007",
-          ParsedInputAddress("1311", "30th St NW", "Washington", "20007", "DC")),
-        ParsedOutputBatchAddress("3146 M St NW Washington DC 20007",
-          ParsedInputAddress("3146", "M St NW", "Washington", "20007", "DC")),
-        ParsedOutputBatchAddress("198 President St Arkansas City AR 71630",
-          ParsedInputAddress("198", "President St", "Washington", "71630", "AR")),
-        ParsedOutputBatchAddress("1 Main St City ST 00001",
-          ParsedInputAddress("1", "Main ST", "City", "1","ST")))
-
-    val source = Source(() => parsedBatchList.toIterator)
-    val future = source.via(GeocodeFlows.censusFlow).grouped(4).runWith(Sink.head)
-    val result = Await.result(future, 2.seconds)
-    result.size mustBe 4
-    result.head.input mustBe "1311 30th St NW Washington DC 20007"
-    val point = Point(result.head.longitude, result.head.latitude).roundCoordinates(3)
-    point mustBe Point(-77.059, 38.907)
-  }
-
-  it must "geocode addresses into points" in {
+  it must "geocode with State Address Points" in {
     val addresses =
-      List(
-        "1311 30th St NW Washington DC 20007",
-        "3146 M St NW Washington DC 20007",
-        "198 President St Arkansas City AR 71630",
-        "1 Main St City ST 00001"
-      ).toIterator
+      List("3146 M St NW Washington DC 20007").toIterator
 
     val source = Source(() => addresses)
-    val future = source.via(GeocodeFlows.addressPointsFlow).grouped(4).runWith(Sink.head)
-    val result = Await.result(future, 2.seconds)
-    result.size mustBe 4
-    result.tail.tail.head.input mustBe "198 President St Arkansas City AR 71630"
-    result.tail.tail.head.latitude mustBe 33.60824683723317
-    result.tail.tail.head.longitude mustBe -91.19986550300061
 
+    val future = source.via(geocodePointFlow).grouped(4).runWith(Sink.head)
+    val result = Await.result(future, timeout)
+    result.size mustBe 1
+    result.head.geometry.centroid.roundCoordinates(3) mustBe Point(-77.062, 38.905)
   }
+
+  it must "geocode with TIGER line" in {
+    val addresses =
+      List("3146 M St NW Washington DC 20007").toIterator
+
+    val source = Source(() => addresses)
+
+    val future = source
+      .via(parseFlow)
+      .via(parsedInputAddressFlow)
+      .via(geocodeLineFlow)
+      .grouped(1)
+      .runWith(Sink.head)
+
+    val result = Await.result(future, timeout)
+    result.size mustBe 1
+    result.head.geometry.centroid.roundCoordinates(3) mustBe Point(-77.062, 38.905)
+  }
+
+  it must "perform cascade geocode" in {
+    val addresses =
+      List("3146 M St NW Washington DC 20007").toIterator
+
+    val source = Source(() => addresses)
+
+    val future = source
+      .via(geocodeFlow)
+      .grouped(1)
+      .runWith(Sink.head)
+
+    val result = Await.result(future, timeout)
+    result.size mustBe 1
+    result.head.features.size mustBe 2
+  }
+
+  it must "choose address point result when batch geocoding" in {
+    val addresses =
+      List("3146 M St NW Washington DC 20007").toIterator
+
+    val source = Source(() => addresses)
+
+    val future = source
+      .via(geocodeFlow)
+      .via(filterPointResultFlow)
+      .grouped(1)
+      .runWith(Sink.head)
+
+    val result = Await.result(future, timeout)
+    result.size mustBe 1
+    result.head.geometry mustBe getPointFeature1.geometry
+  }
+
 }
