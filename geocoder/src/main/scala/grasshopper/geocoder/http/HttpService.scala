@@ -19,8 +19,8 @@ import com.typesafe.scalalogging.Logger
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.ParserStatus
 import grasshopper.geocoder.api.GeocodeFlow
-import grasshopper.geocoder.model.GeocodeStatus1
-import grasshopper.geocoder.protocol.GrasshopperJsonProtocol1
+import grasshopper.geocoder.model.GeocodeStatus
+import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import org.elasticsearch.client.Client
 import org.slf4j.LoggerFactory
 import scala.async.Async.{ async, await }
@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContextExecutor
 import spray.json._
 import io.geojson.FeatureJsonProtocol._
 
-trait HttpService extends GrasshopperJsonProtocol1 with GeocodeFlow {
+trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
 
   implicit val system: ActorSystem
 
@@ -46,7 +46,7 @@ trait HttpService extends GrasshopperJsonProtocol1 with GeocodeFlow {
     pathSingleSlash {
       val fStatus = async {
         val ps = AddressParserClient.status.map(s => s.right.getOrElse(ParserStatus.empty))
-        GeocodeStatus1(await(ps))
+        GeocodeStatus(await(ps))
       }
 
       encodeResponseWith(NoCoding, Gzip, Deflate) {
