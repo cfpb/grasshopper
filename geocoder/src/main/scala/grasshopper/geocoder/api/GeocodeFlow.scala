@@ -153,29 +153,45 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
       .map(p => geocodeLine1(client, "census", "addrfeat", p, 1).head)
   }
 
-  def tupleToArrayFlow[T]: Flow[(T, T), List[T], Unit] = {
+  def tupleToListFlow[T]: Flow[(T, T), List[T], Unit] = {
     Flow[(T, T)]
       .map(t => List(t._1, t._2))
   }
 
-  def geocodeSingle(implicit ec: ExecutionContext): Flow[String, List[Feature], Unit] = {
+  def generateResponseFlow: Flow[(ParsedAddress, List[Feature]), GeocodeResponse, Unit] = {
+    Flow[(ParsedAddress, List[Feature])]
+      .map(t => GeocodeResponse(t._1, t._2))
+  }
+
+  def filterFeatureListFlow: Flow[List[Feature], List[Feature], Unit] = {
+    Flow[List[Feature]].map(xs => xs.filter(f => f.geometry.centroid.x != 0 && f.geometry.centroid.y != 0))
+  }
+
+  def geocodeSingleFlow(implicit ec: ExecutionContext): Flow[String, GeocodeResponse, Unit] = {
     Flow() { implicit b =>
       import FlowGraph.Implicits._
 
       val input = b.add(Flow[String])
-      val parse = b.add(parseFlow.via(parsedInputAddressFlow))
-      val broadcast = b.add(Broadcast[String](2))
+      val broadcastParsed = b.add(Broadcast[ParsedAddress](2))
+      val broadcastInput = b.add(Broadcast[String](2))
+      val pFlow = b.add(parseFlow)
+      val pInputFlow = b.add(parsedInputAddressFlow)
       val point = b.add(geocodePointFlow)
       val line = b.add(geocodeLineFlow)
       val zip = b.add(Zip[Feature, Feature])
-      val features = b.add(tupleToArrayFlow[Feature])
+      val features = b.add(tupleToListFlow[Feature].via(filterFeatureListFlow))
+      val zip1 = b.add(Zip[ParsedAddress, List[Feature]])
+      val response = b.add(generateResponseFlow)
+
       //val resp = b.add(Flow[GeocodeResponse])
 
-      input ~> broadcast ~> parse ~> line ~> zip.in0
-      broadcast ~> point ~> zip.in1
-      zip.out ~> features
+      input ~> broadcastInput ~> pFlow ~> broadcastParsed ~> pInputFlow ~> line ~> zip.in0
+      broadcastParsed ~> zip1.in0
+      broadcastInput ~> point ~> zip.in1
+      zip.out ~> features ~> zip1.in1
+      zip1.out ~> response
 
-      (input.inlet, features.outlet)
+      (input.inlet, response.outlet)
 
     }
   }

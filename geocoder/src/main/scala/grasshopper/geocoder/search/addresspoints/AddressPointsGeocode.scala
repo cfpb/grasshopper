@@ -43,6 +43,7 @@ trait AddressPointsGeocode {
         .map(hit => hit.getSourceAsString)
         .take(count)
         .map(s => s.parseJson.convertTo[Feature])
+        .map(f => f.addOrUpdate("source", "state-address-points"))
     } else {
       Array(Feature(Point(0, 0)))
     }

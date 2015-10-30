@@ -65,7 +65,7 @@ trait HttpService1 extends GrasshopperJsonProtocol1 with GeocodeFlow {
         complete {
           val source = Source.single(address)
           val geocodeFlow = source
-            .via(geocodeSingle)
+            .via(geocodeSingleFlow)
 
           val geocodeFlowByteStream = geocodeFlow.map(s => ByteString(s.toJson.toString))
           HttpEntity.Chunked.fromData(`application/json`, geocodeFlowByteStream)
