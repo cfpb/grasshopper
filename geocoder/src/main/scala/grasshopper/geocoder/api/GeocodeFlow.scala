@@ -183,11 +183,9 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
       val zip1 = b.add(Zip[ParsedAddress, List[Feature]])
       val response = b.add(generateResponseFlow)
 
-      //val resp = b.add(Flow[GeocodeResponse])
-
       input ~> broadcastInput ~> pFlow ~> broadcastParsed ~> pInputFlow ~> line ~> zip.in0
-      broadcastParsed ~> zip1.in0
       broadcastInput ~> point ~> zip.in1
+      broadcastParsed ~> zip1.in0
       zip.out ~> features ~> zip1.in1
       zip1.out ~> response
 

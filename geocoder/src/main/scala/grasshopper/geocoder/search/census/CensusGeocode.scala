@@ -49,6 +49,7 @@ trait CensusGeocode {
           val addressRange = AddressInterpolator.calculateAddressRange(line, addressNumber)
           AddressInterpolator.interpolate(line, addressRange, addressNumber)
         }
+        .map(f => f.addOrUpdate("source", "census-tiger"))
     } else {
       Array(Feature(Point(0, 0)))
     }
