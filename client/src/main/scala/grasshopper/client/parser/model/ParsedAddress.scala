@@ -5,8 +5,7 @@ case class AddressPart(
   city: String,
   state: String,
   streetName: String,
-  zip: String
-)
+  zip: String)
 case class ParsedAddress(input: String, parts: AddressPart)
 
 object ParsedAddress {

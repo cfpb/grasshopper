@@ -15,7 +15,7 @@ trait GrasshopperJsonProtocol
     with ParserJsonProtocol
     with StatusJsonProtocol {
 
-  implicit val geocodeResponseFormat = jsonFormat3(GeocodeResponse.apply)
+  implicit val geocodeResponseFormat = jsonFormat2(GeocodeResponse.apply)
   implicit val geocodeResultFormat = jsonFormat5(GeocodeResult.apply)
   implicit val geocodeStatusFormat = jsonFormat3(GeocodeStatus.apply)
   implicit val addressPointsGeocodeBatchResultFormat = jsonFormat3(AddressPointsGeocodeBatchResult.apply)
