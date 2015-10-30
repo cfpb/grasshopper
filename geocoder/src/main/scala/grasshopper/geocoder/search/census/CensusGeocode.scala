@@ -18,24 +18,7 @@ trait CensusGeocode {
 
   lazy val censusLogger = Logger(LoggerFactory.getLogger("grasshopper-census"))
 
-  def geocodeLine(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress, count: Int): Try[Array[Feature]] = {
-    censusLogger.debug(s"Search Address: ${addressInput.toString()}")
-    Try {
-      val hits = searchAddress(client, index, indexType, addressInput)
-      val addressNumber = toInt(addressInput.addressNumber).getOrElse(0)
-      hits
-        .map(hit => hit.getSourceAsString)
-        .take(count)
-        .map { s =>
-          val line = s.parseJson.convertTo[Feature]
-          censusLogger.debug(line.toJson.toString)
-          val addressRange = AddressInterpolator.calculateAddressRange(line, addressNumber)
-          AddressInterpolator.interpolate(line, addressRange, addressNumber)
-        }
-    }
-  }
-
-  def geocodeLine1(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress, count: Int): Array[Feature] = {
+  def geocodeLine(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress, count: Int): Array[Feature] = {
     censusLogger.debug(s"Search Address: ${addressInput.toString()}")
     val hits = searchAddress(client, index, indexType, addressInput)
     val addressNumber = toInt(addressInput.addressNumber).getOrElse(0)

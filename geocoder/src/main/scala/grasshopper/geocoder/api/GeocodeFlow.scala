@@ -41,12 +41,12 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
 
   def geocodePointFlow: Flow[String, Feature, Unit] = {
     Flow[String]
-      .map(s => geocodePoint1(client, "address", "point", s, 1).head)
+      .map(s => geocodePoint(client, "address", "point", s, 1).head)
   }
 
   def geocodeLineFlow: Flow[ParsedInputAddress, Feature, Unit] = {
     Flow[ParsedInputAddress]
-      .map(p => geocodeLine1(client, "census", "addrfeat", p, 1).head)
+      .map(p => geocodeLine(client, "census", "addrfeat", p, 1).head)
   }
 
   def tupleToListFlow[T]: Flow[(T, T), List[T], Unit] = {

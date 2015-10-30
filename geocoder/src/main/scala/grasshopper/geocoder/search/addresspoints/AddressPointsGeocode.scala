@@ -18,23 +18,8 @@ trait AddressPointsGeocode {
 
   lazy val pointLogger = Logger(LoggerFactory.getLogger("grasshopper-grasshopper.addresspoints"))
 
-  def geocodePoint(client: Client, index: String, indexType: String, address: String, count: Int): Try[Array[Feature]] = {
-    val addr = URLDecoder.decode(address, "UTF-8")
-    pointLogger.debug(s"Search Address: ${addr}")
-    Try {
-      val hits = searchAddress(client, index, indexType, addr)
-      hits
-        .map(hit => hit.getSourceAsString)
-        .take(count)
-        .map { s =>
-          pointLogger.debug(s)
-          s.parseJson.convertTo[Feature]
-        }
-    }
-  }
-
-  def geocodePoint1(client: Client, index: String, indexType: String, address: String, count: Int): Array[Feature] = {
-    pointLogger.info(s"Search Address: ${address}")
+  def geocodePoint(client: Client, index: String, indexType: String, address: String, count: Int): Array[Feature] = {
+    pointLogger.debug(s"Search Address: ${address}")
     val hits = searchAddress(client, index, indexType, address)
     if (hits.length >= 1) {
       hits
