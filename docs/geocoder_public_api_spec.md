@@ -18,32 +18,29 @@ Requests that don't specify their content type will be rejected
 
 **1. Status**
 
-`GET  /status`
+`GET  /`
 
 Returns a message with current status and date
 
 ```json
 {
-  "status": "OK",
-  "service": "grasshopper-geocoder",
-  "time": "2015-05-13T15:52:25.856Z",
-  "host": "localhost"
+  parserStatus: {
+    status: "OK",
+    time: "2015-11-02T13:34:57.146499+00:00",
+    upSince: "2015-10-28T16:26:10.444087+00:00",
+    host: "896b22f803a0"
+  }
 }
 ```
 
 **2. Single Geocode**
 
-`GET /geocode/<address>?parseAddress=<parseAddress>` where:
+`GET /geocode/<address>` where:
 
  - `<address>` is the non-URL encoded input address to be found
- - `parseAddress` is true by default and triggers a validation (parsing) of the input string.
-
-If `parseAddress` is `false`, a search will be performed on the input string as is.
-In this case, only the addresspoints backend service will be used (i.e. no interpolation on census TIGER data).
 
 The response follows the following structure.
-One or more features may be returned, with the `service` field indicating what service is responsible for the geocoding,
-and the `data` field containing the location in GeoJSON format.
+One or more features may be returned, with the `source` field indicating what service is responsible for the geocoding.
 
 
 **Example:**
@@ -52,8 +49,7 @@ and the `data` field containing the location in GeoJSON format.
 
 ```json
 {
-  "status": "OK",
-  "query": {
+  query: {
     "input": "200 President St Arkansas City AR 71630",
     "parts": {
       "city": "Arkansas City",
@@ -63,52 +59,46 @@ and the `data` field containing the location in GeoJSON format.
       "addressNumber": "200"
     }
   },
-  "addressPointsService": {
-    "status": "OK",
-    "features": [{
+  "features": [
+    {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-91.19978780015629, 33.608091616155995, 0.0]
+        "coordinates": [
+          -91.19960153268617,
+          33.60763673811005
+        ]
+      },
+      "properties": {
+        "RFROMHN": "100",
+        "source": "census-tiger",
+        "RTOHN": "498",
+        "ZIPL": null,
+        "FULLNAME": "President St",
+        "LFROMHN": null,
+        "LTOHN": null,
+        "ZIPR": "71630",
+        "STATE": "AR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -91.19978780015629,
+           33.608091616155995
+        ]
       },
       "properties": {
         "address": "200 President St Arkansas City AR 71630",
         "alt_address": "",
-        "load_date": 1426878185988
+        "source": "state-address-points"
       }
-    }]
-  },
-  "censusService": {
-    "status": "OK",
-    "features": [{
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-91.19960153268617, 33.60763673811005, 0.0]
-      },
-      "properties": {
-        "RFROMHN": "100",
-        "RTOHN": "498",
-        "ZIPL": "",
-        "FULLNAME": "President St",
-        "LFROMHN": "",
-        "LTOHN": "",
-        "ZIPR": "71630",
-        "STATE": "AR"
-      }
-    }]
-  }
+    }
+  ]
 }
 ```
-
-Each service has a status code that provides metadata about the geocode request performed:
-
-- `OK` indicates that no errors resulted in the geocoding operation.
-- `ADDRESS_NOT_FOUND` indicates that the geocoding engine could not find the address passed.
-   The input string is correctly formed, but the address does not exist in the Grasshopper geocoding databases.
-- `SERVICE_UNAVAILABLE` indicates an unexpected problem with the underlying service. The request may succeed if you try again.
-
-
 
 **3. Batch Geocode**
 
