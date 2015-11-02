@@ -33,6 +33,13 @@ trait CensusGeocode {
           AddressInterpolator.interpolate(line, addressRange, addressNumber)
         }
         .map(f => f.addOrUpdate("source", "census-tiger"))
+        .map { f =>
+          val streetName = f.get("FULLNAME").getOrElse("")
+          val city = addressInput.city
+          val state = f.get("STATE").getOrElse("")
+          val zipCodeR = f.get("ZIPR").getOrElse("")
+          f.addOrUpdate("address", s"${addressNumber} ${streetName} ${city} ${state} ${zipCodeR}")
+        }
     } else {
       Array(Feature(Point(0, 0)))
     }

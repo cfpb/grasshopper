@@ -1,7 +1,8 @@
 package grasshopper.geocoder.api
 
 import akka.stream.scaladsl._
-import feature.Feature
+import feature._
+import geometry.Point
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.ParsedAddress
 import grasshopper.geocoder.model._
@@ -116,7 +117,15 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
         val lines = features
           .filter(predicate("census-tiger"))
 
-        if (points.nonEmpty) points.head else lines.head
+        if (points.nonEmpty) {
+          points.head
+        } else if (lines.nonEmpty) {
+          lines.head
+        } else {
+          val schema = Schema(List(Field("geom", GeometryType()), Field("address", StringType())))
+          val values = Map("geom" -> Point(0, 0), "address" -> "ADDRESS NOT FOUND")
+          Feature(schema, values)
+        }
       }
 
   }

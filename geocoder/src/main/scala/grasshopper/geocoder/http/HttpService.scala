@@ -1,5 +1,7 @@
 package grasshopper.geocoder.http
 
+import java.net.{ URLDecoder, URLEncoder }
+
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
@@ -82,6 +84,7 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
                 .via(geocodeFlow)
                 .via(filterPointResultFlow)
                 .via(featureToCsv)
+                .map(c => c + "\n")
 
               val geocodeByteStream = gFlow.map(s => ByteString(s))
               HttpEntity.Chunked.fromData(`text/csv`, geocodeByteStream)
@@ -90,8 +93,9 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
         }
       } ~
       path("geocode" / Segment) { address =>
+        val a = URLDecoder.decode(address, "UTF-8")
         complete {
-          val source = Source.single(address)
+          val source = Source.single(a)
           val gFlow = source
             .via(geocodeFlow)
 
