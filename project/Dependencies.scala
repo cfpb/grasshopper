@@ -23,6 +23,7 @@ object Dependencies {
   val scalaCheck         = "org.scalacheck"             %% "scalacheck"                           % Version.scalaCheck  % "it, test"
 
   val es                 = "org.elasticsearch"           % "elasticsearch"                        % Version.elasticsearch
+  val mfglabs            = "com.mfglabs"                %% "akka-stream-extensions-elasticsearch" % Version.mfglabs
 
   val scaleGeoJson       = "com.github.jmarin"          %% "scale-geojson"                        % Version.scale
 
