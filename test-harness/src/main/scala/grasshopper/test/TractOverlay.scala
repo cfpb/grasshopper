@@ -3,9 +3,11 @@ package grasshopper.test
 import java.io.File
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.stream.io.{ Framing, SynchronousFileSource }
+import akka.stream.{ Supervision, ActorMaterializer }
+import akka.stream.io.{ SynchronousFileSink, Framing, SynchronousFileSource }
 import akka.stream.scaladsl._
+import akka.stream.ActorAttributes.supervisionStrategy
+import Supervision.resumingDecider
 import akka.util.ByteString
 import com.typesafe.config.ConfigFactory
 import feature.Feature
@@ -58,7 +60,14 @@ object TractOverlay extends GeocodeFlow {
       .via(byte2StringFlow)
       .via(str2PointInputAddressFlow)
       .via(censusOverlayFlow.map(_.toCSV))
-      .runWith(Sink.foreach(println), mat)
+      .via(string2ByteStringFlow)
+      .runWith(SynchronousFileSink(new File("test-harness/target/census-results.csv")), mat)
+      .onComplete {
+        case _ =>
+          println("*** DONE!! ***")
+          client.close()
+          system.terminate()
+      }
 
   }
 
@@ -71,22 +80,26 @@ object TractOverlay extends GeocodeFlow {
   def str2PointInputAddressFlow: Flow[String, PointInputAddressTract, Unit] = {
     Flow[String].map { str =>
       val parts = str.split(",")
-      val address = parts(0)
-      val longitude = parts(1).toDouble
-      val latitude = parts(2).toDouble
-      val geoid = parts(3)
-      val point = Point(longitude, latitude)
-      val pointInput = PointInputAddress(address, point)
-      PointInputAddressTract(pointInput, geoid)
+      if (parts.length == 4) {
+        val address = parts(0)
+        val longitude = parts(1).toDouble
+        val latitude = parts(2).toDouble
+        val geoid = parts(3)
+        val point = Point(longitude, latitude)
+        val pointInput = PointInputAddress(address, point)
+        PointInputAddressTract(pointInput, geoid)
+      } else {
+        PointInputAddressTract.empty
+      }
     }
   }
 
   def pointInput2CensusGeocodeFlow: Flow[PointInputAddressTract, Feature, Unit] = {
     Flow[PointInputAddressTract]
       .map(p => p.pointInputAddress.inputAddress)
-      .via(parseFlow)
+      .via(parseFlow.withAttributes(supervisionStrategy(resumingDecider)))
       .via(parsedInputAddressFlow)
-      .via(geocodeLineFlow)
+      .via(geocodeLineFlow.withAttributes(supervisionStrategy(resumingDecider)))
   }
 
   def outputCensusTractFlow: Flow[Feature, PointInputAddressTract, Unit] = {
@@ -99,7 +112,7 @@ object TractOverlay extends GeocodeFlow {
           y = x.right.getOrElse(HMDAGeoTractResult.empty)
           geoid = y.geoid
         } yield PointInputAddressTract(i, geoid)
-      }
+      }.withAttributes(supervisionStrategy(resumingDecider))
   }
 
   def pointList2CensusOverlayFlow: Flow[List[PointInputAddressTract], CensusOverlayResult, Unit] = {

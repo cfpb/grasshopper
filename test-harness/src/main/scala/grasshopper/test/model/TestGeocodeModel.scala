@@ -1,6 +1,7 @@
 package grasshopper.test.model
 
 import geometry.Point
+import grasshopper.test.util.Haversine
 
 object TestGeocodeModel {
   object PointInputAddress {
@@ -18,12 +19,17 @@ object TestGeocodeModel {
   }
 
   case class CensusOverlayResult(inputPoint: PointInputAddressTract, outputPoint: PointInputAddressTract) {
+
+    def dist: Double = Haversine.distance(this.inputPoint.pointInputAddress.point, this.outputPoint.pointInputAddress.point)
+
     def toCSV: String = s"${inputPoint.pointInputAddress.inputAddress}," +
       s"${inputPoint.pointInputAddress.point.x}," +
       s"${inputPoint.pointInputAddress.point.y}," +
       s"${inputPoint.geoid}," +
       s"${outputPoint.pointInputAddress.point.x}," +
       s"${outputPoint.pointInputAddress.point.y}," +
-      s"${outputPoint.geoid}"
+      s"${dist}," +
+      s"${outputPoint.geoid}\n"
+
   }
 }
