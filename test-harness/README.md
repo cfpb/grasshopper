@@ -1,15 +1,15 @@
-## Grasshopper Test Harness
+# Grasshopper Test Harness
 
-# Introduction
+## Introduction
 
 This project serves as a testing tool for the Grasshopper project. It is not intended to be deployed to production with
 the main software, but to provide some assistance in checking the quality of the Geocoder. 
 The test harness provides a few programs that automate geocoding at a larger scale through batching, and provide results
 for further analysis.
 
-# Tools
+## Tools
 
-* ExtractIndex: This program extracts the contents of an index to a file. It is useful for extracting indexes that contain
+### ExtractIndex: This program extracts the contents of an index to a file. It is useful for extracting indexes that contain
 state level data from Elasticsearch, dumping them to a file that can be used for further processing. 
 It requires the [hmda-geo](https://github.com/cfpb/hmda-geo) project to be running in order to add the Census Tract information
 to the original address points. 
@@ -29,7 +29,7 @@ This file has the following structure:
 `Input Address, Input Longitude,Input Latitude, Input Census Tract ID`
 
 
-* TractOverlay: This program takes the output from the previous program. It will require both the `hmda-geo` project mentioned
+### TractOverlay: This program takes the output from the previous program. It will require both the `hmda-geo` project mentioned
 above as well as the [Grasshopper Parser](https://github.com/cfpb/grasshopper-parser) running in order to produce results. 
 
 It can be run as follows from an `sbt` prompt: 
