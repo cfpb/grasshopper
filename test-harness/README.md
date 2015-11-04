@@ -50,6 +50,8 @@ This file contains the following structure:
 
 `Input Address, Input Longitude,Input Latitude, Input Census Tract ID, Census Longitude, Census Latitude, Distance, Output Census Tract ID` 
 
+`Distance` is the distance in Km between the input point and the geocoded point.
+
 
 
 
