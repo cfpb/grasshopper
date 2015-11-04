@@ -54,7 +54,7 @@ object ExtractIndex {
     source
       .via(jsonToPointInputAddress)
       .via(tractOverlay)
-      .map(c => c.toString + "\n")
+      .map(c => c.toCSV + "\n")
       .map(ByteString(_))
       .runWith(Sink.synchronousFile(new File(s"test-harness/target/${index}-${indexType}.csv")))
       .onComplete {
