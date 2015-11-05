@@ -2,7 +2,6 @@ package grasshopper.geocoder.protocol
 
 import grasshopper.client.parser.model.ParserStatus
 import grasshopper.geocoder.model.{ GeocodeStatus, GeocodeResult }
-import grasshopper.model.Status
 import grasshopper.model.addresspoints.AddressPointsResult
 import org.scalatest.{ MustMatchers, FlatSpec }
 import spray.json._
@@ -35,16 +34,12 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
       """.stripMargin
 
     val geocoderStatus = statusStr.parseJson.convertTo[GeocodeStatus]
-    geocoderStatus.addressPointsStatus.status mustBe "OK"
-    geocoderStatus.censusStatus.status mustBe "SERVICE_UNAVAILABLE"
     geocoderStatus.parserStatus.host mustBe "cfa96f3d0de0"
   }
 
   it must "serialize to JSON" in {
-    val addressPointStatus = Status("OK", "grasshopper-addresspoints", "2015-05-21T14:24:22.477Z", "localhost")
-    val censusStatus = Status("SERVICE_UNAVAILABLE", "grasshopper-addresspoints", "2015-05-21T14:24:22.102Z", "")
     val parserStatus = ParserStatus("OK", "2015-05-21T14:24:27.112803+00:00", "2015-05-08T20:16:32.264973+00:00", "cfa96f3d0de0")
-    val geocodeStatus = GeocodeStatus(addressPointStatus, censusStatus, parserStatus)
+    val geocodeStatus = GeocodeStatus(parserStatus)
     geocodeStatus.toJson.toString.parseJson.convertTo[GeocodeStatus] mustBe geocodeStatus
   }
 
