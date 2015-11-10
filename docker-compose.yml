@@ -5,23 +5,7 @@ geocoder:
     file: docker-compose-common.yml
     service: geocoder
   links:
-    - lines
-    - points
     - parser
-
-lines:
-  extends:
-    file: docker-compose-common.yml
-    service: lines
-  links: 
-    - elasticsearch
-
-points:
-  extends:
-    file: docker-compose-common.yml
-    service: points
-  links: 
-    - elasticsearch
 
 parser:
   extends:
