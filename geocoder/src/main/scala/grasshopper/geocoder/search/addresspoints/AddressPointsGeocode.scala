@@ -7,7 +7,7 @@ import grasshopper.client.parser.model.ParsedAddress
 import org.slf4j.LoggerFactory
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
-import org.elasticsearch.index.query.{ FilterBuilders, QueryBuilders }
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHit
 import spray.json._
 import io.geojson.FeatureJsonProtocol._
