@@ -3,10 +3,10 @@ geocoder:
   ports:
     - "31010:31010"
   environment:
-    GRASSHOPPER_ADDRESSPOINTS_HOST: points
-    GRASSHOPPER_ADDRESSPOINTS_PORT: 8081
-    GRASSHOPPER_CENSUS_HOST: lines
-    GRASSHOPPER_CENSUS_PORT: 8082
+    ELASTICSEARCH_HOST: elasticsearch
+    # NOTE: Official ES image has a ELASTICSEARCH_PORT envvar,
+    # but it actually host/port, so it MUST be overridden here.
+    ELASTICSEARCH_PORT: 9300
     GRASSHOPPER_PARSER_HOST: parser
     GRASSHOPPER_PARSER_PORT: 5000
 

@@ -5,6 +5,7 @@ geocoder:
     file: docker-compose-common.yml
     service: geocoder
   links:
+    - elasticsearch
     - parser
 
 parser:
