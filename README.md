@@ -62,10 +62,12 @@ each project representing a specific task and usually a [Microservice](http://en
 
         > projects
         [info] In file:/Users/keelerh/Projects/grasshopper/
-        [info]       client
-        [info]       elasticsearch
-        [info]       geocoder
-        [info]     * grasshopper
+        [info]     client
+        [info]     elasticsearch
+        [info]     geocoder
+        [info]   * grasshopper
+        [info]     metrics
+        [info]     model
 
         > project geocoder 
         [info] Set current project to geocoder (in build file: /path/to/geocoder/)
