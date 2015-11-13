@@ -160,21 +160,20 @@ For further details on loading data, see [grasshopper-loader](https://github.com
 
 #### Making changes to running containers
 
-The `grasshopper-ui` project includes some Grunt magic
-1. 
-    Then run `cd` into the grasshopper-ui directory and run
+The `grasshopper-ui` and `grasshopper-parser` projects support auto-reload of code, 
+so you don't have to rebuild thier respectives images with each code change.  `grasshopper-ui`
+even has a Docker-specific Grunt task for further dev-friendliness.  This means you can make
+UI changes and just refresh the browser to view them.
 
         cd ../grasshopper-ui
         grunt docker
 
-    This gives you everything you need to start development plus:
-
-    - the ability to make UI changes and refresh the browser to view them.
-
 
 #### Running the production-like full stack
 
-1. Start **all** Docker containers
+If you'd like to see the "full stack", which adds several logging and monitoring services,
+just point `docker-compose` at the "full" setup.  This will start **a lot** of containers,
+so no need to run this setup during development.
 
         docker-compose -f docker-compose-full.yml up -d
 
