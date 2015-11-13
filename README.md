@@ -143,11 +143,17 @@ a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM us
 
 #### Loading address data
 
-The default Compose setup mounts the local `grasshopper-loader/test/data` directory into
-the container, so you can place files in that directory, and load them without having to rebuild.
+The `grasshopper-loader` projects comes with some small test data files.  You can load state address
+point and Census TIGER line data as follows:
 
-        docker-compose run loader
-        node grasshopper-loader.js -d test/data/{{path/to/your/data}}
+        docker-compose run loader ./grasshopper-loader.js --data test/data/new_york.json
+        docker-compose run loader ./tiger.js -d test/data/tiger/
+
+
+The default Compose setup also mounts the local `grasshopper-loader/test/data` directory into
+the container, so you can place files there, and load them without having to rebuild.
+
+        docker-compose run loader ./grasshopper-loader.js -d test/data/{{path/to/your/data}}
 
 For further details on loading data, see [grasshopper-loader](https://github.com/cfpb/grasshopper-loader).
 
