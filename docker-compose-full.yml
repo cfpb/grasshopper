@@ -6,6 +6,7 @@ geocoder:
     service: geocoder
   links:
     - parser
+    - elasticsearch
     - influxdb
   environment: &MONITORED_JVM_ENV
     IS_MONITORED: 'true'
