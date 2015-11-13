@@ -143,7 +143,7 @@ a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM us
 
 #### Loading address data
 
-The `grasshopper-loader` projects comes with some small test data files.  You can load state address
+The `grasshopper-loader` project comes with some small test data files.  You can load state address
 point and Census TIGER line data as follows:
 
         docker-compose run loader ./grasshopper-loader.js --data test/data/new_york.json
