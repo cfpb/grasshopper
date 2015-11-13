@@ -8,7 +8,7 @@ geocoder:
     - parser
     - influxdb
   environment: &MONITORED_JVM_ENV
-    IS_MONITORED: true
+    IS_MONITORED: 'true'
     INFLUXDB_HOST: &INFLUXDB_HOST influxdb
     INFLUXDB_PORT: &INFLUXDB_PORT 8086
     INFLUXDB_USER: &INFLUXDB_USER root
