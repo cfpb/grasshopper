@@ -5,34 +5,15 @@ geocoder:
     file: docker-compose-common.yml
     service: geocoder
   links:
-    - lines
-    - points
     - parser
+    - elasticsearch
     - influxdb
   environment: &MONITORED_JVM_ENV
-    IS_MONITORED: true
+    IS_MONITORED: 'true'
     INFLUXDB_HOST: &INFLUXDB_HOST influxdb
     INFLUXDB_PORT: &INFLUXDB_PORT 8086
     INFLUXDB_USER: &INFLUXDB_USER root
     INFLUXDB_PASSWORD: &INFLUXDB_PASSWORD root
-
-lines:
-  extends:
-    file: docker-compose-common.yml
-    service: lines
-  links:
-    - elasticsearch
-    - influxdb
-  environment: *MONITORED_JVM_ENV
-
-points:
-  extends:
-    file: docker-compose-common.yml
-    service: points
-  links:
-    - elasticsearch
-    - influxdb
-  environment: *MONITORED_JVM_ENV
 
 parser:
   extends:
@@ -57,9 +38,6 @@ ui:
     service: ui
   links:
     - geocoder
-    - lines
-    - points
-    - parser
 
 # services that are not extended
 cadvisor:

@@ -5,28 +5,17 @@ geocoder:
     file: docker-compose-common.yml
     service: geocoder
   links:
-    - lines
-    - points
+    - elasticsearch
     - parser
-
-lines:
-  extends:
-    file: docker-compose-common.yml
-    service: lines
-  links: 
-    - elasticsearch
-
-points:
-  extends:
-    file: docker-compose-common.yml
-    service: points
-  links: 
-    - elasticsearch
 
 parser:
   extends:
     file: docker-compose-common.yml
     service: parser
+  volumes:
+    - ../grasshopper-parser:/usr/src/app
+  # Adds "--reload" option so Gunicorn listens for changes to .py files
+  command: "gunicorn --reload -c conf/gunicorn.py -b 0.0.0.0:5000 app:app"
 
 # volumes allows for data to be loaded without being part of the container
 loader:
