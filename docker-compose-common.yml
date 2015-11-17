@@ -3,30 +3,12 @@ geocoder:
   ports:
     - "31010:31010"
   environment:
-    GRASSHOPPER_ADDRESSPOINTS_HOST: points
-    GRASSHOPPER_ADDRESSPOINTS_PORT: 8081
-    GRASSHOPPER_CENSUS_HOST: lines
-    GRASSHOPPER_CENSUS_PORT: 8082
+    ELASTICSEARCH_HOST: elasticsearch
+    # NOTE: Official ES image has a ELASTICSEARCH_PORT envvar,
+    # but it actually host/port, so it MUST be overridden here.
+    ELASTICSEARCH_PORT: 9300
     GRASSHOPPER_PARSER_HOST: parser
     GRASSHOPPER_PARSER_PORT: 5000
-
-lines:
-  build: census
-  ports:
-    - "8082:8082"
-  environment: &ES_JAVA_ENV
-    ELASTICSEARCH_HOST: elasticsearch
-
-    # Must override this PORT as Docker Compose autogenerates an envvar by the
-    # same name, but of the format: tcp://172.17.1.146:9200.
-    # Also, ES Java client uses port 9300, not REST API port 9200.
-    ELASTICSEARCH_PORT: 9300
-
-points:
-  build: addresspoints
-  ports:
-    - "8081:8081"
-  environment: *ES_JAVA_ENV
 
 parser:
   build: ../grasshopper-parser

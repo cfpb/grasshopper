@@ -90,7 +90,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
 
   }
 
-  it must "geocode with State Address Points" in {
+  it must "geocode with State Address Points single field" in {
     val addresses =
       List("3146 M St NW Washington DC 20007").toIterator
 
@@ -98,6 +98,25 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
 
     val future = source.via(geocodePointFlow).grouped(4).runWith(Sink.head)
     val result = Await.result(future, timeout)
+    result.size mustBe 1
+    result.head.geometry.centroid.roundCoordinates(3) mustBe Point(-77.062, 38.905)
+  }
+
+  it must "geocode with all State Address Points fields" in {
+    val addresses =
+      List("3146 M St NW Washington DC 20007").toIterator
+
+    val source = Source(() => addresses)
+    val futureParsed = source.via(parseFlow).grouped(4).runWith(Sink.head)
+    val resultParsed = Await.result(futureParsed, timeout)
+
+    resultParsed.size mustBe 1
+
+    val sourceParsed = Source (() =>List(resultParsed.head).toIterator)
+
+    val future = sourceParsed.via(geocodePointFieldsFlow).grouped(4).runWith(Sink.head)
+    val result = Await.result(future, timeout)
+    println(result)
     result.size mustBe 1
     result.head.geometry.centroid.roundCoordinates(3) mustBe Point(-77.062, 38.905)
   }
