@@ -49,10 +49,12 @@ object GrasshopperBuild extends Build {
 
   val asyncDeps = Seq(async)
 
+  val mfgLabs = Seq(mfglabs)
+
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
-    .aggregate(geocoder, model, client)
+    .aggregate(geocoder, model, client, test_harness)
 
 
   lazy val elasticsearch = (project in file("elasticsearch"))
@@ -123,5 +125,24 @@ object GrasshopperBuild extends Build {
       )
     )
 
+  lazy val hmdaGeo = ProjectRef(uri("git://github.com/cfpb/hmda-geo.git"), "client")
+
+  lazy val test_harness = (project in file("test-harness"))
+    .configs(IntegrationTest)
+    .settings(buildSettings: _*)
+    .settings(
+      Seq(
+        assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
+        assemblyMergeStrategy in assembly := {
+          case "application.conf" => MergeStrategy.concat
+          case x =>
+            val oldStrategy = (assemblyMergeStrategy in assembly).value
+            oldStrategy(x)
+        },
+        libraryDependencies ++= akkaHttpDeps ++ scaleDeps ++ mfgLabs,
+        resolvers ++= repos
+      )
+    )
+    .dependsOn(geocoder, hmdaGeo)
 
 }
