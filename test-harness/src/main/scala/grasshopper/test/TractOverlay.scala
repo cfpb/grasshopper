@@ -99,7 +99,7 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
 
   def outputCensusTractFlow: Flow[Feature, PointInputAddressTract, Unit] = {
     Flow[Feature]
-      .mapAsync(4) { f =>
+      .mapAsync(numProcessors) { f =>
         val p = f.geometry.centroid
         val i = PointInputAddress("", p)
         for {
@@ -131,7 +131,6 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
       zip.out ~> censusOverlay
 
       (input.inlet, censusOverlay.outlet)
-
     }
   }
 

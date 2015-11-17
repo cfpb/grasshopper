@@ -26,6 +26,7 @@ import hmda.geo.client.api.model.census.HMDAGeoTractResult
 import scala.concurrent.ExecutionContext
 
 object GeocoderTest extends GeocodeFlow with FlowUtils {
+
   implicit val system = ActorSystem("grasshopper-test-harness-census")
   implicit val mat = ActorMaterializer()(system)
   implicit val ec = system.dispatcher
@@ -134,7 +135,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
 
   private def geocodeResultToGeocodeResultTract: Flow[GeocodeResult, GeocodeResultTract, Unit] = {
     Flow[GeocodeResult]
-      .mapAsync(4) { r =>
+      .mapAsync(numProcessors) { r =>
         val pointInput = r.pointResult
         val censusInput = r.censusResult
         val p = pointInput.point

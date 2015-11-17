@@ -8,6 +8,9 @@ import feature.Feature
 import grasshopper.test.model.TestGeocodeModel.{ PointInputAddress, PointInputAddressTract }
 
 trait FlowUtils {
+
+  val numProcessors = Runtime.getRuntime.availableProcessors()
+
   def byte2StringFlow: Flow[ByteString, String, Unit] =
     Flow[ByteString].map(bs => bs.utf8String)
 
