@@ -64,7 +64,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
       .via(byte2StringFlow)
       .via(stringToPointInputAddressTract)
-      .via(geocodeTestFlow)
+      .via(geocodeTestFlow.withAttributes(supervisionStrategy(resumingDecider)))
       .via(resultsToCSV)
       .via(string2ByteStringFlow)
       .runWith(SynchronousFileSink(outputFile), mat)
@@ -81,9 +81,9 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
     Flow[String]
       .map { s =>
         val parts = s.split(",")
-        val address = parts(0)
-        val x = parts(1).toDouble
-        val y = parts(2).toDouble
+        val x = parts(0).toDouble
+        val y = parts(1).toDouble
+        val address = parts(2)
         val geoid = parts(3)
         val point = Point(x, y)
         val pointInputAddress = PointInputAddress(address, point)
@@ -150,7 +150,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
           pointInputAddressTract = PointInputAddressTract(pointInput, xGeoID)
           censusInputAddressTract = PointInputAddressTract(censusInput, yGeoID)
         } yield GeocodeResultTract(pointInputAddressTract, censusInputAddressTract)
-      }
+      }.withAttributes(supervisionStrategy(resumingDecider))
   }
 
   private def flattenResults: Flow[(PointInputAddressTract, GeocodeResultTract), GeocodeTestResult, Unit] = {

@@ -15,6 +15,7 @@ object TestGeocodeModel {
   }
 
   case class PointInputAddressTract(pointInputAddress: PointInputAddress, geoid: String) {
+    override def toString = toCSV
     def toCSV: String = s"${pointInputAddress.inputAddress},${pointInputAddress.point.x},${pointInputAddress.point.y},${geoid}"
   }
 
