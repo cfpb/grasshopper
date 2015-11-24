@@ -13,6 +13,7 @@ import com.mfglabs.stream.extensions.elasticsearch.EsStream
 import com.typesafe.config.ConfigFactory
 import feature.Feature
 import grasshopper.test.model.TestGeocodeModel.{ PointInputAddressTract, PointInputAddress }
+import grasshopper.test.streams.FlowUtils
 import org.elasticsearch.client.Client
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.ImmutableSettings
@@ -25,7 +26,7 @@ import io.geojson.FeatureJsonProtocol._
 import hmda.geo.client.api.HMDAGeoClient
 import hmda.geo.client.api.model.census.HMDAGeoTractResult
 
-object ExtractIndex {
+object ExtractIndex extends FlowUtils {
 
   implicit val system = ActorSystem("grasshopper-test-harness-extractIndex")
   implicit val mat = ActorMaterializer()(system)
@@ -91,7 +92,7 @@ object ExtractIndex {
 
   def tractOverlay(implicit ec: ExecutionContext): Flow[PointInputAddress, PointInputAddressTract, Unit] = {
     Flow[PointInputAddress]
-      .mapAsyncUnordered(4) { i =>
+      .mapAsyncUnordered(numProcessors) { i =>
         val p = i.point
         for {
           x <- HMDAGeoClient.findTractByPoint(p) if x.isRight

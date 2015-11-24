@@ -15,13 +15,14 @@ import geometry.Point
 import grasshopper.geocoder.api.GeocodeFlow
 import grasshopper.geocoder.model.GeocodeResponse
 import grasshopper.test.model.TestGeocodeModel.{ CensusOverlayResult, PointInputAddress, PointInputAddressTract }
+import grasshopper.test.streams.FlowUtils
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import hmda.geo.client.api.HMDAGeoClient
 import hmda.geo.client.api.model.census.HMDAGeoTractResult
 
-object TractOverlay extends GeocodeFlow {
+object TractOverlay extends GeocodeFlow with FlowUtils {
 
   implicit val system = ActorSystem("grasshopper-test-harness-census")
   implicit val mat = ActorMaterializer()(system)
@@ -71,12 +72,6 @@ object TractOverlay extends GeocodeFlow {
 
   }
 
-  def byte2StringFlow: Flow[ByteString, String, Unit] =
-    Flow[ByteString].map(bs => bs.utf8String)
-
-  def string2ByteStringFlow: Flow[String, ByteString, Unit] =
-    Flow[String].map(str => ByteString(str))
-
   def str2PointInputAddressFlow: Flow[String, PointInputAddressTract, Unit] = {
     Flow[String].map { str =>
       val parts = str.split(",")
@@ -104,14 +99,14 @@ object TractOverlay extends GeocodeFlow {
 
   def outputCensusTractFlow: Flow[Feature, PointInputAddressTract, Unit] = {
     Flow[Feature]
-      .mapAsync(4) { f =>
+      .mapAsync(numProcessors) { f =>
         val p = f.geometry.centroid
         val i = PointInputAddress("", p)
         for {
           x <- HMDAGeoClient.findTractByPoint(p) if x.isRight
           y = x.right.getOrElse(HMDAGeoTractResult.empty)
           geoid = y.geoid
-        } yield PointInputAddressTract(i, geoid)
+        } yield PointInputAddressTract(i, geoid.toString)
       }.withAttributes(supervisionStrategy(resumingDecider))
   }
 
@@ -136,7 +131,6 @@ object TractOverlay extends GeocodeFlow {
       zip.out ~> censusOverlay
 
       (input.inlet, censusOverlay.outlet)
-
     }
   }
 
