@@ -64,7 +64,7 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
           entity(as[FormData]) { formData =>
             complete {
               val source = formData.parts
-                .mapAsync(4) { bodyPart =>
+                .mapAsync(numCores) { bodyPart =>
                   bodyPart
                     .entity
                     .dataBytes
