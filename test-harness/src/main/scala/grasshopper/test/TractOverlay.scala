@@ -3,7 +3,7 @@ package grasshopper.test
 import java.io.File
 
 import akka.actor.ActorSystem
-import akka.stream.{ Supervision, ActorMaterializer }
+import akka.stream.{ FlowShape, Supervision, ActorMaterializer }
 import akka.stream.io.{ SynchronousFileSink, Framing, SynchronousFileSource }
 import akka.stream.scaladsl._
 import akka.stream.ActorAttributes.supervisionStrategy
@@ -121,23 +121,25 @@ object TractOverlay extends GeocodeFlow {
   }
 
   def censusOverlayFlow: Flow[PointInputAddressTract, CensusOverlayResult, Unit] = {
-    Flow() { implicit b =>
-      import FlowGraph.Implicits._
+    Flow.fromGraph(
+      FlowGraph.create() { implicit b =>
+        import FlowGraph.Implicits._
 
-      val input = b.add(Flow[PointInputAddressTract])
-      val broadcast = b.add(Broadcast[PointInputAddressTract](2))
-      val geocode = b.add(pointInput2CensusGeocodeFlow)
-      val outputTract = b.add(outputCensusTractFlow)
-      val zip = b.add(Zip[PointInputAddressTract, PointInputAddressTract])
-      val censusOverlay = b.add(tupleToListFlow[PointInputAddressTract].via(pointList2CensusOverlayFlow))
+        val input = b.add(Flow[PointInputAddressTract])
+        val broadcast = b.add(Broadcast[PointInputAddressTract](2))
+        val geocode = b.add(pointInput2CensusGeocodeFlow)
+        val outputTract = b.add(outputCensusTractFlow)
+        val zip = b.add(Zip[PointInputAddressTract, PointInputAddressTract])
+        val censusOverlay = b.add(tupleToListFlow[PointInputAddressTract].via(pointList2CensusOverlayFlow))
 
-      input ~> broadcast ~> zip.in0
-      broadcast ~> geocode ~> outputTract ~> zip.in1
-      zip.out ~> censusOverlay
+        input ~> broadcast ~> zip.in0
+        broadcast ~> geocode ~> outputTract ~> zip.in1
+        zip.out ~> censusOverlay
 
-      (input.inlet, censusOverlay.outlet)
+        FlowShape(input.inlet, censusOverlay.outlet)
 
-    }
+      }
+    )
   }
 
 }
