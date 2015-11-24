@@ -36,7 +36,7 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
   }
 
   "An AddressPart" must "deserialize from JSON" in {
-    val addrPartStr = """{ "name": "address_number", "value": "1311"}"""
+    val addrPartStr = """{ "type": "address_number", "value": "1311"}"""
 
     val addrPart = addrPartStr.parseJson.convertTo[AddressPart]
     addrPart.`type` mustBe "address_number"
@@ -55,11 +55,11 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
     {
       "input": "1311 30th St washington dc 20007",
       "parts": [
-        {"name": "address_number", "value": "1311"},
-        {"name": "street_name", "value": "30th St"},
-        {"name": "city_name", "value": "washington"},
-        {"name": "state_name", "value": "dc"},
-        {"name": "zip_code", "value": "20007"}
+        {"type": "address_number", "value": "1311"},
+        {"type": "street_name", "value": "30th St"},
+        {"type": "city_name", "value": "washington"},
+        {"type": "state_name", "value": "dc"},
+        {"type": "zip_code", "value": "20007"}
       ]
     } 
     """
