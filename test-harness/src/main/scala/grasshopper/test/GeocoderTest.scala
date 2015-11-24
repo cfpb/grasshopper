@@ -4,7 +4,7 @@ import java.io.File
 
 import akka.actor.ActorSystem
 import akka.stream.ActorAttributes._
-import akka.stream.ActorMaterializer
+import akka.stream.{ FlowShape, ActorMaterializer }
 import akka.stream.Supervision._
 import akka.stream.io.{ SynchronousFileSink, Framing, SynchronousFileSource }
 import akka.stream.scaladsl._
@@ -92,25 +92,27 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
   }
 
   private def geocodeTestFlow(implicit ec: ExecutionContext): Flow[PointInputAddressTract, GeocodeTestResult, Unit] = {
-    Flow() { implicit b =>
-      import FlowGraph.Implicits._
+    Flow.fromGraph(
+      FlowGraph.create() { implicit b =>
+        import FlowGraph.Implicits._
 
-      val input = b.add(Flow[PointInputAddressTract])
-      val inputBcast = b.add(Broadcast[PointInputAddressTract](2))
-      val address = b.add(extractInputAddress)
-      val geocode = b.add(geocodeFlow)
-      val geocodeResult = b.add(geocodeResponseToGeocodeResult)
-      val geocodeResultTract = b.add(geocodeResultToGeocodeResultTract)
-      val zip = b.add(Zip[PointInputAddressTract, GeocodeResultTract])
-      val output = b.add(flattenResults)
+        val input = b.add(Flow[PointInputAddressTract])
+        val inputBcast = b.add(Broadcast[PointInputAddressTract](2))
+        val address = b.add(extractInputAddress)
+        val geocode = b.add(geocodeFlow)
+        val geocodeResult = b.add(geocodeResponseToGeocodeResult)
+        val geocodeResultTract = b.add(geocodeResultToGeocodeResultTract)
+        val zip = b.add(Zip[PointInputAddressTract, GeocodeResultTract])
+        val output = b.add(flattenResults)
 
-      input ~> inputBcast
-      inputBcast ~> address ~> geocode ~> geocodeResult ~> geocodeResultTract ~> zip.in1
-      inputBcast ~> zip.in0
-      zip.out ~> output
+        input ~> inputBcast
+        inputBcast ~> address ~> geocode ~> geocodeResult ~> geocodeResultTract ~> zip.in1
+        inputBcast ~> zip.in0
+        zip.out ~> output
 
-      (input.inlet, output.outlet)
-    }
+        FlowShape(input.inlet, output.outlet)
+      }
+    )
   }
 
   private def extractInputAddress: Flow[PointInputAddressTract, String, Unit] = {
