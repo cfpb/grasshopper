@@ -28,9 +28,12 @@ object AddressParserClient extends ServiceClient with ParserJsonProtocol {
     }
   }
 
-  def standardize(address: String): Future[Either[ResponseError, ParsedAddress]] = {
+  def parse(addressString: String): Future[Either[ResponseError, ParsedAddress]] = {
     implicit val ec: ExecutionContext = system.dispatcher
-    val url = s"/standardize?address=${URLEncoder.encode(address, "UTF-8")}"
+
+    //FIXME: Use a URL builder, and don't hard-code profile
+    val encodedAddress = URLEncoder.encode(addressString, "UTF-8")
+    val url = s"/parse?profile=grasshopper&address=$encodedAddress"
     sendGetRequest(url).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[ParsedAddress].map(Right(_))

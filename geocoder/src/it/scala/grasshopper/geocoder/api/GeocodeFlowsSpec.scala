@@ -6,7 +6,7 @@ import akka.stream.scaladsl.{Sink, Source}
 import geometry.Point
 import grasshopper.client.parser.model.{AddressPart, ParsedAddress}
 import grasshopper.elasticsearch.ElasticsearchServer
-import grasshopper.model.census.ParsedInputAddress
+import grasshopper.model.SearchableAddress
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, MustMatchers}
 import grasshopper.geocoder.util.TestData._
@@ -83,10 +83,10 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
     val result = Await.result(future, timeout)
     result.size mustBe 4
     result.head.toString() mustBe "1311 30th St NW Washington DC 20007"
-    result.head mustBe ParsedInputAddress("1311", "30th St NW", "Washington", "20007", "DC")
+    result.head mustBe SearchableAddress("1311", "30th St NW", "Washington", "20007", "DC")
 
     result.tail.head.toString() mustBe "3146 M St NW Washington DC 20007"
-    result.tail.head mustBe ParsedInputAddress("3146", "M St NW", "Washington", "20007", "DC")
+    result.tail.head mustBe SearchableAddress("3146", "M St NW", "Washington", "20007", "DC")
 
   }
 
