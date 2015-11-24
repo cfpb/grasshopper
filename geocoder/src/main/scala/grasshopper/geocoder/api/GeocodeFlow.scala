@@ -12,13 +12,13 @@ import grasshopper.model.census.ParsedInputAddress
 import org.elasticsearch.client.Client
 import scala.concurrent.ExecutionContext
 
-trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
+trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with ParallelismFactor {
 
   def client: Client
 
   def parseFlow: Flow[String, ParsedAddress, Unit] = {
     Flow[String]
-      .mapAsync(4)(a => AddressParserClient.standardize(a))
+      .mapAsync(numCores)(a => AddressParserClient.standardize(a))
       .map { x =>
         if (x.isRight) {
           x.right.getOrElse(ParsedAddress.empty)
