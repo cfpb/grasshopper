@@ -30,14 +30,18 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
 
   def parsedInputAddressFlow: Flow[ParsedAddress, SearchableAddress, Unit] = {
     Flow[ParsedAddress]
-      .map(a =>
+      .map(parsed => {
+
+        val partMap: Map[String, String] = parsed.parts.map(part => (part.`type`, part.value)).toMap
+
         SearchableAddress(
-          a.parts.addressNumber,
-          a.parts.streetName,
-          a.parts.city,
-          a.parts.zip,
-          a.parts.state
-        ))
+          partMap.getOrElse("address_number_full", ""),
+          partMap.getOrElse("street_name_full", ""),
+          partMap.getOrElse("city_name", ""),
+          partMap.getOrElse("zip_code", ""),
+          partMap.getOrElse("state_name", "")
+        )
+      })
   }
 
   def geocodePointFlow: Flow[String, Feature, Unit] = {
@@ -45,8 +49,8 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
       .map(s => geocodePoint(client, "address", "point", s, 1).head)
   }
 
-  def geocodePointFieldsFlow: Flow[ParsedAddress, Feature, Unit] = {
-    Flow[ParsedAddress]
+  def geocodePointFieldsFlow: Flow[SearchableAddress, Feature, Unit] = {
+    Flow[SearchableAddress]
       .map(p => geocodePointFields(client, "address", "point", p, 1).head)
   }
 
@@ -62,7 +66,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode {
 
   def generateResponseFlow: Flow[(ParsedAddress, List[Feature]), GeocodeResponse, Unit] = {
     Flow[(ParsedAddress, List[Feature])]
-      .map(t => GeocodeResponse(t._1, t._2))
+      .map(t => GeocodeResponse(t._1.input, t._1.parts, t._2))
   }
 
   def featureToCsv: Flow[Feature, String, Unit] = {

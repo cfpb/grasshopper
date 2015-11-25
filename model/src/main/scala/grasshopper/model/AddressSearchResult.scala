@@ -3,8 +3,7 @@ package grasshopper.model
 import feature.Feature
 
 object AddressSearchResult {
-  def empty: AddressSearchResult = AddressSearchResult(Nil.toArray)
+  def empty: AddressSearchResult = AddressSearchResult(List.empty)
 }
 
-case class AddressSearchResult(features: Array[Feature])
-
+case class AddressSearchResult(features: List[Feature])

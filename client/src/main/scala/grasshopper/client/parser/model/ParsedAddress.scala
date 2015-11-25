@@ -1,8 +1,8 @@
 package grasshopper.client.parser.model
 
-case class AddressPart(`type`: String, value: String)
-case class ParsedAddress(parts: Array[AddressPart])
-
 object ParsedAddress {
-  def empty: ParsedAddress = ParsedAddress(Nil.toArray)
+  def empty: ParsedAddress = ParsedAddress("", List.empty)
 }
+
+case class AddressPart(`type`: String, value: String)
+case class ParsedAddress(input: String, parts: List[AddressPart])

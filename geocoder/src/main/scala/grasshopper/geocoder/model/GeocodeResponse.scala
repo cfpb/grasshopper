@@ -1,9 +1,10 @@
 package grasshopper.geocoder.model
 
 import feature.Feature
-import grasshopper.client.parser.model.ParsedAddress
+import grasshopper.client.parser.model.{ AddressPart }
 
 object GeocodeResponse {
-  def empty = GeocodeResponse(ParsedAddress.empty, Nil)
+  def empty: GeocodeResponse = GeocodeResponse("", List.empty, List.empty)
 }
-case class GeocodeResponse(query: ParsedAddress, features: List[Feature])
+
+case class GeocodeResponse(input: String, parts: List[AddressPart], features: List[Feature])

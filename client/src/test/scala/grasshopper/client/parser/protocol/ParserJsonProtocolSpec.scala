@@ -77,7 +77,7 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
   }
 
   it must "serialize to JSON" in {
-    val parsedAddress = ParsedAddress(Array(
+    val parsedAddress = ParsedAddress("1311 30th St washington dc 20007", List(
       AddressPart("address_number", "1311"),
       AddressPart("street_number", "30th St"),
       AddressPart("city_name", "washington"),
