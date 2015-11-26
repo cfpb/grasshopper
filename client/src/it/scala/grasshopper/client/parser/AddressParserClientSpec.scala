@@ -24,23 +24,23 @@ class AddressParserClientSpec extends FlatSpec with MustMatchers {
     maybeAddress match {
       case Right(parsed) =>
         parsed.parts.size mustBe 9
-        parsed.parts(0).`type` mustBe "address_number"
+        parsed.parts(0).code mustBe "address_number"
         parsed.parts(0).value mustBe "1311"
-        parsed.parts(1).`type` mustBe "street_name"
+        parsed.parts(1).code mustBe "street_name"
         parsed.parts(1).value mustBe "30th"
-        parsed.parts(2).`type` mustBe "street_name_post_type"
+        parsed.parts(2).code mustBe "street_name_post_type"
         parsed.parts(2).value mustBe "St"
-        parsed.parts(3).`type` mustBe "street_name_post_directional"
+        parsed.parts(3).code mustBe "street_name_post_directional"
         parsed.parts(3).value mustBe "NW"
-        parsed.parts(4).`type` mustBe "city_name"
+        parsed.parts(4).code mustBe "city_name"
         parsed.parts(4).value mustBe "washington"
-        parsed.parts(5).`type` mustBe "state_name"
+        parsed.parts(5).code mustBe "state_name"
         parsed.parts(5).value mustBe "dc"
-        parsed.parts(6).`type` mustBe "zip_code"
+        parsed.parts(6).code mustBe "zip_code"
         parsed.parts(6).value mustBe "20007"
-        parsed.parts(7).`type` mustBe "address_number_full"
+        parsed.parts(7).code mustBe "address_number_full"
         parsed.parts(7).value mustBe "1311"
-        parsed.parts(8).`type` mustBe "street_name_full"
+        parsed.parts(8).code mustBe "street_name_full"
         parsed.parts(8).value mustBe "30th St NW"
 
       case Left(failed) =>

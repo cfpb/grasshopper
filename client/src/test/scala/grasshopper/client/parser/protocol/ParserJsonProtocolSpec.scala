@@ -36,10 +36,10 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
   }
 
   "An AddressPart" must "deserialize from JSON" in {
-    val addrPartStr = """{ "type": "address_number", "value": "1311"}"""
+    val addrPartStr = """{ "code": "address_number", "value": "1311"}"""
 
     val addrPart = addrPartStr.parseJson.convertTo[AddressPart]
-    addrPart.`type` mustBe "address_number"
+    addrPart.code mustBe "address_number"
     addrPart.value mustBe "1311"
   }
 
@@ -55,24 +55,24 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
     {
       "input": "1311 30th St washington dc 20007",
       "parts": [
-        {"type": "address_number", "value": "1311"},
-        {"type": "street_name", "value": "30th St"},
-        {"type": "city_name", "value": "washington"},
-        {"type": "state_name", "value": "dc"},
-        {"type": "zip_code", "value": "20007"}
+        {"code": "address_number", "value": "1311"},
+        {"code": "street_name", "value": "30th St"},
+        {"code": "city_name", "value": "washington"},
+        {"code": "state_name", "value": "dc"},
+        {"code": "zip_code", "value": "20007"}
       ]
     } 
     """
     val parsed = addrStr.parseJson.convertTo[ParsedAddress]
-    parsed.parts(0).`type` mustBe "address_number"
+    parsed.parts(0).code mustBe "address_number"
     parsed.parts(0).value mustBe "1311"
-    parsed.parts(1).`type` mustBe "street_name"
+    parsed.parts(1).code mustBe "street_name"
     parsed.parts(1).value mustBe "30th St"
-    parsed.parts(2).`type` mustBe "city_name"
+    parsed.parts(2).code mustBe "city_name"
     parsed.parts(2).value mustBe "washington"
-    parsed.parts(3).`type` mustBe "state_name"
+    parsed.parts(3).code mustBe "state_name"
     parsed.parts(3).value mustBe "dc"
-    parsed.parts(4).`type` mustBe "zip_code"
+    parsed.parts(4).code mustBe "zip_code"
     parsed.parts(4).value mustBe "20007"
   }
 

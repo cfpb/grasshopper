@@ -32,7 +32,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
     Flow[ParsedAddress]
       .map(parsed => {
 
-        val partMap: Map[String, String] = parsed.parts.map(part => (part.`type`, part.value)).toMap
+        val partMap: Map[String, String] = parsed.parts.map(part => (part.code, part.value)).toMap
 
         SearchableAddress(
           partMap.getOrElse("address_number_full", ""),

@@ -64,11 +64,11 @@ class GrasshopperJsonProtocolSpec extends FlatSpec with MustMatchers with Grassh
         {
           "input": "200 President St Arkansas City AR 71630",
           "parts": [
-            {"type": "address_number_full", "value": "200"},
-            {"type": "street_name_full", "value": "President St"},
-            {"type": "city_name", "value": "Arkansas City"},
-            {"type": "state_name", "value": "AR"},
-            {"type": "zip_code", "value": "71630"}
+            {"code": "address_number_full", "value": "200"},
+            {"code": "street_name_full", "value": "President St"},
+            {"code": "city_name", "value": "Arkansas City"},
+            {"code": "state_name", "value": "AR"},
+            {"code": "zip_code", "value": "71630"}
           ],
           "features": [{
             "type": "Feature",
