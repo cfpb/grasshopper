@@ -30,7 +30,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
 
   def parsedInputAddressFlow: Flow[ParsedAddress, SearchableAddress, Unit] = {
     Flow[ParsedAddress]
-      .map(parsed => {
+      .map { parsed =>
 
         val partMap: Map[String, String] = parsed.parts.map(part => (part.code, part.value)).toMap
 
@@ -41,7 +41,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
           partMap.getOrElse("zip_code", ""),
           partMap.getOrElse("state_name", "")
         )
-      })
+      }
   }
 
   def geocodePointFlow: Flow[String, Feature, Unit] = {
