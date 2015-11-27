@@ -62,10 +62,10 @@ trait AddressPointsGeocode {
 
   private def searchAddressFields(client: Client, index: String, indexType: String, number: String, streetName: String, city: String, state: String, zipCode: String): Array[SearchHit] = {
     val numberQuery = QueryBuilders.matchQuery("number", number)
-    val streetQuery = QueryBuilders.matchPhraseQuery("streetname", streetName)
+    val streetQuery = QueryBuilders.matchPhraseQuery("street", streetName)
     val cityQuery = QueryBuilders.matchQuery("city", city)
     val stateQuery = QueryBuilders.matchQuery("state", state)
-    val zipQuery = QueryBuilders.matchQuery("zipcode", zipCode)
+    val zipQuery = QueryBuilders.matchQuery("zip", zipCode)
 
     val query = QueryBuilders
       .boolQuery()
