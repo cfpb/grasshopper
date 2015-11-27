@@ -31,37 +31,20 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
     )
 
     val json = parserStatus.toJson.toString
-    //println(json)
     json.parseJson.convertTo[ParserStatus] mustBe parserStatus
 
   }
 
   "An AddressPart" must "deserialize from JSON" in {
-    val addrPartStr = """
-     {
-        "addressNumber": "1311",
-        "city": "washington",
-        "state": "dc",
-        "streetName": "30th St",
-        "zip": "20007"
-      }
-    """
+    val addrPartStr = """{ "code": "address_number", "value": "1311"}"""
+
     val addrPart = addrPartStr.parseJson.convertTo[AddressPart]
-    addrPart.addressNumber mustBe "1311"
-    addrPart.city mustBe "washington"
-    addrPart.state mustBe "dc"
-    addrPart.streetName mustBe "30th St"
-    addrPart.zip mustBe "20007"
+    addrPart.code mustBe "address_number"
+    addrPart.value mustBe "1311"
   }
 
   it must "serialize to JSON" in {
-    val addrPart = AddressPart(
-      "1311",
-      "washington",
-      "dc",
-      "30th St",
-      "20007"
-    )
+    val addrPart = AddressPart("address_number", "1311")
 
     val json = addrPart.toJson.toString
     json.parseJson.convertTo[AddressPart] mustBe addrPart
@@ -71,37 +54,39 @@ class ParserJsonProtocolSpec extends FlatSpec with MustMatchers with ParserJsonP
     val addrStr = """
     {
       "input": "1311 30th St washington dc 20007",
-      "parts": {
-        "addressNumber": "1311",
-        "city": "washington",
-        "state": "dc",
-        "streetName": "30th St",
-        "zip": "20007"
-      }
+      "parts": [
+        {"code": "address_number", "value": "1311"},
+        {"code": "street_name", "value": "30th St"},
+        {"code": "city_name", "value": "washington"},
+        {"code": "state_name", "value": "dc"},
+        {"code": "zip_code", "value": "20007"}
+      ]
     } 
     """
-    val parsedAddress = addrStr.parseJson.convertTo[ParsedAddress]
-    parsedAddress.input mustBe "1311 30th St washington dc 20007"
-    parsedAddress.parts.addressNumber mustBe "1311"
-    parsedAddress.parts.city mustBe "washington"
-    parsedAddress.parts.state mustBe "dc"
-    parsedAddress.parts.streetName mustBe "30th St"
-    parsedAddress.parts.zip mustBe "20007"
-
+    val parsed = addrStr.parseJson.convertTo[ParsedAddress]
+    parsed.parts(0).code mustBe "address_number"
+    parsed.parts(0).value mustBe "1311"
+    parsed.parts(1).code mustBe "street_name"
+    parsed.parts(1).value mustBe "30th St"
+    parsed.parts(2).code mustBe "city_name"
+    parsed.parts(2).value mustBe "washington"
+    parsed.parts(3).code mustBe "state_name"
+    parsed.parts(3).value mustBe "dc"
+    parsed.parts(4).code mustBe "zip_code"
+    parsed.parts(4).value mustBe "20007"
   }
 
   it must "serialize to JSON" in {
-    val addrPart = AddressPart(
-      "1311",
-      "washington",
-      "dc",
-      "30th St",
-      "20007"
-    )
-    val inputStr = "1311 30th St washington dc 20007"
-    val parsedAddress = ParsedAddress(inputStr, addrPart)
+    val parsedAddress = ParsedAddress("1311 30th St washington dc 20007", List(
+      AddressPart("address_number", "1311"),
+      AddressPart("street_number", "30th St"),
+      AddressPart("city_name", "washington"),
+      AddressPart("state_name", "dc"),
+      AddressPart("zip_code", "20007")
+    ))
+
     val json = parsedAddress.toJson.toString
-    json.parseJson.convertTo[ParsedAddress] mustBe parsedAddress
+    json.parseJson.convertTo[ParsedAddress].parts mustBe parsedAddress.parts
   }
 
 }

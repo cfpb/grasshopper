@@ -10,10 +10,9 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, Uri}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.stream.io.SynchronousFileSource
-import akka.stream.scaladsl.{Flow, Source, Sink}
-import akka.util.ByteString
+import akka.stream.scaladsl.Source
 import com.typesafe.config.Config
-import grasshopper.client.parser.model.{ AddressPart, ParsedAddress }
+import grasshopper.client.parser.model.AddressPart
 import grasshopper.elasticsearch.ElasticsearchServer
 import grasshopper.geocoder.model.{GeocodeResponse, GeocodeStatus}
 import grasshopper.geocoder.util.TestData._
@@ -61,7 +60,23 @@ class HttpServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest
       status mustBe OK
       contentType.mediaType mustBe `application/json`
       val resp = responseAs[GeocodeResponse]
-      resp.query mustBe ParsedAddress("3146 M St NW Washington DC 20007",AddressPart("3146","Washington", "DC", "M St NW","20007"))
+      val input = resp.input
+      val parts = resp.parts
+      val features = resp.features
+
+      input mustBe "3146 M St NW Washington DC 20007"
+      parts.length mustBe 9
+      parts(0) mustBe AddressPart("address_number", "3146")
+      parts(1) mustBe AddressPart("street_name", "M")
+      parts(2) mustBe AddressPart("street_name_post_type", "St")
+      parts(3) mustBe AddressPart("street_name_post_directional", "NW")
+      parts(4) mustBe AddressPart("city_name", "Washington")
+      parts(5) mustBe AddressPart("state_name", "DC")
+      parts(6) mustBe AddressPart("zip_code", "20007")
+      parts(7) mustBe AddressPart("address_number_full", "3146")
+      parts(8) mustBe AddressPart("street_name_full", "M St NW")
+
+      features.length mustBe 2
     }
   }
 

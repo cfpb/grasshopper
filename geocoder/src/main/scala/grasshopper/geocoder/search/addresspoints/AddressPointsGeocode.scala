@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.Logger
 import feature._
 import geometry.Point
 import grasshopper.client.parser.model.ParsedAddress
+import grasshopper.model.SearchableAddress
 import org.slf4j.LoggerFactory
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
@@ -30,12 +31,12 @@ trait AddressPointsGeocode {
     }
   }
 
-  def geocodePointFields(client: Client, index: String, indexType: String, parsedAddress: ParsedAddress, count: Int): Array[Feature] = {
-    val number = parsedAddress.parts.addressNumber
-    val street = parsedAddress.parts.streetName
-    val city = parsedAddress.parts.city
-    val state = parsedAddress.parts.state
-    val zip = parsedAddress.parts.zip
+  def geocodePointFields(client: Client, index: String, indexType: String, searchableAddress: SearchableAddress, count: Int): Array[Feature] = {
+    val number = searchableAddress.addressNumber
+    val street = searchableAddress.streetName
+    val city = searchableAddress.city
+    val state = searchableAddress.state
+    val zip = searchableAddress.zipCode
     val hits = searchAddressFields(client, index, indexType, number, street, city, state, zip)
     if (hits.length >= 1) {
       hits.map(hit => hit.getSourceAsString)

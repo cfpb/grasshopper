@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.Logger
 import feature.Feature
 import geometry.Point
 import grasshopper.geocoder.search.census.SearchUtils._
-import grasshopper.model.census.ParsedInputAddress
+import grasshopper.model.SearchableAddress
 import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
@@ -18,7 +18,7 @@ trait CensusGeocode {
 
   lazy val censusLogger = Logger(LoggerFactory.getLogger("grasshopper-census"))
 
-  def geocodeLine(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress, count: Int): Array[Feature] = {
+  def geocodeLine(client: Client, index: String, indexType: String, addressInput: SearchableAddress, count: Int): Array[Feature] = {
     censusLogger.debug(s"Search Address: ${addressInput.toString()}")
     val hits = searchAddress(client, index, indexType, addressInput)
     val addressNumber = toInt(addressInput.addressNumber).getOrElse(0)
@@ -45,7 +45,7 @@ trait CensusGeocode {
     }
   }
 
-  private def searchAddress(client: Client, index: String, indexType: String, addressInput: ParsedInputAddress) = {
+  private def searchAddress(client: Client, index: String, indexType: String, addressInput: SearchableAddress) = {
     censusLogger.debug(s"Searching on ${addressInput}")
 
     val number = addressInput.addressNumber.toLowerCase
