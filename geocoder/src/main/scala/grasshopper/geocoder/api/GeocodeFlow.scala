@@ -1,5 +1,6 @@
 package grasshopper.geocoder.api
 
+import akka.stream.FlowShape
 import akka.stream.scaladsl._
 import feature._
 import geometry.Point
@@ -84,31 +85,32 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
   }
 
   def geocodeFlow(implicit ec: ExecutionContext): Flow[String, GeocodeResponse, Unit] = {
-    Flow() { implicit b =>
-      import FlowGraph.Implicits._
+    Flow.fromGraph(
+      FlowGraph.create() { implicit b =>
+        import FlowGraph.Implicits._
 
-      val input = b.add(Flow[String])
-      val broadcastParsed = b.add(Broadcast[ParsedAddress](2))
-      val pFlow = b.add(parseFlow)
-      val pInputFlow = b.add(parsedInputAddressFlow)
-      val broadcastSearchable = b.add(Broadcast[SearchableAddress](2))
-      val point = b.add(geocodePointFieldsFlow)
-      val line = b.add(geocodeLineFlow)
-      val zip = b.add(Zip[Feature, Feature])
-      val features = b.add(tupleToListFlow[Feature].via(filterFeatureListFlow))
-      val zip1 = b.add(Zip[ParsedAddress, List[Feature]])
-      val response = b.add(generateResponseFlow)
+        val input = b.add(Flow[String])
+        val broadcastParsed = b.add(Broadcast[ParsedAddress](2))
+        val pFlow = b.add(parseFlow)
+        val pInputFlow = b.add(parsedInputAddressFlow)
+        val broadcastSearchable = b.add(Broadcast[SearchableAddress](2))
+        val point = b.add(geocodePointFieldsFlow)
+        val line = b.add(geocodeLineFlow)
+        val zip = b.add(Zip[Feature, Feature])
+        val features = b.add(tupleToListFlow[Feature].via(filterFeatureListFlow))
+        val zip1 = b.add(Zip[ParsedAddress, List[Feature]])
+        val response = b.add(generateResponseFlow)
 
-      input ~> pFlow ~> broadcastParsed ~> pInputFlow ~> broadcastSearchable
-      broadcastSearchable ~> line ~> zip.in0
-      broadcastSearchable ~> point ~> zip.in1
-      broadcastParsed ~> zip1.in0
-      zip.out ~> features ~> zip1.in1
-      zip1.out ~> response
+        input ~> pFlow ~> broadcastParsed ~> pInputFlow ~> broadcastSearchable
+        broadcastSearchable ~> line ~> zip.in0
+        broadcastSearchable ~> point ~> zip.in1
+        broadcastParsed ~> zip1.in0
+        zip.out ~> features ~> zip1.in1
+        zip1.out ~> response
 
-      (input.inlet, response.outlet)
+        FlowShape(input.inlet, response.outlet)
 
-    }
+      })
   }
 
   def filterPointResultFlow: Flow[GeocodeResponse, Feature, Unit] = {
