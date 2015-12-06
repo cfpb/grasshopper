@@ -100,6 +100,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
         val features = b.add(tupleToListFlow[Feature].via(filterFeatureListFlow))
         val zip1 = b.add(Zip[ParsedAddress, List[Feature]])
         val response = b.add(generateResponseFlow)
+        val responseBroadcast = b.add(Broadcast[GeocodeResponse](2))
 
         input ~> pFlow ~> broadcastParsed ~> pInputFlow ~> broadcastSearchable
         broadcastSearchable ~> line ~> zip.in0
@@ -107,8 +108,9 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
         broadcastParsed ~> zip1.in0
         zip.out ~> features ~> zip1.in1
         zip1.out ~> response
+        response ~> responseBroadcast ~> Sink.actorSubscriber(GeocodeSubscriber.props)
 
-        FlowShape(input.inlet, response.outlet)
+        FlowShape(input.inlet, responseBroadcast.outlet)
 
       })
   }

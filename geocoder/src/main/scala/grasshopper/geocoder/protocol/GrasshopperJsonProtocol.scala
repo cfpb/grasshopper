@@ -1,7 +1,7 @@
 package grasshopper.geocoder.protocol
 
 import grasshopper.client.parser.protocol.ParserJsonProtocol
-import grasshopper.geocoder.model.{ GeocodeResponse, GeocodeStatus }
+import grasshopper.geocoder.model.{ GeocodeResponse, GeocodeStatus, GeocodeStats }
 import grasshopper.protocol.{ AddressSearchJsonProtocol, StatusJsonProtocol }
 import io.geojson.FeatureJsonProtocol._
 
@@ -12,4 +12,5 @@ trait GrasshopperJsonProtocol
 
   implicit val geocodeStatusFormat = jsonFormat1(GeocodeStatus.apply)
   implicit val geocodeResponseFormat = jsonFormat3(GeocodeResponse.apply)
+  implicit val geocodeStatsFormat = jsonFormat2(GeocodeStats.apply)
 }
