@@ -12,7 +12,7 @@ import akka.util.ByteString
 import com.typesafe.config.ConfigFactory
 import feature.Feature
 import geometry.Point
-import grasshopper.geocoder.api.GeocodeFlow
+import grasshopper.geocoder.api.geocode.GeocodeFlow
 import grasshopper.geocoder.model.GeocodeResponse
 import grasshopper.test.model.TestGeocodeModel.{ CensusOverlayResult, PointInputAddress, PointInputAddressTract }
 import grasshopper.test.streams.FlowUtils
@@ -132,7 +132,8 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
         zip.out ~> censusOverlay
 
         FlowShape(input.inlet, censusOverlay.outlet)
-      })
+      }
+    )
   }
 
 }

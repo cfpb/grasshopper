@@ -1,17 +1,16 @@
-package grasshopper.geocoder.api
+package grasshopper.geocoder.api.stats
 
-import akka.actor.{ Props, ActorLogging }
-import akka.stream.actor.{ WatermarkRequestStrategy, RequestStrategy, ActorSubscriber }
+import akka.actor.{ ActorLogging, Props }
 import akka.stream.actor.ActorSubscriberMessage.{ OnComplete, OnError, OnNext }
-import grasshopper.geocoder.model.{ GeocodeStats, GeocodeResponse }
+import akka.stream.actor.{ ActorSubscriber, RequestStrategy, WatermarkRequestStrategy }
+import grasshopper.geocoder.model.{ GeocodeResponse, GeocodeStats }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
-import spray.json._
 
-object GeocodeSubscriber {
-  def props: Props = Props(new GeocodeSubscriber)
+object GeocodeStatsSubscriber {
+  def props: Props = Props(new GeocodeStatsSubscriber)
 }
 
-class GeocodeSubscriber extends ActorSubscriber with ActorLogging with GrasshopperJsonProtocol {
+class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with GrasshopperJsonProtocol {
 
   var total: Int = 0
   var totalNotParsed: Int = 0
@@ -23,7 +22,8 @@ class GeocodeSubscriber extends ActorSubscriber with ActorLogging with Grasshopp
   override def receive: Receive = {
     case OnNext(g: GeocodeResponse) =>
       val stats = computeGeocodeStats(g)
-      log.info(stats.toJson.toString)
+      //log.info(stats.toJson.toString)
+      context.system.eventStream.publish(stats)
     case OnNext(s: String) =>
       log.info(s"received an input string: ${s}")
     case OnError(err: Exception) =>

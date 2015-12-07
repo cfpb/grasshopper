@@ -12,7 +12,7 @@ import akka.util.ByteString
 import com.typesafe.config.ConfigFactory
 import feature.Feature
 import geometry.Point
-import grasshopper.geocoder.api.GeocodeFlow
+import grasshopper.geocoder.api.geocode.GeocodeFlow
 import grasshopper.geocoder.model.GeocodeResponse
 import grasshopper.test.model.TestGeocodeModel._
 import grasshopper.test.streams.FlowUtils
@@ -110,7 +110,8 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
         zip.out ~> output
 
         FlowShape(input.inlet, output.outlet)
-      })
+      }
+    )
   }
 
   private def extractInputAddress: Flow[PointInputAddressTract, String, Unit] = {
