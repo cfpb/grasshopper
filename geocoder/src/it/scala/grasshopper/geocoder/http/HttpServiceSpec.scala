@@ -9,7 +9,6 @@ import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, Uri}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import akka.stream.io.SynchronousFileSource
 import akka.stream.scaladsl.Source
 import com.typesafe.config.Config
 import grasshopper.client.parser.model.AddressPart
@@ -82,7 +81,7 @@ class HttpServiceSpec extends FlatSpec with MustMatchers with ScalatestRouteTest
 
   it should "perform batch geocoding" in {
     val file = new File("geocoder/src/test/resources/addresses.csv")
-    val fileSource = SynchronousFileSource(file)
+    val fileSource = Source.file(file)
     val entity = HttpEntity(`application/octet-stream`, file.length(), fileSource)
     val formData =
       FormData(
