@@ -4,7 +4,6 @@ import java.io.File
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{ Source, Flow, Sink }
-import akka.stream.io.Implicits._
 import akka.stream.ActorAttributes.supervisionStrategy
 import akka.stream.Supervision.resumingDecider
 import akka.util.ByteString
@@ -57,7 +56,7 @@ object ExtractIndex extends FlowUtils {
       .via(tractOverlay)
       .map(c => c.toCSV + "\n")
       .map(ByteString(_))
-      .runWith(Sink.synchronousFile(new File(s"test-harness/target/${index}-${indexType}.csv")))
+      .runWith(Sink.file(new File(s"test-harness/target/${index}-${indexType}.csv")))
       .onComplete {
         case _ =>
           println("Extracted file - DONE")

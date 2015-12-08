@@ -4,15 +4,14 @@ import java.io.File
 
 import akka.actor.ActorSystem
 import akka.stream.ActorAttributes._
-import akka.stream.ActorMaterializer
+import akka.stream.{ FlowShape, ActorMaterializer }
 import akka.stream.Supervision._
-import akka.stream.io.{ SynchronousFileSink, Framing, SynchronousFileSource }
+import akka.stream.io.Framing
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import com.typesafe.config.ConfigFactory
 import feature.Feature
 import geometry.Point
-import grasshopper.client.parser.model.ParsedAddress
 import grasshopper.geocoder.api.GeocodeFlow
 import grasshopper.geocoder.model.GeocodeResponse
 import grasshopper.test.model.TestGeocodeModel._
@@ -58,7 +57,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
     val f = new File(args(0))
     val outputFile = new File(args(1))
 
-    val source = SynchronousFileSource.create(f)
+    val source = Source.file(f)
 
     source
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
@@ -67,7 +66,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       .via(geocodeTestFlow.withAttributes(supervisionStrategy(resumingDecider)))
       .via(resultsToCSV)
       .via(string2ByteStringFlow)
-      .runWith(SynchronousFileSink(outputFile), mat)
+      .runWith(Sink.file(outputFile))
       .onComplete {
         case _ =>
           println("DONE!")
@@ -92,25 +91,27 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
   }
 
   private def geocodeTestFlow(implicit ec: ExecutionContext): Flow[PointInputAddressTract, GeocodeTestResult, Unit] = {
-    Flow() { implicit b =>
-      import FlowGraph.Implicits._
+    Flow.fromGraph(
+      FlowGraph.create() { implicit b =>
+        import FlowGraph.Implicits._
 
-      val input = b.add(Flow[PointInputAddressTract])
-      val inputBcast = b.add(Broadcast[PointInputAddressTract](2))
-      val address = b.add(extractInputAddress)
-      val geocode = b.add(geocodeFlow)
-      val geocodeResult = b.add(geocodeResponseToGeocodeResult)
-      val geocodeResultTract = b.add(geocodeResultToGeocodeResultTract)
-      val zip = b.add(Zip[PointInputAddressTract, GeocodeResultTract])
-      val output = b.add(flattenResults)
+        val input = b.add(Flow[PointInputAddressTract])
+        val inputBcast = b.add(Broadcast[PointInputAddressTract](2))
+        val address = b.add(extractInputAddress)
+        val geocode = b.add(geocodeFlow)
+        val geocodeResult = b.add(geocodeResponseToGeocodeResult)
+        val geocodeResultTract = b.add(geocodeResultToGeocodeResultTract)
+        val zip = b.add(Zip[PointInputAddressTract, GeocodeResultTract])
+        val output = b.add(flattenResults)
 
-      input ~> inputBcast
-      inputBcast ~> address ~> geocode ~> geocodeResult ~> geocodeResultTract ~> zip.in1
-      inputBcast ~> zip.in0
-      zip.out ~> output
+        input ~> inputBcast
+        inputBcast ~> address ~> geocode ~> geocodeResult ~> geocodeResultTract ~> zip.in1
+        inputBcast ~> zip.in0
+        zip.out ~> output
 
-      (input.inlet, output.outlet)
-    }
+        FlowShape(input.inlet, output.outlet)
+      }
+    )
   }
 
   private def extractInputAddress: Flow[PointInputAddressTract, String, Unit] = {
