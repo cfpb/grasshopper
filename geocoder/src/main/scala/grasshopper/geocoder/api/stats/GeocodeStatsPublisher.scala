@@ -3,15 +3,16 @@ package grasshopper.geocoder.api.stats
 import akka.actor.{ ActorLogging, Props }
 import akka.stream.actor.ActorPublisher
 import grasshopper.geocoder.model.GeocodeStats
-
+import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import scala.collection.mutable
+import spray.json._
 
 object GeocodeStatsPublisher {
   case class PublishStats()
   def props: Props = Props(new GeocodeStatsPublisher)
 }
 
-class GeocodeStatsPublisher extends ActorPublisher[GeocodeStats] with ActorLogging {
+class GeocodeStatsPublisher extends ActorPublisher[GeocodeStats] with ActorLogging with GrasshopperJsonProtocol {
 
   var stats = mutable.Queue[GeocodeStats]()
 
@@ -22,6 +23,7 @@ class GeocodeStatsPublisher extends ActorPublisher[GeocodeStats] with ActorLoggi
 
   override def receive: Receive = {
     case g: GeocodeStats =>
+      log.info(g.toJson.toString)
       onNext(g)
     case _ => // ignore other messages
   }

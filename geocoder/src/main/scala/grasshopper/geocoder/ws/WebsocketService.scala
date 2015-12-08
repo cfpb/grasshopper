@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.{ FlowShape, ActorMaterializer }
 import akka.stream.actor.ActorPublisher
 import akka.stream.scaladsl._
-import grasshopper.geocoder.api.stats.GeocodeStatsPublisher
+import grasshopper.geocoder.api.stats.{ GeocodeStatsAggregator, GeocodeStatsPublisher }
 import grasshopper.geocoder.model.GeocodeStats
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import scala.concurrent.ExecutionContextExecutor

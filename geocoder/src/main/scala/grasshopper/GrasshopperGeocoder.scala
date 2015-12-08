@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
+import grasshopper.geocoder.api.stats.GeocodeStatsAggregator
 import grasshopper.geocoder.http.HttpService
 import grasshopper.geocoder.ws.WebsocketService
 import grasshopper.metrics.JvmMetrics
@@ -36,6 +37,8 @@ object GrasshopperGeocoder extends App with HttpService with WebsocketService {
 
   override lazy val client = new TransportClient(settings)
     .addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
+
+  val statsAggregator = system.actorOf(GeocodeStatsAggregator.props, name = "statsAggregator")
 
   val http = Http(system).bindAndHandle(
     routes ~ wsRoutes,

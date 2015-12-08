@@ -13,17 +13,16 @@ object GeocodeStatsSubscriber {
 class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with GrasshopperJsonProtocol {
 
   var total: Int = 0
-  var totalNotParsed: Int = 0
-  var pointFeatureCount: Int = 0
-  var censusFeatureCount: Int = 0
+  var parsed: Int = 0
+  var points: Int = 0
+  var census: Int = 0
 
   override protected def requestStrategy: RequestStrategy = WatermarkRequestStrategy(50)
 
   override def receive: Receive = {
     case OnNext(g: GeocodeResponse) =>
       val stats = computeGeocodeStats(g)
-      //log.info(stats.toJson.toString)
-      context.system.eventStream.publish(stats)
+      context.actorSelection("/user/statsAggregator") ! stats
     case OnNext(s: String) =>
       log.info(s"received an input string: ${s}")
     case OnError(err: Exception) =>
@@ -39,17 +38,16 @@ class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with Gras
     val features = g.features
     val pointFeatures = features.filter(f => f.get("source").getOrElse("") == "state-address-points")
     if (pointFeatures.nonEmpty) {
-      pointFeatureCount += 1
+      points += 1
     }
     val censusFeatures = features.filter(f => f.get("source").getOrElse("") == "census-tiger")
     if (censusFeatures.nonEmpty) {
-      censusFeatureCount += 1
+      census += 1
     }
 
-    if (parts.isEmpty) {
-      totalNotParsed += 1
+    if (parts.nonEmpty) {
+      parsed += 1
     }
-    val percentageParsed = (1 - (totalNotParsed.toDouble / total.toDouble)) * 100
-    GeocodeStats(total, percentageParsed)
+    GeocodeStats(total, parsed, points, census)
   }
 }
