@@ -9,7 +9,6 @@ import spray.json._
 
 object GeocodeStatsAggregator {
   case class PublishStats()
-  case class StartPublishingStats()
   def props: Props = Props(new GeocodeStatsAggregator)
 }
 
@@ -32,7 +31,6 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
       val aggrStats = calculateStats(g)
       stats = aggrStats
       log.info(stats.toJson.toString)
-    case StartPublishingStats =>
     case PublishStats =>
       context.system.eventStream.publish(stats)
     case _ => //ignore all other messages
