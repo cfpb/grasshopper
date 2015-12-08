@@ -3,15 +3,14 @@ package grasshopper.geocoder.search.addresspoints
 import com.typesafe.scalalogging.Logger
 import feature._
 import geometry.Point
-import grasshopper.client.parser.model.ParsedAddress
 import grasshopper.model.SearchableAddress
-import org.slf4j.LoggerFactory
+import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.SearchHit
+import org.slf4j.LoggerFactory
 import spray.json._
-import io.geojson.FeatureJsonProtocol._
 
 trait AddressPointsGeocode {
 
@@ -71,7 +70,7 @@ trait AddressPointsGeocode {
       .boolQuery()
       .must(numberQuery)
       .must(streetQuery)
-      .must(cityQuery)
+      //.must(cityQuery) Removing for now, decreases response rate if data is not 100% accurate
       .must(stateQuery)
       .must(zipQuery)
 
