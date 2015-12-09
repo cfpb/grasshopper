@@ -2,41 +2,63 @@
 <html>
 <head>
     <title></title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.11.2/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.11.2/build/ol.js" type="text/javascript"></script>
 </head>
 <body>
 <h1 style="text-align: center;">
     Grasshopper Metrics
 </h1>
 
-<hr />
+<hr/>
 
-<div>
-    <div><h2>Total requests:</h2></div>
-    <div id="total"><h1>0</h1></div>
+<div class="container">
+    <div class="left" style="width:30%;">
+        <div>
+            <div class="container">
+                <div class="left">
+                    <h2>Total requests:</h2>
+                </div>
+                <div class="right" id="total">
+                    <h1>0</h1>
+                </div>
+            </div>
+        </div>
+
+
+        <label><h2>Total Parsed:</h2></label>
+        <div id="parsed"><h1>0 (0 %)</h1></div>
+
+        <!--<div>-->
+            <!--<div><h2>Total Parsed:</h2></div>-->
+            <!--<div id="parsed"><h1>0 (0 %)</h1></div>-->
+        <!--</div>-->
+
+        <div>
+            <div><h2>Total Geocoded:</h2></div>
+            <div id="geocoded"><h1>0 (0 %)</h1></div>
+        </div>
+
+        <div>
+            <div><h2>State Point Geocoder:</h2></div>
+            <div id="point"><h1>0</h1></div>
+        </div>
+
+
+        <div>
+            <div><h2>Census TIGER Geocoder:</h2></div>
+            <div id="census"><h1>0</h1></div>
+        </div>
+
+    </div>
+    <div class="right" id="map" style="width: 70%;"></div>
+
 </div>
 
-<div>
-    <div><h2>Total Parsed:</h2></div>
-    <div id="parsed"><h1>0 (0 %)</h1></div>
-</div>
-
-<div>
-    <div><h2>Total Geocoded:</h2></div>
-    <div id="geocoded"><h1>0 (0 %)</h1></div>
-</div>
-
-<div>
-    <div><h2>State Point Geocoder:</h2></div>
-    <div id="point"><h1>0</h1></div>
-</div>
-
-
-<div>
-    <div><h2>Census TIGER Geocoder:</h2></div>
-    <div id="census"><h1>0</h1></div>
-</div>
 
 <script src="js/metrics.js" type="text/javascript"></script>
+
 
 </body>
 </html>
