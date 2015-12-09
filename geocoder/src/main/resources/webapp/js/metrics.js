@@ -24,7 +24,6 @@ ws.onmessage = function(e) {
 
   updateFeatures(msg);
 
-  console.log(msg);
 };
 
 
@@ -67,25 +66,44 @@ var edit = new ol.layer.Vector({
 
 map.addLayer(edit);
 
+
 function updateFeatures (msg) {
   var features = msg.features;
-  for (feature in features) {
-    console.log(feature);
+  var geoJsonObject = {
+    'type': 'FeatureCollection',
+    'features': []
+  }
+
+  var vectorSource = new ol.source.Vector({
+    features: (new ol.format.GeoJSON()).readFeatures(geoJsonObject)
+  });
+
+  for (i in features) {
+    var geoJson = features[i];
+    //var geomWGS84 = new ol.format.GeoJSON().readGeometry(geoJson);
+    //console.log(geomWGS84);
+    //var geom = geomWGS84.transform('EPSG:4326','EPSG:3857');
+    //console.log(geom);
   }
 
 
-  //var geoJson = msg.st_asgeojson;
-//	var geoJsonFormat = new ol.format.GeoJSON({
-//	  defaultProjection: 'EPSG:4326'
-//	});
-//	var geomWGS84 = geoJsonFormat.readGeometry(geoJson);
-//	var geom = geomWGS84.transform('EPSG:4326','EPSG:3857');
- //	var feature = new ol.Feature({
-//	  geometry: geom
-//	});
-//	if (editSource.getFeatures().length > maxFeatures) {
-//	  var lastFeature = editSource.getFeatures()[0];
-//		editSource.removeFeature(lastFeature);
-//	}
-//	editSource.addFeature(feature);
+  var geoJsonFormat = new ol.format.GeoJSON({
+    defaultProjection: 'EPSG:4326'
+  });
+
+  var features = msg.features;
+  for (i in features) {
+    var geoJson = features[i];
+    //console.log(geoJson);
+    //var geomWGS84 = geoJsonFormat.readGeometry(geoJson);
+    //var geom = geomWGS84.transform('EPSG:4326','EPSG:3857');
+    //var feature = new ol.Feature({
+    //  geometry: geom
+    //});
+    //if (editSource.getFeatures().length > maxFeatures) {
+    //  var lastFeature = editSource.getFeatures()[0];
+    //  editSource.removeFeature(lastFeature);
+    //}
+    //editSource.addFeature(feature);
+  }
 }

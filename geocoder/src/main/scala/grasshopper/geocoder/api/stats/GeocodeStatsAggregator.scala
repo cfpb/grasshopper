@@ -1,11 +1,12 @@
 package grasshopper.geocoder.api.stats
 
-import akka.actor.{ Props, ActorLogging, Actor }
-import scala.concurrent.duration._
+import akka.actor.{ Actor, ActorLogging, Props }
 import com.typesafe.config.ConfigFactory
+import feature.FeatureCollection
 import grasshopper.geocoder.model.GeocodeStats
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import spray.json._
+import scala.concurrent.duration._
 
 object GeocodeStatsAggregator {
   case class PublishStats()
@@ -14,9 +15,10 @@ object GeocodeStatsAggregator {
 
 class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJsonProtocol {
   import grasshopper.geocoder.api.stats.GeocodeStatsAggregator._
+
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  var stats = GeocodeStats(0, 0, 0, 0, 0, Nil)
+  var stats = GeocodeStats(0, 0, 0, 0, 0, FeatureCollection(Nil))
 
   val config = ConfigFactory.load()
 
@@ -42,7 +44,8 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
     val points = stats.points + g.points
     val census = stats.census + g.census
     val geocoded = stats.geocoded + g.geocoded
-    val features = stats.features ::: g.features
-    GeocodeStats(total, parsed, points, census, geocoded, features)
+    val featureList = stats.fc.features.toList ::: g.fc.features.toList
+    val fc = FeatureCollection(featureList)
+    GeocodeStats(total, parsed, points, census, geocoded, fc)
   }
 }

@@ -1,5 +1,5 @@
 package grasshopper.geocoder.model
 
-import feature.Feature
+import feature.FeatureCollection
 
-case class GeocodeStats(total: Int, parsed: Int, points: Int, census: Int, geocoded: Int, features: List[Feature])
+case class GeocodeStats(total: Int, parsed: Int, points: Int, census: Int, geocoded: Int, fc: FeatureCollection)

@@ -3,7 +3,7 @@ package grasshopper.geocoder.api.stats
 import akka.actor.{ ActorLogging, Props }
 import akka.stream.actor.ActorSubscriberMessage.{ OnComplete, OnError, OnNext }
 import akka.stream.actor.{ ActorSubscriber, RequestStrategy, WatermarkRequestStrategy }
-import feature.Feature
+import feature.{ FeatureCollection, Feature }
 import grasshopper.geocoder.model.{ GeocodeResponse, GeocodeStats }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 
@@ -70,6 +70,6 @@ class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with Gras
       parsed += 1
     }
 
-    GeocodeStats(total, parsed, points, census, geocoded, featureQueue.toList)
+    GeocodeStats(total, parsed, points, census, geocoded, FeatureCollection(featureQueue.toList))
   }
 }
