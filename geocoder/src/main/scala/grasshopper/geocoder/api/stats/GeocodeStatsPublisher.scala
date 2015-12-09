@@ -23,7 +23,7 @@ class GeocodeStatsPublisher extends ActorPublisher[GeocodeStats] with ActorLoggi
 
   override def receive: Receive = {
     case g: GeocodeStats =>
-      log.info(g.toJson.toString)
+      log.debug(g.toJson.toString)
       onNext(g)
     case _ => // ignore other messages
   }

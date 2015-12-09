@@ -12,5 +12,5 @@ trait GrasshopperJsonProtocol
 
   implicit val geocodeStatusFormat = jsonFormat1(GeocodeStatus.apply)
   implicit val geocodeResponseFormat = jsonFormat3(GeocodeResponse.apply)
-  implicit val geocodeStatsFormat = jsonFormat4(GeocodeStats.apply)
+  implicit val geocodeStatsFormat = jsonFormat5(GeocodeStats.apply)
 }

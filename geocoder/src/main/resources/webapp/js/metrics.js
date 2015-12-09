@@ -8,16 +8,17 @@ ws.onmessage = function(e) {
   var parsed = msg.parsed;
   var points = msg.points;
   var census = msg.census;
-  //var geocoded = msg.geocoded;
-
+  var geocoded = msg.geocoded;
 
   document.getElementById('total').innerHTML = '<h1>' + total + '</h1>';
   var parsedPct = calculatePct(parsed, total);
   document.getElementById('parsed').innerHTML = setValue(parsed, parsedPct);
   var geocodedPct = calculatePct(geocoded, total);
-  //document.getElementById('geocoded').innerHTML = setValue(geocoded, geocodedPct);
-  document.getElementById('point').innerHTML = setValue(points, 0)
-  document.getElementById('census').innerHTML = setValue(census, 0)
+  document.getElementById('geocoded').innerHTML = setValue(geocoded, geocodedPct);
+  var pointPct = calculatePct(points, geocoded)
+  document.getElementById('point').innerHTML = setValue(points, pointPct)
+  var censusPct = calculatePct(census, geocoded)
+  document.getElementById('census').innerHTML = setValue(census, censusPct)
 
 
   console.log(msg);

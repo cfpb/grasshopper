@@ -16,7 +16,7 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
   import grasshopper.geocoder.api.stats.GeocodeStatsAggregator._
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  var stats = GeocodeStats(0, 0, 0, 0)
+  var stats = GeocodeStats(0, 0, 0, 0, 0)
 
   val config = ConfigFactory.load()
 
@@ -30,7 +30,7 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
     case g: GeocodeStats =>
       val aggrStats = calculateStats(g)
       stats = aggrStats
-      log.info(stats.toJson.toString)
+      log.debug(stats.toJson.toString)
     case PublishStats =>
       context.system.eventStream.publish(stats)
     case _ => //ignore all other messages
@@ -41,6 +41,7 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
     val parsed = stats.parsed + g.parsed
     val points = stats.points + g.points
     val census = stats.census + g.census
-    GeocodeStats(total, parsed, points, census)
+    val geocoded = stats.geocoded + g.geocoded
+    GeocodeStats(total, parsed, points, census, geocoded)
   }
 }

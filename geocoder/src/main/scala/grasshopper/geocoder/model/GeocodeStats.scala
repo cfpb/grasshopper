@@ -1,3 +1,3 @@
 package grasshopper.geocoder.model
 
-case class GeocodeStats(total: Int, parsed: Int, points: Int, census: Int)
+case class GeocodeStats(total: Int, parsed: Int, points: Int, census: Int, geocoded: Int)

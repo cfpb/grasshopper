@@ -16,6 +16,7 @@ class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with Gras
   var parsed: Int = 0
   var points: Int = 0
   var census: Int = 0
+  var geocoded: Int = 0
 
   override protected def requestStrategy: RequestStrategy = WatermarkRequestStrategy(50)
 
@@ -28,14 +29,14 @@ class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with Gras
     case OnError(err: Exception) =>
       log.error(s"ERROR: ${err.getLocalizedMessage}")
     case OnComplete =>
-      log.info("Geocoding Stream completed")
+      log.debug("Geocoding Stream completed")
   }
 
   private def computeGeocodeStats(g: GeocodeResponse): GeocodeStats = {
     total += 1
-    val inputAddress = g.input
     val parts = g.parts
     val features = g.features
+
     val pointFeatures = features.filter(f => f.get("source").getOrElse("") == "state-address-points")
     if (pointFeatures.nonEmpty) {
       points += 1
@@ -45,9 +46,13 @@ class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with Gras
       census += 1
     }
 
+    if (pointFeatures.nonEmpty || censusFeatures.nonEmpty) {
+      geocoded += 1
+    }
+
     if (parts.nonEmpty) {
       parsed += 1
     }
-    GeocodeStats(total, parsed, points, census)
+    GeocodeStats(total, parsed, points, census, geocoded)
   }
 }
