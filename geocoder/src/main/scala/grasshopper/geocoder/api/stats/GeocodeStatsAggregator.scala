@@ -2,10 +2,11 @@ package grasshopper.geocoder.api.stats
 
 import akka.actor.{ Actor, ActorLogging, Props }
 import com.typesafe.config.ConfigFactory
-import feature.FeatureCollection
-import grasshopper.geocoder.model.GeocodeStats
+import feature.{ Feature, FeatureCollection }
+import grasshopper.geocoder.model.{ GeocodeResponse, GeocodeStats }
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
-import spray.json._
+
+import scala.collection.mutable
 import scala.concurrent.duration._
 
 object GeocodeStatsAggregator {
@@ -18,7 +19,14 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  var stats = GeocodeStats(0, 0, 0, 0, 0, FeatureCollection(Nil))
+  var total = 0
+  var parsed = 0
+  var geocoded = 0
+  var points = 0
+  var census = 0
+  var featureQueue = mutable.Queue[Feature]()
+
+  var stats = GeocodeStats(total, parsed, geocoded, points, census, FeatureCollection(featureQueue.toList))
 
   val config = ConfigFactory.load()
 
@@ -29,23 +37,40 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
   context.system.scheduler.schedule(delay, interval, self, PublishStats)
 
   override def receive: Receive = {
-    case g: GeocodeStats =>
-      val aggrStats = calculateStats(g)
-      stats = aggrStats
-      log.debug(stats.toJson.toString)
+    case g: GeocodeResponse =>
+      computeGeocodeStats(g)
+      stats = GeocodeStats(total, parsed, points, census, geocoded, FeatureCollection(featureQueue.toList))
     case PublishStats =>
       context.system.eventStream.publish(stats)
     case _ => //ignore all other messages
   }
 
-  private def calculateStats(g: GeocodeStats): GeocodeStats = {
-    val total = stats.total + g.total
-    val parsed = stats.parsed + g.parsed
-    val points = stats.points + g.points
-    val census = stats.census + g.census
-    val geocoded = stats.geocoded + g.geocoded
-    val featureList = stats.fc.features.toList ::: g.fc.features.toList
-    val fc = FeatureCollection(featureList)
-    GeocodeStats(total, parsed, points, census, geocoded, fc)
+  private def computeGeocodeStats(g: GeocodeResponse): GeocodeStats = {
+    total += 1
+    val parts = g.parts
+    val features = g.features
+
+    val pointFeatures = features.filter(f => f.get("source").getOrElse("") == "state-address-points")
+    if (pointFeatures.nonEmpty) {
+      points += 1
+      featureQueue.enqueue(pointFeatures.head)
+    }
+    val censusFeatures = features.filter(f => f.get("source").getOrElse("") == "census-tiger")
+
+    if (censusFeatures.nonEmpty) {
+      census += 1
+      featureQueue.enqueue(censusFeatures.head)
+    }
+
+    if (pointFeatures.nonEmpty || censusFeatures.nonEmpty) {
+      geocoded += 1
+    }
+
+    if (parts.nonEmpty) {
+      parsed += 1
+    }
+
+    GeocodeStats(total, parsed, points, census, geocoded, FeatureCollection(featureQueue.toList))
   }
+
 }
