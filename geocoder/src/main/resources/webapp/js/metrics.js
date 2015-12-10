@@ -12,7 +12,7 @@ ws.onmessage = function(e) {
   var census = msg.census;
   var geocoded = msg.geocoded;
 
-  document.getElementById('total').innerHTML = '<h1>' + total + '</h1>';
+  document.getElementById('total').innerHTML = '<h2>' + total + '</h2>';
   var parsedPct = calculatePct(parsed, total);
   document.getElementById('parsed').innerHTML = setValue(parsed, parsedPct);
   var geocodedPct = calculatePct(geocoded, total);
@@ -28,7 +28,7 @@ ws.onmessage = function(e) {
 
 
 function setValue(metric, pct) {
-  return '<h1>' + metric + ' (' + pct + ' %)</h1>';
+  return '<h2>' + metric + ' (' + pct + ' %)</h2>';
 }
 
 function calculatePct(metric, total) {
@@ -57,8 +57,10 @@ var map = new ol.Map({
 
 var image = new ol.style.Circle({
   radius: 5,
-  fill: null,
-  stroke: new ol.style.Stroke({color: 'red', width: 1})
+  fill: new ol.style.Fill({
+    color: 'rgba(255,0,0,0.3)'
+  }),
+  stroke: new ol.style.Stroke({color: 'red', width: 0.5})
 });
 
 var styles = {
