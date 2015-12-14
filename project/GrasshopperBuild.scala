@@ -125,7 +125,7 @@ object GrasshopperBuild extends Build {
       )
     )
 
-  lazy val hmdaGeo = ProjectRef(uri("git://github.com/jmarin/hmda-geo.git#streams_2.0"), "client")
+  lazy val hmdaGeo = ProjectRef(uri("git://github.com/cfpb/hmda-geo.git"), "client")
 
   lazy val test_harness = (project in file("test-harness"))
     .configs(IntegrationTest)

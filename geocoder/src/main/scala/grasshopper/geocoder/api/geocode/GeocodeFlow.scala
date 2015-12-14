@@ -5,14 +5,13 @@ import akka.stream.scaladsl._
 import feature._
 import geometry.Point
 import grasshopper.client.parser.AddressParserClient
-import grasshopper.client.parser.model.ParsedAddress
 import grasshopper.geocoder.api.stats.GeocodeStatsSubscriber
 import grasshopper.geocoder.model._
 import grasshopper.geocoder.search.addresspoints.AddressPointsGeocode
 import grasshopper.geocoder.search.census.CensusGeocode
+import grasshopper.client.parser.model.ParsedAddress
 import grasshopper.model.SearchableAddress
 import org.elasticsearch.client.Client
-
 import scala.concurrent.ExecutionContext
 
 trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with ParallelismFactor {
