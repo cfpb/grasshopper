@@ -27,5 +27,6 @@ class GeocodeStatsPublisher extends ActorPublisher[GeocodeStats] with ActorLoggi
       log.debug(g.toJson.toString)
       onNext(g)
     case _ => // ignore other messages
+      log.warning("Message not supported")
   }
 }

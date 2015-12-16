@@ -17,8 +17,6 @@ class GeocodeStatsSubscriber extends ActorSubscriber with ActorLogging with Gras
   override def receive: Receive = {
     case OnNext(g: GeocodeResponse) =>
       context.actorSelection("/user/statsAggregator") ! g
-    case OnNext(s: String) =>
-      log.info(s"received an input string: ${s}")
     case OnError(err: Exception) =>
       log.error(s"ERROR: ${err.getLocalizedMessage}")
     case OnComplete =>

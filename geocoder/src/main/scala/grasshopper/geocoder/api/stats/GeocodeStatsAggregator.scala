@@ -43,6 +43,7 @@ class GeocodeStatsAggregator extends Actor with ActorLogging with GrasshopperJso
     case PublishStats =>
       context.system.eventStream.publish(stats)
     case _ => //ignore all other messages
+      log.warning("Message not supported")
   }
 
   private def computeGeocodeStats(g: GeocodeResponse): GeocodeStats = {
