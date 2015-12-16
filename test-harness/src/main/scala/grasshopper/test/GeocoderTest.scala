@@ -3,24 +3,23 @@ package grasshopper.test
 import java.io.File
 
 import akka.actor.ActorSystem
-import akka.stream.ActorAttributes._
-import akka.stream.{ FlowShape, ActorMaterializer }
-import akka.stream.Supervision._
+import akka.stream.{ ActorAttributes, FlowShape, ActorMaterializer }
 import akka.stream.io.Framing
 import akka.stream.scaladsl._
+import akka.stream.Supervision._
 import akka.util.ByteString
 import com.typesafe.config.ConfigFactory
 import feature.Feature
 import geometry.Point
-import grasshopper.geocoder.api.GeocodeFlow
+import grasshopper.geocoder.api.geocode.GeocodeFlow
 import grasshopper.geocoder.model.GeocodeResponse
 import grasshopper.test.model.TestGeocodeModel._
 import grasshopper.test.streams.FlowUtils
+import hmda.geo.client.api.HMDAGeoClient
+import hmda.geo.client.api.model.census.HMDAGeoTractResult
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-import hmda.geo.client.api.HMDAGeoClient
-import hmda.geo.client.api.model.census.HMDAGeoTractResult
 
 import scala.concurrent.ExecutionContext
 
@@ -63,7 +62,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
       .via(byte2StringFlow)
       .via(stringToPointInputAddressTract)
-      .via(geocodeTestFlow.withAttributes(supervisionStrategy(resumingDecider)))
+      .via(geocodeTestFlow.withAttributes(ActorAttributes.supervisionStrategy(resumingDecider)))
       .via(resultsToCSV)
       .via(string2ByteStringFlow)
       .runWith(Sink.file(outputFile))
@@ -151,7 +150,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
           pointInputAddressTract = PointInputAddressTract(pointInput, xGeoID)
           censusInputAddressTract = PointInputAddressTract(censusInput, yGeoID)
         } yield GeocodeResultTract(pointInputAddressTract, censusInputAddressTract)
-      }.withAttributes(supervisionStrategy(resumingDecider))
+      }.withAttributes(ActorAttributes.supervisionStrategy(resumingDecider))
   }
 
   private def flattenResults: Flow[(PointInputAddressTract, GeocodeResultTract), GeocodeTestResult, Unit] = {

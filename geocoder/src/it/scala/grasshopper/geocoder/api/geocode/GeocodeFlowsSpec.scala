@@ -1,4 +1,4 @@
-package grasshopper.geocoder.api
+package grasshopper.geocoder.api.geocode
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
@@ -6,10 +6,10 @@ import akka.stream.scaladsl.{Sink, Source}
 import geometry.Point
 import grasshopper.client.parser.model.{AddressPart, ParsedAddress}
 import grasshopper.elasticsearch.ElasticsearchServer
+import grasshopper.geocoder.util.TestData._
 import grasshopper.model.SearchableAddress
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, MustMatchers}
-import grasshopper.geocoder.util.TestData._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._

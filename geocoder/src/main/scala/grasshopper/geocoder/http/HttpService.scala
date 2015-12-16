@@ -20,7 +20,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.ParserStatus
-import grasshopper.geocoder.api.GeocodeFlow
+import grasshopper.geocoder.api.geocode.GeocodeFlow
 import grasshopper.geocoder.model.GeocodeStatus
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
 import org.elasticsearch.client.Client
@@ -59,6 +59,11 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
         }
       }
     } ~
+      path("metrics") {
+        getFromResource("webapp/index.html")
+      } ~ {
+        getFromResourceDirectory("webapp")
+      } ~
       path("geocode") {
         post {
           entity(as[FormData]) { formData =>
