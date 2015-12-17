@@ -78,7 +78,7 @@ This will retrieve all necessary dependencies, compile Scala source, and start a
 
         > ~re-start
 
-1. Confirm service is up by browsing to http://localhost:31010/status.
+1. Confirm service is up by browsing to http://localhost:31010.
 
 ### Docker
 
