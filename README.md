@@ -28,7 +28,7 @@ We encourage forking, adding to the code base and/or general use of the service.
 ### Java 8 JDK
 Grasshopper's service layer runs on the Java Virtual Machine (JVM), and requires the Java 8 JDK to build and run the project.
 This project is currenly being built and tested on [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
-See [Oracle's JDK Install Overview](http://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html) 
+See [Oracle's JDK Install Overview](http://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html)
 for install instructions.
 
 Grasshopper _should_ also run on OpenJDK 8.
@@ -49,7 +49,7 @@ For non-dev environments, you'll want a dedicated Elasticsearch instance.
 
 
 ## Building & Running
-Grasshopper uses [sbt's multi-project builds](http://www.scala-sbt.org/0.13/tutorial/Multi-Project.html), 
+Grasshopper uses [sbt's multi-project builds](http://www.scala-sbt.org/0.13/tutorial/Multi-Project.html),
 each project representing a specific task and usually a [Microservice](http://en.wikipedia.org/wiki/Microservices).
 
 ### Interactive
@@ -69,18 +69,16 @@ each project representing a specific task and usually a [Microservice](http://en
         [info]     metrics
         [info]     model
 
-        > project geocoder 
+        > project geocoder
         [info] Set current project to geocoder (in build file: /path/to/geocoder/)
 
 1. Start the service
 
-    This will retrieve all necessary dependencies, compile Scala source, and
-    start a local server.  It also listens for changes to underlying
-    source code, and auto-deploys to local server.
+This will retrieve all necessary dependencies, compile Scala source, and start a local server.  It also listens for changes to underlying source code, and auto-deploys to local server.
 
         > ~re-start
 
-1. Confirm service is up by browsing to http://localhost:31010/status.
+1. Confirm service is up by browsing to http://localhost:31010.
 
 ### Docker
 
@@ -90,7 +88,7 @@ All grasshopper services and apps can be built as [Docker](https://docs.docker.c
 #### Docker Setup
 
 Docker is a Linux-only tool.  If you are developing on Mac or Windows, you will need
-a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM using 
+a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM using
 [Docker Machine](https://docs.docker.com/machine/).
 
 1. Install necessary dependencies (Mac-specific):
@@ -117,11 +115,10 @@ a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM us
     1. [grasshopper-parser](https://github.com/cfpb/grasshopper-parser)
     1. [grasshopper-ui](https://github.com/cfpb/grasshopper-ui)
 
-
 1. Assemble Scala projects into Java artifacts:
 
-        cd grasshopper
-        sbt clean assembly
+    cd grasshopper
+    sbt clean assembly
 
     **Note:** This is necessary because the `geocoder` Docker image is purely Java,
     so the Scala code must first be compiled and packaged to run in that environment.
@@ -141,32 +138,23 @@ a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM us
     | `elasticsearch` | http://{{docker-host-ip}}:9200  |
 
 
-#### Loading address data
-
-The `grasshopper-loader` project comes with some small test data files.  You can load state address
-point and Census TIGER line data as follows:
-
-        docker-compose run loader ./grasshopper-loader.js --data test/data/new_york.json
-        docker-compose run loader ./tiger.js -d test/data/tiger/
-
-
-The default Compose setup also mounts the local `grasshopper-loader/test/data` directory into
-the container, so you can place files there, and load them without having to rebuild.
-
-        docker-compose run loader ./grasshopper-loader.js -d test/data/{{path/to/your/data}}
-
-For further details on loading data, see [grasshopper-loader](https://github.com/cfpb/grasshopper-loader).
-
-
 #### Making changes to running containers
 
-The `grasshopper-ui` and `grasshopper-parser` projects support auto-reload of code, 
-so you don't have to rebuild thier respectives images with each code change.  `grasshopper-ui`
-even has a Docker-specific Grunt task for further dev-friendliness.  This means you can make
-UI changes and just refresh the browser to view them.
+The `grasshopper-ui` and `grasshopper-parser` projects support auto-reload of code, so you don't have to rebuild their respective images with each code change.  `grasshopper-ui` even has a Docker-specific Grunt task for further dev-friendliness.  This means you can make UI changes and just refresh the browser to view them.
 
-        cd ../grasshopper-ui
-        grunt docker
+    cd ../grasshopper-ui
+    grunt docker
+
+The default Compose setup also mounts the local `grasshopper-loader/test/data` directory into the `grasshopper-loader` container so you can place files there and load them without having to rebuild.
+
+#### Loading address data
+
+The `grasshopper-loader` project comes with some small test data files.  You can load state address point and Census TIGER line data as follows:
+
+    docker-compose run loader ./index.js -f path/to/data.json
+    docker-compose run loader ./tiger.js -d path/to/tiger
+
+For further details on loading data, see [grasshopper-loader](https://github.com/cfpb/grasshopper-loader).
 
 
 #### Running the production-like full stack
@@ -175,13 +163,13 @@ If you'd like to see the "full stack", which adds several logging and monitoring
 just point `docker-compose` at the "full" setup.  This will start **a lot** of containers,
 so no need to run this setup during development.
 
-        docker-compose -f docker-compose-full.yml up -d
+    docker-compose -f docker-compose-full.yml up -d
 
 
 
-## Testing 
+## Testing
 
-To run the tests, from the project directory: 
+To run the tests, from the project directory:
 
 ```
 $ sbt
