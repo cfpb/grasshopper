@@ -56,7 +56,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
     val f = new File(args(0))
     val outputFile = new File(args(1))
 
-    val source = Source.file(f)
+    val source = FileIO.fromFile(f)
 
     source
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
@@ -65,7 +65,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       .via(geocodeTestFlow.withAttributes(ActorAttributes.supervisionStrategy(resumingDecider)))
       .via(resultsToCSV)
       .via(string2ByteStringFlow)
-      .runWith(Sink.file(outputFile))
+      .runWith(FileIO.toFile(outputFile))
       .onComplete {
         case _ =>
           println("DONE!")
@@ -91,8 +91,8 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
 
   private def geocodeTestFlow(implicit ec: ExecutionContext): Flow[PointInputAddressTract, GeocodeTestResult, Unit] = {
     Flow.fromGraph(
-      FlowGraph.create() { implicit b =>
-        import FlowGraph.Implicits._
+      GraphDSL.create() { implicit b =>
+        import GraphDSL.Implicits._
 
         val input = b.add(Flow[PointInputAddressTract])
         val inputBcast = b.add(Broadcast[PointInputAddressTract](2))
@@ -108,7 +108,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
         inputBcast ~> zip.in0
         zip.out ~> output
 
-        FlowShape(input.inlet, output.outlet)
+        FlowShape(input.in, output.outlet)
       }
     )
   }

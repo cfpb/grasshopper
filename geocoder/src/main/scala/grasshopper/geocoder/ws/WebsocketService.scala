@@ -1,7 +1,7 @@
 package grasshopper.geocoder.ws
 
 import akka.actor.{ ActorSystem, Props }
-import akka.http.scaladsl.model.ws.{ BinaryMessage, Message, TextMessage }
+import akka.http.scaladsl.model.ws.{ Message, TextMessage }
 import akka.http.scaladsl.server.Directives._
 import akka.stream.{ FlowShape, ActorMaterializer }
 import akka.stream.actor.ActorPublisher
@@ -20,8 +20,8 @@ trait WebsocketService extends GrasshopperJsonProtocol {
 
   def geocodeStats: Flow[Message, Message, Unit] = {
     Flow.fromGraph(
-      FlowGraph.create() { implicit b =>
-        import FlowGraph.Implicits._
+      GraphDSL.create() { implicit b: GraphDSL.Builder[Unit] =>
+        import GraphDSL.Implicits._
 
         val merge = b.add(Merge[String](2))
         val msgToString = b.add(Flow[Message].map(msg => ""))
@@ -33,7 +33,7 @@ trait WebsocketService extends GrasshopperJsonProtocol {
         msgToString ~> merge
         source ~> statToString ~> merge ~> stringToMsg
 
-        FlowShape(msgToString.inlet, stringToMsg.outlet)
+        FlowShape(msgToString.in, stringToMsg.outlet)
 
       }
     )
