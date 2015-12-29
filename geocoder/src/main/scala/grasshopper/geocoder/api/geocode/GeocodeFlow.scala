@@ -87,8 +87,8 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
 
   def geocodeFlow(implicit ec: ExecutionContext): Flow[String, GeocodeResponse, Unit] = {
     Flow.fromGraph(
-      FlowGraph.create() { implicit b =>
-        import FlowGraph.Implicits._
+      GraphDSL.create() { implicit b: GraphDSL.Builder[Unit] =>
+        import GraphDSL.Implicits._
 
         val input = b.add(Flow[String])
         val broadcastParsed = b.add(Broadcast[ParsedAddress](2))
@@ -111,7 +111,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
         zip1.out ~> response
         response ~> responseBroadcast ~> Sink.actorSubscriber(GeocodeStatsSubscriber.props)
 
-        FlowShape(input.inlet, responseBroadcast.outlet)
+        FlowShape(input.in, responseBroadcast.outlet)
 
       }
     )

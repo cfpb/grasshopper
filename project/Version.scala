@@ -4,7 +4,7 @@ object Version {
   val scalaLogging     = "3.1.0"
   val config           = "1.3.0"
   val akka             = "2.4.0"
-  val akkaStreams      = "2.0-M2"
+  val akkaStreams      = "2.0"
   val scalaTest        = "2.2.4"
   val scalaCheck       = "1.12.5"
   val elasticsearch    = "1.7.1"

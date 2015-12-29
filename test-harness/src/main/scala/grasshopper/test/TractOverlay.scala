@@ -53,7 +53,7 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
 
     val f = new File(args(0))
 
-    val source = Source.file(f)
+    val source = FileIO.fromFile(f)
 
     source
       .via(Framing.delimiter(ByteString("\n"), maximumFrameLength = 256, allowTruncation = true))
@@ -61,7 +61,7 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
       .via(str2PointInputAddressFlow)
       .via(censusOverlayFlow.map(_.toCSV))
       .via(string2ByteStringFlow)
-      .runWith(Sink.file(new File("test-harness/target/census-results.csv")))
+      .runWith(FileIO.toFile(new File("test-harness/target/census-results.csv")))
       .onComplete {
         case _ =>
           println("*** DONE!! ***")
@@ -116,8 +116,8 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
 
   def censusOverlayFlow: Flow[PointInputAddressTract, CensusOverlayResult, Unit] = {
     Flow.fromGraph(
-      FlowGraph.create() { implicit b =>
-        import FlowGraph.Implicits._
+      GraphDSL.create() { implicit b =>
+        import GraphDSL.Implicits._
 
         val input = b.add(Flow[PointInputAddressTract])
         val broadcast = b.add(Broadcast[PointInputAddressTract](2))
@@ -130,7 +130,7 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
         broadcast ~> geocode ~> outputTract ~> zip.in1
         zip.out ~> censusOverlay
 
-        FlowShape(input.inlet, censusOverlay.outlet)
+        FlowShape(input.in, censusOverlay.outlet)
       }
     )
   }

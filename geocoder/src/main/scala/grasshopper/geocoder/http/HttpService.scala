@@ -1,16 +1,16 @@
 package grasshopper.geocoder.http
 
-import java.net.{ URLDecoder, URLEncoder }
-
+import java.net.URLDecoder
 import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.coding.{ Deflate, Gzip, NoCoding }
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.scaladsl.model.HttpEntity
+import akka.http.scaladsl.model.{ HttpCharsets, HttpEntity }
 import akka.http.scaladsl.model.MediaTypes.`application/json`
 import akka.http.scaladsl.model.MediaTypes.`text/csv`
 import akka.http.scaladsl.model.Multipart.FormData
+import akka.http.scaladsl.server.ContentNegotiator.Alternative.MediaType
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.stream.io.Framing
@@ -92,7 +92,7 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
                 .map(c => c + "\n")
 
               val geocodeByteStream = gFlow.map(s => ByteString(s))
-              HttpEntity.Chunked.fromData(`text/csv`, geocodeByteStream)
+              HttpEntity.Chunked.fromData(`text/csv`.toContentType(HttpCharsets.`UTF-8`), geocodeByteStream)
             }
           }
         }
