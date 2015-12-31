@@ -7,7 +7,7 @@ import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
   val buildOrganization = "cfpb"
-  val buildVersion      = "0.0.1"
+  val buildVersion      = "1.0.0"
   val buildScalaVersion = "2.11.7"
 
   val buildSettings = Defaults.coreDefaultSettings ++

@@ -1,4 +1,4 @@
-package grasshopper.geocoder.api
+package grasshopper.geocoder.api.geocode
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
@@ -6,10 +6,10 @@ import akka.stream.scaladsl.{Sink, Source}
 import geometry.Point
 import grasshopper.client.parser.model.{AddressPart, ParsedAddress}
 import grasshopper.elasticsearch.ElasticsearchServer
+import grasshopper.geocoder.util.TestData._
 import grasshopper.model.SearchableAddress
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, MustMatchers}
-import grasshopper.geocoder.util.TestData._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -49,7 +49,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
         "198 President St, Arkansas City AR 71630"
       ).toIterator
 
-    val source = Source(() => addresses)
+    val source = Source.fromIterator(() => addresses)
 
     val future = source.via(parseFlow).grouped(4).runWith(Sink.head)
     val result = Await.result(future, timeout)
@@ -95,7 +95,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
         AddressPart("state_name", "AR"),
         AddressPart("zip_code","71630"))))
 
-    val source = Source(() => inputParsedList.toIterator)
+    val source = Source.fromIterator(() => inputParsedList.toIterator)
     val future = source.via(parsedInputAddressFlow).grouped(4).runWith(Sink.head)
     val result = Await.result(future, timeout)
     result.size mustBe 3
@@ -113,7 +113,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
     val addresses =
       List("3146 M St NW Washington DC 20007").toIterator
 
-    val source = Source(() => addresses)
+    val source = Source.fromIterator(() => addresses)
 
     val future = source.via(geocodePointFlow).grouped(4).runWith(Sink.head)
     val result = Await.result(future, timeout)
@@ -124,13 +124,13 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
   it must "geocode with all State Address Points fields" in {
     val addresses = List("3146 M St NW Washington DC 20007").toIterator
 
-    val source = Source(() => addresses)
+    val source = Source.fromIterator(() => addresses)
     val futureParsed = source.via(parseFlow).grouped(4).runWith(Sink.head)
     val resultParsed = Await.result(futureParsed, timeout)
 
     resultParsed.size mustBe 1
 
-    val sourceParsed = Source (() => List(resultParsed.head).toIterator)
+    val sourceParsed = Source.fromIterator(() => List(resultParsed.head).toIterator)
 
     val future = sourceParsed.via(parsedInputAddressFlow).grouped(4).runWith(Sink.head)
     val result = Await.result(future, timeout)
@@ -145,7 +145,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
     val addresses =
       List("3146 M St NW Washington DC 20007").toIterator
 
-    val source = Source(() => addresses)
+    val source = Source.fromIterator(() => addresses)
 
     val future = source
       .via(parseFlow)
@@ -163,7 +163,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
     val addresses =
       List("3146 M St NW Washington DC 20007").toIterator
 
-    val source = Source(() => addresses)
+    val source = Source.fromIterator(() => addresses)
 
     val future = source
       .via(geocodeFlow)
@@ -179,7 +179,7 @@ class GeocodeFlowsSpec extends FlatSpec with MustMatchers with GeocodeFlow with 
     val addresses =
       List("3146 M St NW Washington DC 20007").toIterator
 
-    val source = Source(() => addresses)
+    val source = Source.fromIterator(() => addresses)
 
     val future = source
       .via(geocodeFlow)

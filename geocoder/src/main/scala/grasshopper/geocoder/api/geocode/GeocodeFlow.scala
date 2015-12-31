@@ -1,17 +1,17 @@
-package grasshopper.geocoder.api
+package grasshopper.geocoder.api.geocode
 
 import akka.stream.FlowShape
 import akka.stream.scaladsl._
 import feature._
 import geometry.Point
 import grasshopper.client.parser.AddressParserClient
-import grasshopper.client.parser.model.ParsedAddress
+import grasshopper.geocoder.api.stats.GeocodeStatsSubscriber
 import grasshopper.geocoder.model._
 import grasshopper.geocoder.search.addresspoints.AddressPointsGeocode
 import grasshopper.geocoder.search.census.CensusGeocode
+import grasshopper.client.parser.model.ParsedAddress
 import grasshopper.model.SearchableAddress
 import org.elasticsearch.client.Client
-
 import scala.concurrent.ExecutionContext
 
 trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with ParallelismFactor {
@@ -87,8 +87,8 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
 
   def geocodeFlow(implicit ec: ExecutionContext): Flow[String, GeocodeResponse, Unit] = {
     Flow.fromGraph(
-      FlowGraph.create() { implicit b =>
-        import FlowGraph.Implicits._
+      GraphDSL.create() { implicit b: GraphDSL.Builder[Unit] =>
+        import GraphDSL.Implicits._
 
         val input = b.add(Flow[String])
         val broadcastParsed = b.add(Broadcast[ParsedAddress](2))
@@ -101,6 +101,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
         val features = b.add(tupleToListFlow[Feature].via(filterFeatureListFlow))
         val zip1 = b.add(Zip[ParsedAddress, List[Feature]])
         val response = b.add(generateResponseFlow)
+        val responseBroadcast = b.add(Broadcast[GeocodeResponse](2))
 
         input ~> pFlow ~> broadcastParsed ~> pInputFlow ~> broadcastSearchable
         broadcastSearchable ~> line ~> zip.in0
@@ -108,8 +109,9 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
         broadcastParsed ~> zip1.in0
         zip.out ~> features ~> zip1.in1
         zip1.out ~> response
+        response ~> responseBroadcast ~> Sink.actorSubscriber(GeocodeStatsSubscriber.props)
 
-        FlowShape(input.inlet, response.outlet)
+        FlowShape(input.in, responseBroadcast.outlet)
 
       }
     )

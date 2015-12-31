@@ -104,7 +104,12 @@ One or more features may be returned, with the `source` field indicating what se
 
 `POST /geocode`
 
-The request must send a file with one address string per line as `multipart/form-data`.
+The request must send a file with one address string per line as `multipart/form-data`. For instance, using `curl`:
+
+```
+curl -v -F upload=@batch_addresses.csv http://localhost:31010/geocode
+```
+
 This endpoint will geocode the addresses in parallel and choose the best option from the available geocoders.
 The response is a chunked response, and starts sending data to download as soon as the geocoding process begins.
 

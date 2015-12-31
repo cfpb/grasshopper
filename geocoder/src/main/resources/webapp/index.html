@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grasshopper Metrics</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.11.2/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.11.2/build/ol.js" type="text/javascript"></script>
+</head>
+<body>
+<h1 style="text-align: center;">
+    Grasshopper Metrics
+</h1>
+
+<hr/>
+<div class="container">
+    <div class="left" style="width:30%;">
+        <div>
+            <div><h3>Total requests:</h3></div>
+            <div id="total"><h2>0</h2></div>
+        </div>
+
+        <div>
+            <div><h3>Total Parsed:</h3></div>
+            <div id="parsed"><h2>0 (0 %)</h2></div>
+        </div>
+
+        <div>
+            <div><h3>Total Geocoded:</h3></div>
+            <div id="geocoded"><h2>0 (0 %)</h2></div>
+        </div>
+
+        <div>
+            <div><h3>State Point Geocoder:</h3></div>
+            <div id="point"><h2>0</h2></div>
+        </div>
+
+
+        <div>
+            <div><h3>Census TIGER Geocoder:</h3></div>
+            <div id="census"><h2>0</h2></div>
+        </div>
+    </div>
+    <div class="right" id="map" style="width: 70%;"></div>
+</div>
+
+<script src="js/metrics.js" type="text/javascript"></script>
+
+</body>
+</html>
