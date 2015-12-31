@@ -125,11 +125,13 @@ object GrasshopperBuild extends Build {
       )
     )
 
-  lazy val hmdaGeo = ProjectRef(uri("git://github.com/cfpb/hmda-geo.git"), "client")
+  //lazy val hmdaGeo = ProjectRef(uri("git://github.com/cfpb/hmda-geo.git"), "client")
+  lazy val hmdaGeo = ProjectRef(file("../hmda-geo"), "client")
 
   lazy val test_harness = (project in file("test-harness"))
     .configs(IntegrationTest)
     .settings(buildSettings: _*)
+    .settings(mainClass in assembly := Some("grasshopper.test.GeocoderTest"))
     .settings(
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
