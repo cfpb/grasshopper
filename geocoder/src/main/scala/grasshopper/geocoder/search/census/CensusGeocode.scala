@@ -12,23 +12,22 @@ import org.elasticsearch.index.query.{ FilterBuilders, QueryBuilders }
 import org.slf4j.LoggerFactory
 import spray.json._
 
-import scala.util.Try
-
 trait CensusGeocode {
 
-  lazy val censusLogger = Logger(LoggerFactory.getLogger("grasshopper-census"))
+  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-census"))
 
   def geocodeLine(client: Client, index: String, indexType: String, addressInput: SearchableAddress, count: Int): Array[Feature] = {
-    censusLogger.debug(s"Search Address: ${addressInput.toString()}")
     val hits = searchAddress(client, index, indexType, addressInput)
     val addressNumber = toInt(addressInput.addressNumber).getOrElse(0)
-    if (hits.length >= 1) {
+    if (hits.nonEmpty) {
       hits
         .map(hit => hit.getSourceAsString)
         .take(count)
         .map { s =>
           val line = s.parseJson.convertTo[Feature]
-          censusLogger.debug(line.toJson.toString)
+
+          log.debug(s"Translated JSON to Feature: $line")
+
           val addressRange = AddressInterpolator.calculateAddressRange(line, addressNumber)
           AddressInterpolator.interpolate(line, addressRange, addressNumber)
         }
@@ -38,15 +37,17 @@ trait CensusGeocode {
           val city = addressInput.city
           val state = f.get("STATE").getOrElse("")
           val zipCodeR = f.get("ZIPR").getOrElse("")
-          f.addOrUpdate("address", s"${addressNumber} ${streetName} ${city} ${state} ${zipCodeR}")
+          f.addOrUpdate("address", s"$addressNumber $streetName $city $state $zipCodeR")
         }
     } else {
+      //FIXME: Why an array with a single 0/0 point?
+      log.warn(s"No hits for input address: $addressInput")
       Array(Feature(Point(0, 0)))
     }
   }
 
   private def searchAddress(client: Client, index: String, indexType: String, addressInput: SearchableAddress) = {
-    censusLogger.debug(s"Searching on ${addressInput}")
+    log.debug(s"Searching census data for '$addressInput'...")
 
     val number = addressInput.addressNumber.toLowerCase
     val street = addressInput.streetName
@@ -82,7 +83,7 @@ trait CensusGeocode {
 
     val query = QueryBuilders.filteredQuery(boolQuery, filter)
 
-    censusLogger.debug(query.toString)
+    log.debug(s"Elasticsearch query: $query")
 
     val response = client.prepareSearch(index)
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -90,8 +91,11 @@ trait CensusGeocode {
       .execute
       .actionGet()
 
-    response.getHits.getHits
+    val hits = response.getHits.getHits
 
+    log.debug(s"$hits hits from census data for '$addressInput'")
+
+    hits
   }
 
 }
