@@ -42,7 +42,7 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
 
   val logger: LoggingAdapter
 
-  lazy val log = Logger(LoggerFactory.getLogger("grashopper-geocoder"))
+  override lazy val log = Logger(LoggerFactory.getLogger("grashopper-geocoder"))
 
   val routes = {
     pathSingleSlash {
