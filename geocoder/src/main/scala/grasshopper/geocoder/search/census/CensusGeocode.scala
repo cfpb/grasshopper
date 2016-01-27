@@ -14,7 +14,7 @@ import spray.json._
 
 trait CensusGeocode {
 
-  lazy val log = Logger(LoggerFactory.getLogger("grasshopper-census"))
+  lazy val censusLogger = Logger(LoggerFactory.getLogger("grasshopper-census"))
 
   def geocodeLine(client: Client, index: String, indexType: String, addressInput: SearchableAddress, count: Int): Array[Feature] = {
     val hits = searchAddress(client, index, indexType, addressInput)
@@ -26,7 +26,7 @@ trait CensusGeocode {
         .map { s =>
           val line = s.parseJson.convertTo[Feature]
 
-          log.debug(s"Translated JSON to Feature: $line")
+          censusLogger.debug(s"Translated JSON to Feature: $line")
 
           val addressRange = AddressInterpolator.calculateAddressRange(line, addressNumber)
           AddressInterpolator.interpolate(line, addressRange, addressNumber)
@@ -40,14 +40,13 @@ trait CensusGeocode {
           f.addOrUpdate("address", s"$addressNumber $streetName $city $state $zipCodeR")
         }
     } else {
-      //FIXME: Why an array with a single 0/0 point?
-      log.warn(s"No hits for input address: $addressInput")
+      censusLogger.warn(s"No hits for input address: $addressInput")
       Array(Feature(Point(0, 0)))
     }
   }
 
   private def searchAddress(client: Client, index: String, indexType: String, addressInput: SearchableAddress) = {
-    log.debug(s"Searching census data for '$addressInput'...")
+    censusLogger.debug(s"Searching census data for '$addressInput'...")
 
     val number = addressInput.addressNumber.toLowerCase
     val street = addressInput.streetName
@@ -83,7 +82,7 @@ trait CensusGeocode {
 
     val query = QueryBuilders.filteredQuery(boolQuery, filter)
 
-    log.debug(s"Elasticsearch query: $query")
+    censusLogger.debug(s"Elasticsearch query: $query")
 
     val response = client.prepareSearch(index)
       .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -93,7 +92,7 @@ trait CensusGeocode {
 
     val hits = response.getHits.getHits
 
-    log.debug(s"$hits hits from census data for '$addressInput'")
+    censusLogger.debug(s"$hits hits from census data for '$addressInput'")
 
     hits
   }
