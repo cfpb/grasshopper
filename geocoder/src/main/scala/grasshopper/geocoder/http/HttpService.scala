@@ -17,7 +17,6 @@ import akka.stream.io.Framing
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.Logger
 import grasshopper.client.parser.AddressParserClient
 import grasshopper.client.parser.model.ParserStatus
 import grasshopper.geocoder.api.geocode.GeocodeFlow
@@ -41,8 +40,6 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
   def client: Client
 
   val logger: LoggingAdapter
-
-  override lazy val log = Logger(LoggerFactory.getLogger("grashopper-geocoder"))
 
   val routes = {
     pathSingleSlash {
