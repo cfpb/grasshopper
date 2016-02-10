@@ -125,11 +125,17 @@ object GrasshopperBuild extends Build {
       )
     )
 
+  // FIXME: A better solution would be to push hmda-geo to a Maven repo and import
+  //        it as a standard dependency.
   lazy val hmdaGeo = ProjectRef(uri("git://github.com/cfpb/hmda-geo.git"), "client")
+
+  // NOTE: Use this method when referencing a locally modified version of hmda-geo 
+  //lazy val hmdaGeo = ProjectRef(file("../hmda-geo"), "client")
 
   lazy val test_harness = (project in file("test-harness"))
     .configs(IntegrationTest)
     .settings(buildSettings: _*)
+    .settings(mainClass in assembly := Some("grasshopper.test.GeocoderTest"))
     .settings(
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},

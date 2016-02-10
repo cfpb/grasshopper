@@ -15,8 +15,8 @@ import java.net.URLEncoder
 object AddressParserClient extends ServiceClient with ParserJsonProtocol {
   override val config = ConfigFactory.load()
 
-  lazy val host = Properties.envOrElse("GRASSHOPPER_PARSER_HOST", config.getString("grasshopper.client.parser.host"))
-  lazy val port = Properties.envOrElse("GRASSHOPPER_PARSER_PORT", config.getString("grasshopper.client.parser.port"))
+  lazy val host = config.getString("grasshopper.client.parser.host")
+  lazy val port = config.getString("grasshopper.client.parser.port")
 
   def status: Future[Either[ResponseError, ParserStatus]] = {
     implicit val ec: ExecutionContext = system.dispatcher

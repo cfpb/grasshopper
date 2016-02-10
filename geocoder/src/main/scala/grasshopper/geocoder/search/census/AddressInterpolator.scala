@@ -74,11 +74,11 @@ object AddressInterpolator {
 
   }
 
-  private def prefix(f: Feature, a: Int): String = {
-    val addressIsEven = a % 2 == 0
-    val rightRangeIsEven: Boolean = rangeIsEven(f, false)
+  private def prefix(feature: Feature, addressNumber: Int): String = {
+    val addressIsEven = addressNumber % 2 == 0
+    val rightRangeIsEven: Boolean = rangeIsEven(feature, false)
 
-    val leftRangeIsEven: Boolean = rangeIsEven(f, true)
+    val leftRangeIsEven: Boolean = rangeIsEven(feature, true)
 
     if (addressIsEven && rightRangeIsEven) {
       "R"
@@ -89,8 +89,9 @@ object AddressInterpolator {
     } else if (!addressIsEven && !leftRangeIsEven) {
       "L"
     } else {
-      log.warn(s"Could not determine if range is even in feature: ${f.toString}")
-      "R"
+      val default = "R"
+      log.warn(s"Could not determine R/L prefix.  Defaulting to $default.  Feature: ${feature.toString}")
+      default
     }
   }
 
