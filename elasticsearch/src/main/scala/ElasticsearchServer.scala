@@ -4,7 +4,7 @@ import java.io.File
 import java.nio.file.Files
 import com.typesafe.scalalogging.Logger
 import org.elasticsearch.client.Client
-import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.Node
@@ -18,7 +18,8 @@ class ElasticsearchServer {
 
   private val clusterName = "elasticsearch"
   private val dataDir = Files.createTempDirectory("elasticsearch_data_").toFile
-  private val settings = ImmutableSettings.settingsBuilder
+  private val settings = Settings.settingsBuilder
+    .put("path.home", dataDir.toString)
     .put("path.data", dataDir.toString)
     .put("cluster.name", clusterName)
     .build
