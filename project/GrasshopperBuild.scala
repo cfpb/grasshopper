@@ -99,6 +99,8 @@ object GrasshopperBuild extends Build {
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
         assemblyMergeStrategy in assembly := {
           case "application.conf" => MergeStrategy.concat
+          // Elasticsearch has its own unshaded org.joda.time.base.BaseDateTime
+          // https://www.elastic.co/blog/to-shade-or-not-to-shade
           case PathList("org", "joda", "time", "base", "BaseDateTime.class") => MergeStrategy.first
           case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
@@ -142,6 +144,8 @@ object GrasshopperBuild extends Build {
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
         assemblyMergeStrategy in assembly := {
           case "application.conf" => MergeStrategy.concat
+          // Elasticsearch has its own unshaded org.joda.time.base.BaseDateTime
+          // https://www.elastic.co/blog/to-shade-or-not-to-shade
           case PathList("org", "joda", "time", "base", "BaseDateTime.class") => MergeStrategy.first
           case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
