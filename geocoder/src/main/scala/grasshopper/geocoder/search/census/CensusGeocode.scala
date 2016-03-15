@@ -8,7 +8,7 @@ import grasshopper.model.SearchableAddress
 import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
-import org.elasticsearch.index.query.{ FilterBuilders, QueryBuilders }
+import org.elasticsearch.index.query.QueryBuilders
 import org.slf4j.LoggerFactory
 import spray.json._
 
@@ -57,30 +57,35 @@ trait CensusGeocode {
 
     val streetQuery = QueryBuilders.matchPhraseQuery("FULLNAME", street)
 
-    val zipLeftFilter = FilterBuilders.termFilter("ZIPL", zipCode)
-    val zipRightFilter = FilterBuilders.termFilter("ZIPR", zipCode)
-    val zipFilter = FilterBuilders.orFilter(zipLeftFilter, zipRightFilter)
+    val zipLeftQuery = QueryBuilders.termQuery("ZIPL", zipCode)
+    val zipRightQuery = QueryBuilders.termQuery("ZIPR", zipCode)
+    val zipQuery = QueryBuilders.boolQuery()
+      .should(zipLeftQuery)
+      .should(zipRightQuery)
 
-    val rightHouseFilter = FilterBuilders.andFilter(
-      FilterBuilders.rangeFilter("RFROMHN").lte(number),
-      FilterBuilders.rangeFilter("RTOHN").gte(number)
-    )
+    val rightHouseQuery = QueryBuilders.boolQuery()
+      .must(QueryBuilders.rangeQuery("RFROMHN").lte(number))
+      .must(QueryBuilders.rangeQuery("RTOHN").gte(number))
 
-    val leftHouseFilter = FilterBuilders.andFilter(
-      FilterBuilders.rangeFilter("LFROMHN").lte(number),
-      FilterBuilders.rangeFilter("LTOHN").gte(number)
-    )
+    val leftHouseQuery = QueryBuilders.boolQuery()
+      .must(QueryBuilders.rangeQuery("LFROMHN").lte(number))
+      .must(QueryBuilders.rangeQuery("LTOHN").gte(number))
 
-    val houseFilter = FilterBuilders.orFilter(rightHouseFilter, leftHouseFilter)
+    val houseQuery = QueryBuilders.boolQuery()
+      .should(rightHouseQuery)
+      .should(leftHouseQuery)
 
-    val filter = FilterBuilders.andFilter(houseFilter, zipFilter)
+    val filter = QueryBuilders.boolQuery()
+      .must(houseQuery)
+      .must(zipQuery)
 
-    val boolQuery = QueryBuilders
-      .boolQuery()
+    val boolQuery = QueryBuilders.boolQuery()
       .must(stateQuery)
       .must(streetQuery)
 
-    val query = QueryBuilders.filteredQuery(boolQuery, filter)
+    val query = QueryBuilders.boolQuery()
+      .must(boolQuery)
+      .filter(filter)
 
     censusLogger.debug(s"Elasticsearch query: $query")
 

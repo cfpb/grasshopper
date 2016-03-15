@@ -21,7 +21,7 @@ loader:
 
 # Must be named "elasticsearch" to create expected ELASTICSEARCH_* envvars
 elasticsearch:
-  image: elasticsearch:1.7.1
+  image: elasticsearch:2.2.0
 
 ui:
   build: ../grasshopper-ui

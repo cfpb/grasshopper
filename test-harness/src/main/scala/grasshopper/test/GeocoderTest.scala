@@ -1,6 +1,7 @@
 package grasshopper.test
 
 import java.io.File
+import java.net.InetAddress
 
 import akka.actor.ActorSystem
 import akka.stream.{ ActorAttributes, FlowShape, ActorMaterializer }
@@ -18,8 +19,9 @@ import grasshopper.test.streams.FlowUtils
 import hmda.geo.client.api.HMDAGeoClient
 import hmda.geo.client.api.model.census.HMDAGeoTractResult
 import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.shield.ShieldPlugin
 
 import scala.concurrent.ExecutionContext
 
@@ -35,15 +37,30 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
   lazy val port = config.getString("grasshopper.test-harness.elasticsearch.port")
   lazy val cluster = config.getString("grasshopper.test-harness.elasticsearch.cluster")
 
-  lazy val settings = ImmutableSettings.settingsBuilder()
+  lazy val settings = Settings.settingsBuilder()
     .put("http.enabled", false)
     .put("node.data", false)
     .put("node.master", false)
     .put("cluster.name", cluster)
     .put("client.transport.sniff", true)
 
-  implicit lazy val client = new TransportClient(settings)
-    .addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
+  lazy val clientBuilder = TransportClient.builder()
+
+  lazy val user = config.getString("grasshopper.geocoder.elasticsearch.user")
+  lazy val password = config.getString("grasshopper.geocoder.elasticsearch.password")
+
+  if (!user.isEmpty && !password.isEmpty) {
+    settings.put("shield.user", String.format("%s:%s", user, password))
+    clientBuilder.addPlugin(classOf[ShieldPlugin])
+  }
+
+  implicit lazy val client = clientBuilder
+    .settings(settings)
+    .build()
+    .addTransportAddress(new InetSocketTransportAddress(
+      InetAddress.getByName(host),
+      port.toInt
+    ))
 
   def main(args: Array[String]): Unit = {
     println("Testing Geocoder")
