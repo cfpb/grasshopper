@@ -1,5 +1,6 @@
 package grasshopper.geocoder.ws
 
+import akka.NotUsed
 import akka.actor.{ ActorSystem, Props }
 import akka.http.scaladsl.model.ws.{ Message, TextMessage }
 import akka.http.scaladsl.server.Directives._
@@ -18,9 +19,9 @@ trait WebsocketService extends GrasshopperJsonProtocol {
   implicit def executor: ExecutionContextExecutor
   implicit val materializer: ActorMaterializer
 
-  def geocodeStats: Flow[Message, Message, Unit] = {
+  def geocodeStats: Flow[Message, Message, NotUsed] = {
     Flow.fromGraph(
-      GraphDSL.create() { implicit b: GraphDSL.Builder[Unit] =>
+      GraphDSL.create() { implicit b: GraphDSL.Builder[NotUsed] =>
         import GraphDSL.Implicits._
 
         val merge = b.add(Merge[String](2))
@@ -42,7 +43,7 @@ trait WebsocketService extends GrasshopperJsonProtocol {
 
   val wsRoutes =
     path("metrics-ws") {
-      handleWebsocketMessages(geocodeStats)
+      handleWebSocketMessages(geocodeStats)
     }
 
   object WSActor {

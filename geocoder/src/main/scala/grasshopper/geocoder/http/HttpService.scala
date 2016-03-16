@@ -13,7 +13,7 @@ import akka.http.scaladsl.model.Multipart.FormData
 import akka.http.scaladsl.server.ContentNegotiator.Alternative.MediaType
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import akka.stream.io.Framing
+import akka.stream.scaladsl.Framing
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import com.typesafe.config.Config
