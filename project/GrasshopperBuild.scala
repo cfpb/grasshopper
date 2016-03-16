@@ -141,6 +141,7 @@ object GrasshopperBuild extends Build {
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
         assemblyMergeStrategy in assembly := {
           case "application.conf" => MergeStrategy.concat
+          case "logback.xml" => MergeStrategy.last
           case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
