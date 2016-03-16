@@ -2,10 +2,10 @@ package grasshopper.test
 
 import java.io.File
 import java.net.InetAddress
-
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.{ ActorAttributes, FlowShape, ActorMaterializer }
-import akka.stream.io.Framing
+import akka.stream.scaladsl.Framing
 import akka.stream.scaladsl._
 import akka.stream.Supervision._
 import akka.util.ByteString
@@ -92,7 +92,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
 
   }
 
-  private def stringToPointInputAddressTract: Flow[String, PointInputAddressTract, Unit] = {
+  private def stringToPointInputAddressTract: Flow[String, PointInputAddressTract, NotUsed] = {
     Flow[String]
       .map { s =>
         val parts = s.split(",")
@@ -106,7 +106,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       }
   }
 
-  private def geocodeTestFlow(implicit ec: ExecutionContext): Flow[PointInputAddressTract, GeocodeTestResult, Unit] = {
+  private def geocodeTestFlow(implicit ec: ExecutionContext): Flow[PointInputAddressTract, GeocodeTestResult, NotUsed] = {
     Flow.fromGraph(
       GraphDSL.create() { implicit b =>
         import GraphDSL.Implicits._
@@ -130,11 +130,11 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
     )
   }
 
-  private def extractInputAddress: Flow[PointInputAddressTract, String, Unit] = {
+  private def extractInputAddress: Flow[PointInputAddressTract, String, NotUsed] = {
     Flow[PointInputAddressTract].map(i => i.pointInputAddress.inputAddress)
   }
 
-  private def geocodeResponseToGeocodeResult: Flow[GeocodeResponse, GeocodeResult, Unit] = {
+  private def geocodeResponseToGeocodeResult: Flow[GeocodeResponse, GeocodeResult, NotUsed] = {
     Flow[GeocodeResponse]
       .map { r =>
         val features = r.features
@@ -150,7 +150,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       }
   }
 
-  private def geocodeResultToGeocodeResultTract: Flow[GeocodeResult, GeocodeResultTract, Unit] = {
+  private def geocodeResultToGeocodeResultTract: Flow[GeocodeResult, GeocodeResultTract, NotUsed] = {
     Flow[GeocodeResult]
       .mapAsync(numProcessors) { r =>
         val pointInput = r.pointResult
@@ -170,7 +170,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       }.withAttributes(ActorAttributes.supervisionStrategy(resumingDecider))
   }
 
-  private def flattenResults: Flow[(PointInputAddressTract, GeocodeResultTract), GeocodeTestResult, Unit] = {
+  private def flattenResults: Flow[(PointInputAddressTract, GeocodeResultTract), GeocodeTestResult, NotUsed] = {
     Flow[(PointInputAddressTract, GeocodeResultTract)]
       .map { x =>
         val p = x._1
@@ -181,7 +181,7 @@ object GeocoderTest extends GeocodeFlow with FlowUtils {
       }
   }
 
-  private def resultsToCSV: Flow[GeocodeTestResult, String, Unit] = {
+  private def resultsToCSV: Flow[GeocodeTestResult, String, NotUsed] = {
     Flow[GeocodeTestResult].map(g => g.toCSV)
   }
 

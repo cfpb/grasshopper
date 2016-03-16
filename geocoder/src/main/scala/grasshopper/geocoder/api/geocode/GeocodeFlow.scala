@@ -2,6 +2,7 @@ package grasshopper.geocoder.api.geocode
 
 import akka.stream.FlowShape
 import akka.stream.scaladsl._
+import akka.NotUsed
 import feature._
 import geometry.Point
 import grasshopper.client.parser.AddressParserClient
@@ -18,7 +19,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
 
   def client: Client
 
-  def parseFlow: Flow[String, ParsedAddress, Unit] = {
+  def parseFlow: Flow[String, ParsedAddress, NotUsed] = {
     Flow[String]
       .mapAsync(numCores)(a => AddressParserClient.parse(a))
       .map { x =>
@@ -30,7 +31,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
       }
   }
 
-  def parsedInputAddressFlow: Flow[ParsedAddress, SearchableAddress, Unit] = {
+  def parsedInputAddressFlow: Flow[ParsedAddress, SearchableAddress, NotUsed] = {
     Flow[ParsedAddress]
       .map { parsed =>
 
@@ -46,32 +47,32 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
       }
   }
 
-  def geocodePointFlow: Flow[String, Feature, Unit] = {
+  def geocodePointFlow: Flow[String, Feature, NotUsed] = {
     Flow[String]
       .map(s => geocodePoint(client, "address", "point", s, 1).head)
   }
 
-  def geocodePointFieldsFlow: Flow[SearchableAddress, Feature, Unit] = {
+  def geocodePointFieldsFlow: Flow[SearchableAddress, Feature, NotUsed] = {
     Flow[SearchableAddress]
       .map(p => geocodePointFields(client, "address", "point", p, 1).head)
   }
 
-  def geocodeLineFlow: Flow[SearchableAddress, Feature, Unit] = {
+  def geocodeLineFlow: Flow[SearchableAddress, Feature, NotUsed] = {
     Flow[SearchableAddress]
       .map(p => geocodeLine(client, "census", "addrfeat", p, 1).head)
   }
 
-  def tupleToListFlow[T]: Flow[(T, T), List[T], Unit] = {
+  def tupleToListFlow[T]: Flow[(T, T), List[T], NotUsed] = {
     Flow[(T, T)]
       .map(t => List(t._1, t._2))
   }
 
-  def generateResponseFlow: Flow[(ParsedAddress, List[Feature]), GeocodeResponse, Unit] = {
+  def generateResponseFlow: Flow[(ParsedAddress, List[Feature]), GeocodeResponse, NotUsed] = {
     Flow[(ParsedAddress, List[Feature])]
       .map(t => GeocodeResponse(t._1.input, t._1.parts, t._2))
   }
 
-  def featureToCsv: Flow[Feature, String, Unit] = {
+  def featureToCsv: Flow[Feature, String, NotUsed] = {
     Flow[Feature]
       .map { f =>
         val address = f.get("address").getOrElse("").toString
@@ -81,13 +82,13 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
       }
   }
 
-  def filterFeatureListFlow: Flow[List[Feature], List[Feature], Unit] = {
+  def filterFeatureListFlow: Flow[List[Feature], List[Feature], NotUsed] = {
     Flow[List[Feature]].map(xs => xs.filter(f => f.geometry.centroid.x != 0 && f.geometry.centroid.y != 0))
   }
 
-  def geocodeFlow(implicit ec: ExecutionContext): Flow[String, GeocodeResponse, Unit] = {
+  def geocodeFlow(implicit ec: ExecutionContext): Flow[String, GeocodeResponse, NotUsed] = {
     Flow.fromGraph(
-      GraphDSL.create() { implicit b: GraphDSL.Builder[Unit] =>
+      GraphDSL.create() { implicit b: GraphDSL.Builder[NotUsed] =>
         import GraphDSL.Implicits._
 
         val input = b.add(Flow[String])
@@ -117,7 +118,7 @@ trait GeocodeFlow extends AddressPointsGeocode with CensusGeocode with Paralleli
     )
   }
 
-  def filterPointResultFlow: Flow[GeocodeResponse, Feature, Unit] = {
+  def filterPointResultFlow: Flow[GeocodeResponse, Feature, NotUsed] = {
 
     def predicate(source: String): (Feature) => Boolean = { f =>
       f.get("source")
