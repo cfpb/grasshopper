@@ -1,10 +1,10 @@
 package grasshopper.test
 
 import java.io.File
-
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.{ FlowShape, Supervision, ActorMaterializer }
-import akka.stream.io.Framing
+import akka.stream.scaladsl.Framing
 import akka.stream.scaladsl._
 import akka.stream.ActorAttributes.supervisionStrategy
 import Supervision.resumingDecider
@@ -71,7 +71,7 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
 
   }
 
-  def str2PointInputAddressFlow: Flow[String, PointInputAddressTract, Unit] = {
+  def str2PointInputAddressFlow: Flow[String, PointInputAddressTract, NotUsed] = {
     Flow[String].map { str =>
       val parts = str.split(",")
       if (parts.length == 4) {
@@ -88,7 +88,7 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
     }
   }
 
-  def pointInput2CensusGeocodeFlow: Flow[PointInputAddressTract, Feature, Unit] = {
+  def pointInput2CensusGeocodeFlow: Flow[PointInputAddressTract, Feature, NotUsed] = {
     Flow[PointInputAddressTract]
       .map(p => p.pointInputAddress.inputAddress)
       .via(parseFlow.withAttributes(supervisionStrategy(resumingDecider)))
@@ -96,7 +96,7 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
       .via(geocodeLineFlow.withAttributes(supervisionStrategy(resumingDecider)))
   }
 
-  def outputCensusTractFlow: Flow[Feature, PointInputAddressTract, Unit] = {
+  def outputCensusTractFlow: Flow[Feature, PointInputAddressTract, NotUsed] = {
     Flow[Feature]
       .mapAsync(numProcessors) { f =>
         val p = f.geometry.centroid
@@ -109,12 +109,12 @@ object TractOverlay extends GeocodeFlow with FlowUtils {
       }.withAttributes(supervisionStrategy(resumingDecider))
   }
 
-  def pointList2CensusOverlayFlow: Flow[List[PointInputAddressTract], CensusOverlayResult, Unit] = {
+  def pointList2CensusOverlayFlow: Flow[List[PointInputAddressTract], CensusOverlayResult, NotUsed] = {
     Flow[List[PointInputAddressTract]]
       .map(xs => CensusOverlayResult(xs.head, xs.tail.head))
   }
 
-  def censusOverlayFlow: Flow[PointInputAddressTract, CensusOverlayResult, Unit] = {
+  def censusOverlayFlow: Flow[PointInputAddressTract, CensusOverlayResult, NotUsed] = {
     Flow.fromGraph(
       GraphDSL.create() { implicit b =>
         import GraphDSL.Implicits._

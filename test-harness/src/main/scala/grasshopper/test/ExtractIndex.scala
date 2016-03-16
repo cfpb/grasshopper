@@ -1,6 +1,7 @@
 package grasshopper.test
 
 import java.io.File
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{ FileIO, Source, Flow, Sink }
@@ -89,7 +90,7 @@ object ExtractIndex extends FlowUtils {
       )
   }
 
-  def tractOverlay(implicit ec: ExecutionContext): Flow[PointInputAddress, PointInputAddressTract, Unit] = {
+  def tractOverlay(implicit ec: ExecutionContext): Flow[PointInputAddress, PointInputAddressTract, NotUsed] = {
     Flow[PointInputAddress]
       .mapAsyncUnordered(numProcessors) { i =>
         val p = i.point
@@ -102,7 +103,7 @@ object ExtractIndex extends FlowUtils {
       .withAttributes(supervisionStrategy(resumingDecider))
   }
 
-  def jsonToPointInputAddress: Flow[String, PointInputAddress, Unit] = {
+  def jsonToPointInputAddress: Flow[String, PointInputAddress, NotUsed] = {
     Flow[String]
       .map { s =>
         val f = s.parseJson.convertTo[Feature]
