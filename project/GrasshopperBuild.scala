@@ -1,6 +1,5 @@
 import sbt._
 import sbt.Keys._
-import com.typesafe.sbt.SbtScalariform._
 import spray.revolver.RevolverPlugin._
 import wartremover._
 import sbtassembly.AssemblyPlugin.autoImport._
@@ -11,7 +10,6 @@ object BuildSettings {
   val buildScalaVersion = "2.11.7"
 
   val buildSettings = Defaults.coreDefaultSettings ++
-    scalariformSettings ++
     wartremoverSettings ++
     Defaults.itSettings ++
     Seq(
