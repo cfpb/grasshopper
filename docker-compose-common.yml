@@ -1,5 +1,5 @@
 geocoder:
-  build: geocoder
+  build: .
   ports:
     - "31010:31010"
   environment:
