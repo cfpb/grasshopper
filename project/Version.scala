@@ -3,7 +3,6 @@ object Version {
   val scalaLogging        = "3.1.0"
   val config              = "1.3.0"
   val akka                = "2.4.2"
-  val akkaStreams         = "2.0"
   val scalaTest           = "2.2.4"
   val scalaCheck          = "1.12.5"
   val elasticsearch       = "2.2.0"
@@ -14,5 +13,5 @@ object Version {
   val metrics             = "3.1.2"
   val influxdbReporter    = "0.7.0"
   val metricsScala        = "3.5.2"
-  val mfglabs             = "0.8.0"
+  val mfglabs             = "0.9.0"
 }
