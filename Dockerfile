@@ -11,8 +11,8 @@ WORKDIR /
 
 USER daemon
 
-ENTRYPOINT ["java", "-jar", "/opt/grasshopper-geocoder.jar"]
+ENTRYPOINT ["java", "-jar", "/opt/grasshopper.jar"]
 
 EXPOSE 31010
 
-COPY target/scala-2.11/grasshopper-geocoder.jar /opt/grasshopper-geocoder.jar
+COPY target/scala-2.11/grasshopper.jar /opt/grasshopper.jar

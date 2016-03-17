@@ -21,7 +21,8 @@ object BuildSettings {
         "-Xlint",
         "-deprecation",
         "-unchecked",
-        "-feature")
+        "-feature"),
+      aggregate in assembly := false
     )
 }
 
@@ -52,7 +53,20 @@ object GrasshopperBuild extends Build {
     
   lazy val grasshopper = (project in file("."))
     .settings(buildSettings: _*)
-    .aggregate(geocoder, model, client, test_harness)
+    .settings(
+      Seq(
+        assemblyJarName in assembly := {s"${name.value}.jar"},
+        mainClass in assembly := Some("grasshopper.geocoder.GrasshopperGeocoder"),
+        assemblyMergeStrategy in assembly := {
+          case "application.conf" => MergeStrategy.concat
+          case x =>
+            val oldStrategy = (assemblyMergeStrategy in assembly).value
+            oldStrategy(x)
+        }
+      )
+    )
+    .dependsOn(geocoder)
+    .aggregate(geocoder, model, client)
 
 
   lazy val elasticsearch = (project in file("elasticsearch"))
