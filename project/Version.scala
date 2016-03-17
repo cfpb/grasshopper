@@ -14,5 +14,5 @@ object Version {
   val metrics          = "3.1.2"
   val influxdbReporter = "0.7.0"
   val metricsScala     = "3.5.2"
-  val mfglabs          = "0.8.0"
+  val mfglabs          = "0.9.0"
 }
