@@ -6,7 +6,6 @@ object Version {
   val scalaTest           = "2.2.4"
   val scalaCheck          = "1.12.5"
   val elasticsearch       = "2.2.0"
-  val elasticsearchShield = "2.2.0"
   val jts                 = "1.13"
   val scale               = "0.0.2"
   val async               = "0.9.5"
