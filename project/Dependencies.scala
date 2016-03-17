@@ -26,7 +26,7 @@ object Dependencies {
 
   val es                 = "org.elasticsearch"           % "elasticsearch"                        % Version.elasticsearch
   val esShield           = "org.elasticsearch.plugin"    % "shield"                               % Version.elasticsearchShield
-  val mfglabs            = "com.mfglabs"                %% "akka-stream-extensions-elasticsearch" % Version.mfglabs
+  val mfglabs            = "com.mfglabs"                %% "akka-stream-extensions-elasticsearch" % Version.mfglabs excludeAll(ExclusionRule(organization = "com.typesafe.akka"))
 
   val scaleGeoJson       = "com.github.jmarin"          %% "scale-geojson"                        % Version.scale
 
