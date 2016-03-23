@@ -53,38 +53,43 @@ trait CensusGeocode {
     val zipCode = addressInput.zipCode
     val state = addressInput.state
 
-    val stateQuery = QueryBuilders.matchQuery("STATE", state)
+    val stateQuery = QueryBuilders.matchQuery("properties.STATE", state)
 
-    val streetQuery = QueryBuilders.matchPhraseQuery("FULLNAME", street)
+    //FIXME: With the upgrade to ES 2.x, "phrase" queries stopped returning values for this field.
+    //       Further research is needed to determine why.
+    //val streetQuery = QueryBuilders.matchPhraseQuery("properties.FULLNAME", street)
+    val streetQuery = QueryBuilders.matchQuery("properties.FULLNAME", street)
 
-    val zipLeftQuery = QueryBuilders.termQuery("ZIPL", zipCode)
-    val zipRightQuery = QueryBuilders.termQuery("ZIPR", zipCode)
+    val zipLeftQuery = QueryBuilders.termQuery("properties.ZIPL", zipCode)
+    val zipRightQuery = QueryBuilders.termQuery("properties.ZIPR", zipCode)
+
     val zipQuery = QueryBuilders.boolQuery()
       .should(zipLeftQuery)
       .should(zipRightQuery)
 
     val rightHouseQuery = QueryBuilders.boolQuery()
-      .must(QueryBuilders.rangeQuery("RFROMHN").lte(number))
-      .must(QueryBuilders.rangeQuery("RTOHN").gte(number))
+      .must(QueryBuilders.rangeQuery("properties.RFROMHN").lte(number))
+      .must(QueryBuilders.rangeQuery("properties.RTOHN").gte(number))
 
     val leftHouseQuery = QueryBuilders.boolQuery()
-      .must(QueryBuilders.rangeQuery("LFROMHN").lte(number))
-      .must(QueryBuilders.rangeQuery("LTOHN").gte(number))
+      .must(QueryBuilders.rangeQuery("properties.LFROMHN").lte(number))
+      .must(QueryBuilders.rangeQuery("properties.LTOHN").gte(number))
 
     val houseQuery = QueryBuilders.boolQuery()
       .should(rightHouseQuery)
       .should(leftHouseQuery)
 
     val filter = QueryBuilders.boolQuery()
-      .must(houseQuery)
+      //FIXME: The current house number range queries do not work.  This seems to be due to:
+      //       1. the ES 2.x upgrade.
+      //       2. the assumption that FROM values are always greater than TO values.
+      //       3. TO/FROM fields must be a numeric type for range queries to function properly.
+      //.must(houseQuery)
       .must(zipQuery)
 
-    val boolQuery = QueryBuilders.boolQuery()
+    val query = QueryBuilders.boolQuery()
       .must(stateQuery)
       .must(streetQuery)
-
-    val query = QueryBuilders.boolQuery()
-      .must(boolQuery)
       .filter(filter)
 
     censusLogger.debug(s"Elasticsearch query: $query")
