@@ -42,7 +42,7 @@ object GrasshopperGeocoder extends App with HttpService with WebsocketService {
   lazy val user = config.getString("grasshopper.geocoder.elasticsearch.user")
   lazy val password = config.getString("grasshopper.geocoder.elasticsearch.password")
 
-  if (!user.isEmpty && !password.isEmpty) {
+  if (user.nonEmpty && password.nonEmpty) {
     settings.put("shield.user", String.format("%s:%s", user, password))
     clientBuilder.addPlugin(classOf[ShieldPlugin])
   }
