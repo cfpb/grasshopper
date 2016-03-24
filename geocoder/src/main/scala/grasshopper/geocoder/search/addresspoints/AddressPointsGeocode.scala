@@ -61,6 +61,8 @@ trait AddressPointsGeocode {
 
   private def searchAddressFields(client: Client, index: String, indexType: String, number: String, streetName: String, city: String, state: String, zipCode: String): Array[SearchHit] = {
     val numberQuery = QueryBuilders.matchQuery("properties.number", number)
+
+    //FIXME: Figure out why matchPhraseQuery no longer works under ES 2.2
     //val streetQuery = QueryBuilders.matchPhraseQuery("properties.street", streetName)
     val streetQuery = QueryBuilders.matchQuery("properties.street", streetName)
     val cityQuery = QueryBuilders.matchQuery("properties.city", city)

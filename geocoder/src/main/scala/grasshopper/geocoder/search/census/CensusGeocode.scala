@@ -55,8 +55,7 @@ trait CensusGeocode {
 
     val stateQuery = QueryBuilders.matchQuery("properties.STATE", state)
 
-    //FIXME: With the upgrade to ES 2.x, "phrase" queries stopped returning values for this field.
-    //       Further research is needed to determine why.
+    //FIXME: Figure out why matchPhraseQuery no longer works under ES 2.2
     //val streetQuery = QueryBuilders.matchPhraseQuery("properties.FULLNAME", street)
     val streetQuery = QueryBuilders.matchQuery("properties.FULLNAME", street)
 
