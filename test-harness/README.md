@@ -8,15 +8,18 @@ The test harness provides a few programs that automate geocoding at a larger sca
 for further analysis.
 
 ## `GeocoderTest` - Batch Geocode Testing
+
 The primary function of the test-harness subproject is testing known "good" geocodes against the results of 
 the grasshopper geocoder.  This is performed via [`GeocoderTest.scala`](https://github.com/cfpb/grasshopper/blob/master/test-harness/src/main/scala/grasshopper/test/GeocoderTest.scala).
 
 ### Setup
+
 `GeocoderTest` depends on several external services.  The full setup is semi-complex, so we use Docker Compose to glue it all together.
 The one exception is Elasticsearch (ES). Due to VirtualBox's slow I/O, it is much faster to run ES natively. The below assumes an install
 on a Mac.  Adjust as necessary per your environment.
 
 #### Install Elasticsearch
+
 1. Install Elasticsearch 2.2 via Homebrew
 
     ```
@@ -42,12 +45,14 @@ on a Mac.  Adjust as necessary per your environment.
 3. Increase Elasticsearch memory
     ES defaults allocating 1 GB of memory for itself at startup.  For optimal performance, its recommended to use 
     half your system's memory, which can be set via the `ES_HEAP_SIZE` envvar set the memory allocated to ES.  
+
     ```
     export ES_HEAP_SIZE=4g
     ```
 
     If you'd like to make this a little more permanent, add this to your shell's profile.  The following should
     work if you're using bash.
+
     ```
     echo '\n#Elasticsearch memory settings\nexport ES_HEAP_SIZE=4g' >> ~/.bash_profile
     source ~/.bash_profile
@@ -60,6 +65,7 @@ on a Mac.  Adjust as necessary per your environment.
     ```
 
 #### Get all necessary projects
+
 The following projects must be checked out into the same directory:
 * `grasshopper`
 * `grasshopper-loader`
@@ -69,17 +75,20 @@ The following projects must be checked out into the same directory:
 
 
 ### Run test-harness via Docker Compose
+
 All Docker Compose files are in the root of the `grasshopper` project.  When using the 
 `test-harness` you must explicitly set its config file with  `-f docker-compose-test-harness.yaml`.
 
 #### Upload geo data with grasshopper-loader
 
 1. Address points data
+
     ```
     docker-compose -f docker-compose-test-harness.yaml run loader ./index.js -f data.json -h elasticsearch -c 1
     ```
 
 1. Upload address points data
+
     ```
     docker-compose -f docker-compose-test-harness.yaml run loader ./index.js -f data.json -h elasticsearch -c 1
     ```
@@ -90,14 +99,15 @@ make sure only a single file is processed at a time.  This does make the loading
 slower, but reduces the chances of failures and the need for multiple runs of the loader.
 
 #### Run test-harness
+
 1. Delete previous run's `out.csv` file.  If the file is still in place, test-harness will _seem_ to
 be working, but actually hangs without error.
+
 1. Run the `test_harness` service.
+
     ```
     docker-compose -f docker-compose-test-harness.yaml up test_harness
-    ```
-    
- 
+    ```     
 
 ## Other Tools
 
