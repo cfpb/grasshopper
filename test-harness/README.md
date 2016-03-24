@@ -7,7 +7,94 @@ the main software, but to provide some assistance in checking the quality of the
 The test harness provides a few programs that automate geocoding at a larger scale through batching, and provide results
 for further analysis.
 
-## Tools
+## `GeocoderTest` - Batch Geocode Testing
+The primary function of the test-harness subproject is testing known "good" geocodes against the results of 
+the grasshopper geocoder.  This is performed via [`GeocoderTest.scala`](https://github.com/cfpb/grasshopper/blob/master/test-harness/src/main/scala/grasshopper/test/GeocoderTest.scala).
+
+### Setup
+`GeocoderTest` depends on several external services.  The full setup is semi-complex, so we use Docker Compose to glue it all together.
+The one exception is Elasticsearch (ES). Due to VirtualBox's slow I/O, it is much faster to run ES natively. The below assumes an install
+on a Mac.  Adjust as necessary per your environment.
+
+#### Install Elasticsearch
+1. Install Elasticsearch 2.2 via Homebrew
+
+    ```
+    brew install elasticsearch
+    ```
+    
+    **Warning:** Elasticsearch 1.x is now a separate install from 2.x in Homebrew.  If you have an existing 1.7 install,
+    you may need to do some extra cleanup before reinstalling.
+
+2. Configure Elasticsearch
+
+    ```
+    cd ~/homebrew/etc/elasticsearch/
+
+    # Backup configs
+    mv elasticsearch.yml elasticsearch.yml-orig
+    mv logging.yml logging.yml-orig
+
+    # Copy in new configs
+    cp <projects-root>/grasshopper/test-harness/conf/elasticsearch/* .
+    ```
+
+3. Increase Elasticsearch memory
+The `ES_HEAP_SIZE` envvar is used for this setting.  I've been setting this to 4 GB.
+    ```
+    echo 'export ES_HEAP_SIZE=4g' >> ~/.bash_profile
+    source ~/.bash_profile
+    ```
+
+**Note:** This assumes you're using bash for your shell.  Adjust as necessary for you environment.
+
+4. Start Elasticsearch
+
+    ```
+    elasticsearch
+    ```
+
+#### Get all necessary projects
+The following projects must be checked out into the same directory:
+* `grasshopper`
+* `grasshopper-loader`
+* `grasshopper-parser`
+* `grasshopper-qa`
+* `hmda-geo`
+
+
+### Run test-harness via Docker Compose
+All Docker Compose files are in the root of the `grasshopper` project.  When using the 
+`test-harness` you must explicitly set its config file with  `-f docker-compose-test-harness.yaml`.
+
+#### Upload geo data with grasshopper-loader
+
+1. Address points data
+    ```
+    docker-compose -f docker-compose-test-harness.yaml run loader ./index.js -f data.json -h elasticsearch -c 1
+    ```
+
+1. Upload address points data
+    ```
+    docker-compose -f docker-compose-test-harness.yaml run loader ./index.js -f data.json -h elasticsearch -c 1
+    ```
+
+**Note:** There _seems_ to be bug in the current loader implementation that can cause I/O errors when
+processing files concurrently.  The below examples override the default concurrency setting (`-c 1`) to 
+make sure only a single file is processed at a time.  This does make the loading process considerably
+slower, but reduces the chances of failures and the need for multiple runs of the loader.
+
+#### Run test-harness
+1. Delete previous run's `out.csv` file.  If the file is still in place, test-harness will _seem_ to
+be working, but actually hangs without error.
+1. Run the `test_harness` service.
+    ```
+    docker-compose -f docker-compose-test-harness.yaml up test_harness
+    ```
+    
+ 
+
+## Other Tools
 
 ### ExtractIndex
 
@@ -51,8 +138,3 @@ This file contains the following structure:
 `Input Address, Input Longitude,Input Latitude, Input Census Tract ID, Census Longitude, Census Latitude, Distance, Output Census Tract ID` 
 
 `Distance` is the distance in Km between the input point and the geocoded point.
-
-
-
-
-
