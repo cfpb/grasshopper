@@ -40,13 +40,18 @@ on a Mac.  Adjust as necessary per your environment.
     ```
 
 3. Increase Elasticsearch memory
-The `ES_HEAP_SIZE` envvar is used for this setting.  I've been setting this to 4 GB.
+    ES defaults allocating 1 GB of memory for itself at startup.  For optimal performance, its recommended to use 
+    half your system's memory, which can be set via the `ES_HEAP_SIZE` envvar set the memory allocated to ES.  
     ```
-    echo 'export ES_HEAP_SIZE=4g' >> ~/.bash_profile
-    source ~/.bash_profile
+    export ES_HEAP_SIZE=4g
     ```
 
-**Note:** This assumes you're using bash for your shell.  Adjust as necessary for you environment.
+    If you'd like to make this a little more permanent, add this to your shell's profile.  The following should
+    work if you're using bash.
+    ```
+    echo '\n#Elasticsearch memory settings\nexport ES_HEAP_SIZE=4g' >> ~/.bash_profile
+    source ~/.bash_profile
+    ```
 
 4. Start Elasticsearch
 
