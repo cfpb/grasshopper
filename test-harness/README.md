@@ -147,24 +147,47 @@ would look like:
     docker-compose -f docker-compose-test-harness.yaml run --rm test_harness
     ```
 
+    **Note:** `test_harness` does not exit cleanly when it's done.  You'll see a "DONE" message
+    on the screen, but you'll have to `<ctrl> + c` to get it to stop the container.
+
 ### Making changes
 
 Once you have it all working, of course you'll want to change...something.
 
 #### Rebuilding projects
 
-The following pattern is pretty effective, and guarantees you get a full rebuild, 
+The following patterns work well, and guarantees you get a full rebuild, 
 with no leftovers from previous sbt or Docker builds.
 
+If you are only making small changes to a Scala project, omitting the `clean` step
+will save you several minutes of build time.  However, if you're switching branches, or merging in the
+latest changes, you should **always** do a clean or you risk not getting all changes.
+
+The examples below include an `sbt` step.  This should obviously be omitted for non-Scala projects.
+
+##### Long-running services
+
+Several services (`geocoder`, `parser`, `hmda_geo_api`, `hmda_geo_postgis`) are intended to remain running.
+The following is an example of rebuilding and deploying the geocoder service.
+
 ```
-docker-compose -f docker-compose-test-harness.yaml rm -vf <service_name> && \
-sbt 'project <project_name>' 'clean' 'assembly' && \ # skip this for non-Scala projects
-docker-compose -f docker-compose-test-harness.yaml build --no-cache <service_name> && \
-docker-compose -f docker-compose-test-harness.yaml run --rm <service_name> 
+docker-compose -f docker-compose-test-harness.yaml stop geocoder && \
+docker-compose -f docker-compose-test-harness.yaml rm -vf geocoder && \
+sbt 'clean' 'assembly' && \
+docker-compose -f docker-compose-test-harness.yaml build --no-cache geocoder && \
+docker-compose -f docker-compose-test-harness.yaml up -d geocoder
 ```
 
-**Note:** If you are only making small changes to a Scala project, omitting the `clean` step
-will save you several minutes of build time.
+##### Run-and-done services
+
+The `loader` and `test_harness` are meant to be run as one-time jobs. The following is an
+example of rebuilding and running `test_harness`.
+
+```
+sbt 'project test_harness' 'clean' 'assembly' && \
+docker-compose -f docker-compose-test-harness.yaml build --no-cache test_harness && \
+docker-compose -f docker-compose-test-harness.yaml run --rm test_harness
+```
 
 #### Wiping Elasticsearch data
 
