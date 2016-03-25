@@ -73,6 +73,39 @@ The following projects must be checked out into the same directory:
 * `grasshopper-qa`
 * `hmda-geo`
 
+### Building
+
+#### Scala projects
+
+All Scala-based project must first be "assembled" prior to building their corresponding Docker images.
+The following commands should be executed from the root of the grasshopper project.
+
+* `geocoder` REST API (Default sbt project)
+
+    ```
+    sbt 'clean' 'assembly'
+    ```
+
+* `test_harness`
+
+    ```
+    sbt 'project test_harness' 'clean' 'assembly'
+    ```
+
+#### Docker images
+
+Docker Compose does not always recognize changes, especially for the Scala-based projects, so
+you must _force_ it to do a full rebuild each time you change the underlying code via `build --no-cache`.
+Be careful with this, though, as you probably **don't** want to rebuild the hmda-geo images every time, 
+which are large, slow to build, and change infrequently.
+
+##### First build
+This will build **all** projects from scratch.  This will take a while as it has to build the 
+hmda-geo images, which include loading a large number of shape files into a PostGIS database.
+
+```
+docker-compose -f docker-compose-test-harness.yaml build --no-cache
+```
 
 ### Run test-harness via Docker Compose
 
@@ -81,16 +114,16 @@ All Docker Compose files are in the root of the `grasshopper` project.  When usi
 
 #### Upload geo data with grasshopper-loader
 
-1. Address points data
+1. State address points data
 
     ```
     docker-compose -f docker-compose-test-harness.yaml run loader ./index.js -f data.json -h elasticsearch -c 1
     ```
 
-1. Upload address points data
+1. Census TIGER data
 
     ```
-    docker-compose -f docker-compose-test-harness.yaml run loader ./index.js -f data.json -h elasticsearch -c 1
+    docker-compose -f docker-compose-test-harness.yaml run loader ./tiger.js -h elasticsearch -c 1
     ```
 
 **Note:** There _seems_ to be bug in the current loader implementation that can cause I/O errors when
@@ -101,13 +134,47 @@ slower, but reduces the chances of failures and the need for multiple runs of th
 #### Run test-harness
 
 1. Delete previous run's `out.csv` file.  If the file is still in place, test-harness will _seem_ to
-be working, but actually hangs without error.
+be working, but actually hangs without error.  Running this from the root of the grasshopper project
+would look like:
+
+    ```
+    rm -f ../grasshopper-qa/data/out.csv
+    ```
 
 1. Run the `test_harness` service.
 
     ```
-    docker-compose -f docker-compose-test-harness.yaml up test_harness
-    ```     
+    docker-compose -f docker-compose-test-harness.yaml run --rm test_harness
+    ```
+
+### Making changes
+
+Once you have it all working, of course you'll want to change...something.
+
+#### Rebuilding projects
+
+The following pattern is pretty effective, and guarantees you get a full rebuild, 
+with no leftovers from previous sbt or Docker builds.
+
+```
+docker-compose -f docker-compose-test-harness.yaml rm -vf <service_name> && \
+sbt 'project <project_name>' 'clean' 'assembly' && \ # skip this for non-Scala projects
+docker-compose -f docker-compose-test-harness.yaml build --no-cache <service_name> && \
+docker-compose -f docker-compose-test-harness.yaml run --rm <service_name> 
+```
+
+**Note:** If you are only making small changes to a Scala project, omitting the `clean` step
+will save you several minutes of build time.
+
+#### Wiping Elasticsearch data
+
+Sometimes you want to wipe all or some portion of the data, and reload it.
+
+```
+curl -X DELETE http://localhost:9200/_all
+curl -X DELETE http://localhost:9200/address
+curl -X DELETE http://localhost:9200/census
+```
 
 ## Other Tools
 
