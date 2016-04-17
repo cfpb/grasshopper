@@ -5,7 +5,8 @@ object Dependencies {
     "Local Maven Repo"  at "file://" + Path.userHome.absolutePath + "/.m2/repository",
     "Typesafe Repo"     at "http://repo.typesafe.com/typesafe/releases/",
     "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases",
-    Resolver.bintrayRepo("mfglabs", "maven")
+    Resolver.bintrayRepo("mfglabs", "maven"),
+    "Elasticsearch releases" at "https://maven.elasticsearch.org/public-releases/"
   )
 
   val akkaActor          = "com.typesafe.akka"          %% "akka-actor"                           % Version.akka
@@ -24,7 +25,8 @@ object Dependencies {
   val scalaCheck         = "org.scalacheck"             %% "scalacheck"                           % Version.scalaCheck  % "it, test"
 
   val es                 = "org.elasticsearch"           % "elasticsearch"                        % Version.elasticsearch
-  val mfglabs            = "com.mfglabs"                %% "akka-stream-extensions-elasticsearch" % Version.mfglabs
+  val esShield           = "org.elasticsearch.plugin"    % "shield"                               % Version.elasticsearch
+  val mfglabs            = "com.mfglabs"                %% "akka-stream-extensions-elasticsearch" % Version.mfglabs excludeAll(ExclusionRule(organization = "com.typesafe.akka"))
 
   val scaleGeoJson       = "com.github.jmarin"          %% "scale-geojson"                        % Version.scale
 

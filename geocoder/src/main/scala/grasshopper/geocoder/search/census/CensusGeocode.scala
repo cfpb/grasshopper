@@ -8,7 +8,7 @@ import grasshopper.model.SearchableAddress
 import io.geojson.FeatureJsonProtocol._
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
-import org.elasticsearch.index.query.{ FilterBuilders, QueryBuilders }
+import org.elasticsearch.index.query.QueryBuilders
 import org.slf4j.LoggerFactory
 import spray.json._
 
@@ -53,34 +53,43 @@ trait CensusGeocode {
     val zipCode = addressInput.zipCode
     val state = addressInput.state
 
-    val stateQuery = QueryBuilders.matchQuery("STATE", state)
+    val stateQuery = QueryBuilders.matchQuery("properties.STATE", state)
 
-    val streetQuery = QueryBuilders.matchPhraseQuery("FULLNAME", street)
+    //FIXME: Figure out why matchPhraseQuery no longer works under ES 2.2
+    //val streetQuery = QueryBuilders.matchPhraseQuery("properties.FULLNAME", street)
+    val streetQuery = QueryBuilders.matchQuery("properties.FULLNAME", street)
 
-    val zipLeftFilter = FilterBuilders.termFilter("ZIPL", zipCode)
-    val zipRightFilter = FilterBuilders.termFilter("ZIPR", zipCode)
-    val zipFilter = FilterBuilders.orFilter(zipLeftFilter, zipRightFilter)
+    val zipLeftQuery = QueryBuilders.termQuery("properties.ZIPL", zipCode)
+    val zipRightQuery = QueryBuilders.termQuery("properties.ZIPR", zipCode)
 
-    val rightHouseFilter = FilterBuilders.andFilter(
-      FilterBuilders.rangeFilter("RFROMHN").lte(number),
-      FilterBuilders.rangeFilter("RTOHN").gte(number)
-    )
+    val zipQuery = QueryBuilders.boolQuery()
+      .should(zipLeftQuery)
+      .should(zipRightQuery)
 
-    val leftHouseFilter = FilterBuilders.andFilter(
-      FilterBuilders.rangeFilter("LFROMHN").lte(number),
-      FilterBuilders.rangeFilter("LTOHN").gte(number)
-    )
+    val rightHouseQuery = QueryBuilders.boolQuery()
+      .must(QueryBuilders.rangeQuery("properties.RFROMHN").lte(number))
+      .must(QueryBuilders.rangeQuery("properties.RTOHN").gte(number))
 
-    val houseFilter = FilterBuilders.orFilter(rightHouseFilter, leftHouseFilter)
+    val leftHouseQuery = QueryBuilders.boolQuery()
+      .must(QueryBuilders.rangeQuery("properties.LFROMHN").lte(number))
+      .must(QueryBuilders.rangeQuery("properties.LTOHN").gte(number))
 
-    val filter = FilterBuilders.andFilter(houseFilter, zipFilter)
+    val houseQuery = QueryBuilders.boolQuery()
+      .should(rightHouseQuery)
+      .should(leftHouseQuery)
 
-    val boolQuery = QueryBuilders
-      .boolQuery()
+    val filter = QueryBuilders.boolQuery()
+      //FIXME: The current house number range queries do not work.  This seems to be due to:
+      //       1. the ES 2.x upgrade.
+      //       2. the assumption that FROM values are always greater than TO values.
+      //       3. TO/FROM fields must be a numeric type for range queries to function properly.
+      //.must(houseQuery)
+      .must(zipQuery)
+
+    val query = QueryBuilders.boolQuery()
       .must(stateQuery)
       .must(streetQuery)
-
-    val query = QueryBuilders.filteredQuery(boolQuery, filter)
+      .filter(filter)
 
     censusLogger.debug(s"Elasticsearch query: $query")
 

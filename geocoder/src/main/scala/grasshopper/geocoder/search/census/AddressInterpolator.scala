@@ -90,7 +90,7 @@ object AddressInterpolator {
       "L"
     } else {
       val default = "R"
-      log.warn(s"Could not determine R/L prefix.  Defaulting to $default.  Feature: ${feature.toString}")
+      log.warn(s"Could not determine R/L prefix.  Defaulting to $default.  Feature: ${feature.values}")
       default
     }
   }

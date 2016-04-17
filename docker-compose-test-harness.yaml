@@ -6,16 +6,19 @@ test_harness:
     # FIXME: This should be a configurable using envvars
     - ../grasshopper-qa:/opt/grasshopper-qa
   environment: &grasshopper_envvars
-    ELASTICSEARCH_CLUSTER: elasticsearch # default.  
+    # NOTE: All _PORT envvars MUST be set to override Compose-generated envvars of the same name
+    ELASTICSEARCH_CLUSTER: elasticsearch 
     ELASTICSEARCH_HOST: elasticsearch
-    ELASTICSEARCH_PORT: "9300" # MUST set to override Compose-generated envvar of the same name
+    ELASTICSEARCH_PORT: "9300"
     GRASSHOPPER_PARSER_HOST: parser
+    GRASSHOPPER_PARSER_PORT: 5000
     HMDA_GEO_HOST: hmda_geo_api
-    HMDA_GEO_PORT: "8084" # MUST set to override Compose-generate envvar of the same name
+    HMDA_GEO_PORT: "8084"
   links:
     - hmda_geo_api
     - parser
-    - elasticsearch
+  extra_hosts: &extra_hosts
+    - "elasticsearch:10.0.2.2"
   entrypoint: "java -jar /opt/grasshopper-test_harness.jar"
   command: "/opt/grasshopper-qa/data/in.csv /opt/grasshopper-qa/data/out.csv"
 
@@ -27,7 +30,7 @@ geocoder:
     service: geocoder
   links:
     - parser
-    - elasticsearch
+  extra_hosts: *extra_hosts
   environment: *grasshopper_envvars
 
 parser:
@@ -39,15 +42,7 @@ loader:
   extends:
     file: docker-compose-common.yml
     service: loader
-  links:
-    - elasticsearch
-
-elasticsearch:
-  extends:
-    file: docker-compose-common.yml
-    service: elasticsearch
-  ports:
-    - "9200:9200" # Expose web api for testing
+  extra_hosts: *extra_hosts
 
 hmda_geo_postgis:
   build: ../hmda-geo/docker/postgis-tracts

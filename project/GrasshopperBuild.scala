@@ -38,7 +38,7 @@ object GrasshopperBuild extends Build {
 
   val akkaHttpDeps = akkaDeps ++ jsonDeps ++ Seq(akkaHttp, akkaHttpCore, akkaHttpTestkit)
 
-  val esDeps = commonDeps ++ Seq(es, scaleGeoJson)
+  val esDeps = commonDeps ++ Seq(es, esShield, scaleGeoJson)
 
   val scaleDeps = Seq(scaleGeoJson)
 
@@ -59,14 +59,18 @@ object GrasshopperBuild extends Build {
         mainClass in assembly := Some("grasshopper.geocoder.GrasshopperGeocoder"),
         assemblyMergeStrategy in assembly := {
           case "application.conf" => MergeStrategy.concat
+          // Elasticsearch has its own unshaded org.joda.time.base.BaseDateTime
+          // https://www.elastic.co/blog/to-shade-or-not-to-shade
+          case PathList("org", "joda", "time", "base", "BaseDateTime.class") => MergeStrategy.first
           case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
-        }
+        },
+        resolvers ++= repos
       )
     )
     .dependsOn(geocoder)
-    .aggregate(geocoder, model, client)
+    .aggregate(client, metrics, model, geocoder)
 
 
   lazy val elasticsearch = (project in file("elasticsearch"))
@@ -109,12 +113,6 @@ object GrasshopperBuild extends Build {
       Revolver.settings ++
       Seq(
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
-        assemblyMergeStrategy in assembly := {
-          case "application.conf" => MergeStrategy.concat
-          case x =>
-            val oldStrategy = (assemblyMergeStrategy in assembly).value
-            oldStrategy(x)
-        },
         libraryDependencies ++= geocodeDeps,
         resolvers ++= repos
       )
@@ -153,6 +151,10 @@ object GrasshopperBuild extends Build {
         assemblyJarName in assembly := {s"grasshopper-${name.value}.jar"},
         assemblyMergeStrategy in assembly := {
           case "application.conf" => MergeStrategy.concat
+          case "logback.xml" => MergeStrategy.last
+          // Elasticsearch has its own unshaded org.joda.time.base.BaseDateTime
+          // https://www.elastic.co/blog/to-shade-or-not-to-shade
+          case PathList("org", "joda", "time", "base", "BaseDateTime.class") => MergeStrategy.first
           case x =>
             val oldStrategy = (assemblyMergeStrategy in assembly).value
             oldStrategy(x)
@@ -162,5 +164,6 @@ object GrasshopperBuild extends Build {
       )
     )
     .dependsOn(geocoder, hmdaGeo)
+    .aggregate(client, hmdaGeo, model, geocoder)
 
 }

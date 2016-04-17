@@ -1,5 +1,6 @@
 package grasshopper.geocoder
 
+import java.net.InetAddress
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.server.Directives._
@@ -11,8 +12,9 @@ import grasshopper.geocoder.http.HttpService
 import grasshopper.geocoder.ws.WebsocketService
 import grasshopper.metrics.JvmMetrics
 import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.shield.ShieldPlugin
 
 object GrasshopperGeocoder extends App with HttpService with WebsocketService {
 
@@ -28,15 +30,30 @@ object GrasshopperGeocoder extends App with HttpService with WebsocketService {
   lazy val port = config.getString("grasshopper.geocoder.elasticsearch.port")
   lazy val cluster = config.getString("grasshopper.geocoder.elasticsearch.cluster")
 
-  lazy val settings = ImmutableSettings.settingsBuilder()
+  lazy val settings = Settings.settingsBuilder()
     .put("http.enabled", false)
     .put("node.data", false)
     .put("node.master", false)
     .put("cluster.name", cluster)
     .put("client.transport.sniff", true)
 
-  override lazy val client = new TransportClient(settings)
-    .addTransportAddress(new InetSocketTransportAddress(host, port.toInt))
+  lazy val clientBuilder = TransportClient.builder()
+
+  lazy val user = config.getString("grasshopper.geocoder.elasticsearch.user")
+  lazy val password = config.getString("grasshopper.geocoder.elasticsearch.password")
+
+  if (user.nonEmpty && password.nonEmpty) {
+    settings.put("shield.user", String.format("%s:%s", user, password))
+    clientBuilder.addPlugin(classOf[ShieldPlugin])
+  }
+
+  override lazy val client = clientBuilder
+    .settings(settings)
+    .build()
+    .addTransportAddress(new InetSocketTransportAddress(
+      InetAddress.getByName(host),
+      port.toInt
+    ))
 
   val statsAggregator = system.actorOf(GeocodeStatsAggregator.props, name = "statsAggregator")
 

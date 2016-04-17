@@ -22,7 +22,7 @@ object SearchUtils {
       }
     } catch {
       case e: Exception =>
-        log.error(s"Could not parse integer from address number '$s'", e)
+        log.error(s"Could not parse integer from address number '$s'")
         None
     }
   }
