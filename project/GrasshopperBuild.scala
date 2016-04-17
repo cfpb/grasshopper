@@ -1,22 +1,19 @@
 import sbt._
 import sbt.Keys._
 import spray.revolver.RevolverPlugin._
-import wartremover._
 import sbtassembly.AssemblyPlugin.autoImport._
 
 object BuildSettings {
   val buildOrganization = "cfpb"
   val buildVersion      = "1.0.0"
-  val buildScalaVersion = "2.11.7"
+  val buildScalaVersion = "2.11.8"
 
   val buildSettings = Defaults.coreDefaultSettings ++
-    wartremoverSettings ++
     Defaults.itSettings ++
     Seq(
       organization  := buildOrganization,
       version       := buildVersion,
       scalaVersion  := buildScalaVersion,
-      //wartremoverWarnings ++= Warts.allBut(Wart.NoNeedForMonad, Wart.NonUnitStatements),
       scalacOptions ++= Seq(
         "-Xlint",
         "-deprecation",
