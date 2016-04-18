@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cfpb/grasshopper.svg?branch=master)](https://travis-ci.org/cfpb/grasshopper) [![Coverage Status](https://coveralls.io/repos/cfpb/grasshopper/badge.svg?branch=master)](https://coveralls.io/r/cfpb/grasshopper?branch=master)
+[![Build Status](https://travis-ci.org/cfpb/grasshopper.svg?branch=master)](https://travis-ci.org/cfpb/grasshopper) [![codecov.io](https://codecov.io/github/cfpb/grasshopper/coverage.svg?branch=master)](https://codecov.io/github/cfpb/grasshopper?branch=master) 
 
 # Grasshopper
 

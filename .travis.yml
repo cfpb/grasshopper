@@ -1,9 +1,25 @@
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2/repository
+    - $HOME/.sbt
+    - $HOME/.ivy2
+
 language: scala
-scala: 2.11.6
+
+scala: 2.11.7
+
 jdk:
 - oraclejdk8
-script: sbt clean coverage test && sbt coverageAggregate
-after_success: sbt coveralls
-env:
-  global:
-    secure: U9JES0PngtEiAq4xG9AJM/dA+PqeApx9X5KyLarIUcD8OC802cM75UyTHs3BfeZFZQD16rADacUE7MZnZca/LHLaUJgfwlvWwW4Qcy3goSyoFnI5ki3dKORICksJ1kaaWnU0dnTPRe7W2DGwfX06s2CNc90BBJZRwG0Du48hQQU=
+
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test assembly
+  - sbt ++$TRAVIS_SCALA_VERSION coverageReport
+  - sbt ++$TRAVIS_SCALA_VERSION coverageAggregate
+
+  # Trick to avoid unnecessary cache updates
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
