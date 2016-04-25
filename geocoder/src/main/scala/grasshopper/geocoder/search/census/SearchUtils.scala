@@ -15,7 +15,7 @@ object SearchUtils {
         if (s.contains(".")) {
           Some(s.substring(0, s.indexOf(".")).toInt)
         } else if (s.contains("-")) {
-          Some(s.substring(0, s.indexOf("-")).toInt)
+          Some(s.substring(0, s.indexOf("-", 1)).toInt)
         } else if (s == "None") {
           None
         } else {
