@@ -17,14 +17,9 @@ object AddressInterpolator {
     val s = feature.values.getOrElse(s"${pre}FROMHN", "0")
     val e = feature.values.getOrElse(s"${pre}TOHN", "0")
 
-    val start = s match {
-      case "" => 0
-      case _ => toInt(s.toString).getOrElse(0)
-    }
-    val end = e match {
-      case "" => 0
-      case _ => toInt(e.toString).getOrElse(0)
-    }
+    val start = toInt(s.toString).getOrElse(0)
+
+    val end = toInt(e.toString).getOrElse(0)
 
     AddressRange(start, end)
   }
@@ -98,17 +93,11 @@ object AddressInterpolator {
   private def rangeIsEven(f: Feature, isLeft: Boolean): Boolean = {
     val prefix = if (isLeft) "L" else "R"
     val fromEven = f.values.getOrElse(s"${prefix}FROMHN", 0)
-    val fromRange = fromEven match {
-      case "" => 0
-      case _ => toInt(fromEven.toString).getOrElse(0)
-    }
+    val fromRange = toInt(fromEven.toString).getOrElse(0)
     val fromIsEven = fromEven != "" && fromRange % 2 == 0
 
     val toEven = f.values.getOrElse(s"${prefix}TOHN", 0)
-    val toRange = fromEven match {
-      case "" => 0
-      case _ => toInt(toEven.toString).getOrElse(0)
-    }
+    val toRange = toInt(toEven.toString).getOrElse(0)
     val toIsEven = toEven != "" && toRange % 2 == 0
     fromIsEven || toIsEven
   }

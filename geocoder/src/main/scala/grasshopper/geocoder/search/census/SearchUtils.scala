@@ -18,6 +18,8 @@ object SearchUtils {
           Some(s.substring(0, s.indexOf("-", 1)).toInt)
         } else if (s == "None") {
           None
+        } else if (s == "") {
+          Some(0)
         } else {
           Some(s.replaceAll("[^\\d]", "").toInt)
         }
