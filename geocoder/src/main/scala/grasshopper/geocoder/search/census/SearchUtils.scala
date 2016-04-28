@@ -19,7 +19,7 @@ object SearchUtils {
         } else if (s == "None") {
           None
         } else if (s == "") {
-          Some(0)
+          None
         } else {
           Some(s.replaceAll("[^\\d]", "").toInt)
         }
