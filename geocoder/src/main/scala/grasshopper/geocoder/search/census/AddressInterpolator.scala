@@ -94,11 +94,11 @@ object AddressInterpolator {
     val prefix = if (isLeft) "L" else "R"
     val fromEven = f.values.getOrElse(s"${prefix}FROMHN", 0)
     val fromRange = toInt(fromEven.toString).getOrElse(0)
-    val fromIsEven = fromEven != "" && fromRange % 2 == 0
+    val fromIsEven = fromRange != None && fromRange % 2 == 0
 
     val toEven = f.values.getOrElse(s"${prefix}TOHN", 0)
     val toRange = toInt(toEven.toString).getOrElse(0)
-    val toIsEven = toEven != "" && toRange % 2 == 0
+    val toIsEven = toRange != None && toRange % 2 == 0
     fromIsEven || toIsEven
   }
 
