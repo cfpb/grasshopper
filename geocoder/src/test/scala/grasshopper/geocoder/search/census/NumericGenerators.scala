@@ -16,4 +16,16 @@ trait NumericGenerators {
     } yield n
   }
 
+  def even: Gen[Int] = {
+    for {
+      n <- Gen.choose(-10000, 10000)
+    } yield n * 2
+  }
+
+  def odd: Gen[Int] = {
+    for {
+      n <- Gen.choose(-10000, 10000)
+    } yield n * 2 - 1
+  }
+
 }
