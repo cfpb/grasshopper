@@ -6,7 +6,7 @@ object Dependencies {
     "Typesafe Repo"     at "http://repo.typesafe.com/typesafe/releases/",
     "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases",
     Resolver.bintrayRepo("mfglabs", "maven"),
-    "Elasticsearch releases" at "https://maven.elasticsearch.org/public-releases/"
+    "Elasticsearch releases" at "http://maven.elasticsearch.org/releases/"
   )
 
   val akkaActor          = "com.typesafe.akka"          %% "akka-actor"                           % Version.akka
