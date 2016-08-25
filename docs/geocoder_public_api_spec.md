@@ -107,7 +107,7 @@ One or more features may be returned, with the `source` field indicating what se
 The request must send a file with one address string per line as `multipart/form-data`. For instance, using `curl`:
 
 ```
-curl -v -F upload=@batch_addresses.csv http://localhost:31010/geocode
+curl -v -F upload=@batch_addresses.csv http://localhost:10001/geocode
 ```
 
 This endpoint will geocode the addresses in parallel and choose the best option from the available geocoders.

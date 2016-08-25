@@ -78,7 +78,7 @@ This will retrieve all necessary dependencies, compile Scala source, and start a
 
         > ~re-start
 
-1. Confirm service is up by browsing to http://localhost:31010.
+1. Confirm service is up by browsing to http://localhost:10001.
 
 ### Docker
 
@@ -132,7 +132,7 @@ a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM us
 
     | Container       | URL                             |
     |-----------------|---------------------------------|
-    | `geocoder`      | http://{{docker-host-ip}}:31010 |
+    | `geocoder`      | http://{{docker-host-ip}}:10001 |
     | `parser`        | http://{{docker-host-ip}}:5000  |
     | `ui`            | http://{{docker-host-ip}}       |
     | `elasticsearch` | http://{{docker-host-ip}}:9200  |
