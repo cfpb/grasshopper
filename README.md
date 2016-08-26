@@ -6,7 +6,7 @@ Faster than you can snatch the pebble from our hand, we will return a location.
 
 What Problem This Solves
 ------------------------
-This repo solves the problem of finding a location for geographic text, in particular postal address input. Often called geocoding, this project returns a latitude and longitude (y and x) value for entered postal addresses.  
+This repo solves the problem of finding a location for geographic text, in particular postal address input. Often called geocoding, this project returns a latitude and longitude (y and x) value for entered postal addresses.
 
 
 How This Solves The Problem
@@ -18,7 +18,7 @@ Why We Wanted to Solve It
 -------------------------
 Our goal is to reduce burden for financial institutions who need to report location information.  This project was built in order to establish a federal authoritative function for mortgage market needs.  In particular, the Consumer Financial Protection Bureau has elected to provide a geocoding service for those financial institutions which need to establish location attributes in order to meet regulatory functions for rules like _Qualified Mortgage_ and _Home Mortgage Disclosure Act_ rules.  These rules require financial institutions to report data on mortgage activities for these financial institutions, and this service offers an authoritative function to meet this need.
 
-We also noticed a gap in approaches to traditional geocoding and wanted to allow an opportunity for growth in the technology around this area.  Many federal, state and local entities have generic needs for geocoding, which this service may help provide.  Many traditional geocoding services hamper government use with a) inflexible terms and conditions (e.g. share alike clauses), b) proprietary technology requiring continuous licensing and/or c) in-ability to use local more relavent data for the search
+We also noticed a gap in approaches to traditional geocoding and wanted to allow an opportunity for growth in the technology around this area.  Many federal, state and local entities have generic needs for geocoding, which this service may help provide.  Many traditional geocoding services hamper government use with a) inflexible terms and conditions (e.g. share alike clauses), b) proprietary technology requiring continuous licensing and/or c) in-ability to use local more relevant data for the search.
 
 We encourage forking, adding to the code base and/or general use of the service.  
 
@@ -117,8 +117,8 @@ a VM to run Docker.  Below are the steps for setting up a VirtualBox-based VM us
 
 1. Assemble Scala projects into Java artifacts:
 
-    cd grasshopper
-    sbt clean assembly
+        cd grasshopper
+        sbt clean assembly
 
     **Note:** This is necessary because the `geocoder` Docker image is purely Java,
     so the Scala code must first be compiled and packaged to run in that environment.
