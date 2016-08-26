@@ -13,6 +13,6 @@ USER daemon
 
 ENTRYPOINT ["java", "-jar", "/opt/grasshopper.jar"]
 
-EXPOSE 10001 
+EXPOSE 31010
 
 COPY target/scala-2.11/grasshopper.jar /opt/grasshopper.jar

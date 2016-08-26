@@ -1,4 +1,4 @@
-var ws = new WebSocket("ws://localhost:10001/metrics-ws");
+var ws = new WebSocket("ws://localhost:31010/metrics-ws");
 
 var geocoded = 0;
 
