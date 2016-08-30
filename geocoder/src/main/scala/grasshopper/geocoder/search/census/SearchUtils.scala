@@ -12,8 +12,10 @@ object SearchUtils {
       if (isNumeric(s)) {
         Some(s.toInt)
       } else {
-        if (s.contains("-")) {
-          Some(s.substring(0, s.indexOf("-")).toInt)
+        if (s.contains(".")) {
+          Some(s.substring(0, s.indexOf(".")).toInt)
+        } else if (s.contains("-")) {
+          Some(s.substring(0, s.indexOf("-", 1)).toInt)
         } else if (s == "None") {
           None
         } else {
@@ -28,6 +30,6 @@ object SearchUtils {
   }
 
   def isNumeric(str: String): Boolean = {
-    str.matches("-?\\d+(\\.\\d+)?")
+    str.matches("-?\\d+")
   }
 }
