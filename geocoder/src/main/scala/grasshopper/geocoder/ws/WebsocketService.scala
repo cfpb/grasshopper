@@ -1,17 +1,17 @@
 package grasshopper.geocoder.ws
 
 import akka.NotUsed
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ws.{ Message, TextMessage }
 import akka.http.scaladsl.server.Directives._
-import akka.stream.{ FlowShape, ActorMaterializer }
-import akka.stream.actor.ActorPublisher
 import akka.stream.scaladsl._
+import akka.stream.{ ActorMaterializer, FlowShape }
 import grasshopper.geocoder.api.stats.GeocodeStatsPublisher
 import grasshopper.geocoder.model.GeocodeStats
 import grasshopper.geocoder.protocol.GrasshopperJsonProtocol
-import scala.concurrent.ExecutionContextExecutor
 import spray.json._
+
+import scala.concurrent.ExecutionContextExecutor
 
 trait WebsocketService extends GrasshopperJsonProtocol {
 
@@ -46,14 +46,4 @@ trait WebsocketService extends GrasshopperJsonProtocol {
       handleWebSocketMessages(geocodeStats)
     }
 
-  object WSActor {
-    def props: Props = Props(new WSActor)
-  }
-
-  class WSActor extends ActorPublisher[TextMessage] {
-    override def receive: Receive = {
-      case tm: TextMessage =>
-        sender() ! TextMessage(Source.single("Hello ") ++ tm.textStream ++ Source.single("!")) :: Nil
-    }
-  }
 }
