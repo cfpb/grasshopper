@@ -56,11 +56,6 @@ trait HttpService extends GrasshopperJsonProtocol with GeocodeFlow {
         }
       }
     } ~
-      path("metrics") {
-        getFromResource("webapp/index.html")
-      } ~ {
-        getFromResourceDirectory("webapp")
-      } ~
       path("geocode") {
         post {
           entity(as[FormData]) { formData =>
